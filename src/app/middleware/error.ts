@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { InvalidInputError, ServerError, UnauthorizedError } from "../config/error";
-import logger from "../config/logger";
+import { InvalidInputError, ServerError, UnauthorizedError } from "../../models/error";
+import logger from "../../config/logger";
 
 export const handle = async (err: Error, request: Request, response: Response, next: NextFunction) => {
     logger.error(`${err.name} ocurred: ${err.message}`);

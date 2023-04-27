@@ -1,6 +1,6 @@
 import { isValidObjectId } from "mongoose";
 import { Tag } from "../config/db";
-import { NonExistentResourceError } from "../config/error";
+import { NonExistentResourceError } from "../models/error";
 
 /**
  * Creates a new tag objcet

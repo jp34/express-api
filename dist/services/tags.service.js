@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTag = exports.updateTag = exports.locateTag = exports.findTagById = exports.findTag = exports.countTags = exports.findTags = exports.createTag = void 0;
 const mongoose_1 = require("mongoose");
 const db_1 = require("../config/db");
-const error_1 = require("../config/error");
+const error_1 = require("../models/error");
 /**
  * Creates a new tag objcet
  * @param tag Identifier of new tag

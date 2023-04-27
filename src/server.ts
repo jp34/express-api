@@ -10,8 +10,8 @@ logger.debug(`MONGO_STRING: ${process.env.API_MONGO_STRING}`);
 import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
-import api from "./api/api.router";
-import { handle } from "./middleware/error";
+import api from "./app/router";
+import { handle } from "./app/middleware/error";
 
 // Configure database
 import { connect } from "./config/db";

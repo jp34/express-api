@@ -7,9 +7,8 @@ import {
     deleteTag,
     countTags
 } from "../../services/tags.service";
-import { CreateTagPayload, UpdateTagPayload } from "sn-core";
-import { CreateTagRequest, UpdateTagRequest } from "../../config/io";
-import { InvalidInputError } from "../../config/error";
+import { CreateTagRequest, UpdateTagRequest, CreateTagPayload, UpdateTagPayload } from "../../models/io";
+import { InvalidInputError } from "../../models/error";
 
 export default class TagsController {
 
