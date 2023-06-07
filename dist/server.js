@@ -27,7 +27,7 @@ const port = process.env.API_PORT;
 app.use(body_parser_1.default.json());
 app.use((0, morgan_1.default)("combined"));
 // Configure root controller
-app.use("/api", router_1.default);
+app.use(router_1.default);
 app.use(error_1.handle);
 // Start app
 app.listen(port, () => {

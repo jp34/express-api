@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAccount = exports.updateAccount = exports.findAccountExistsWithEmail = exports.findAccountExistsWithId = exports.findAccountByEmail = exports.findAccountById = exports.findAccounts = exports.createAccount = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const db_1 = require("../config/db");
-const error_1 = require("../config/error");
+const error_1 = require("../models/error");
 // -- CREATE
 /**
  * This method creates a new account
@@ -26,12 +26,11 @@ const error_1 = require("../config/error");
  * @param birthday Birthday
  * @returns The newly created Account
  */
-const createAccount = (email, password, birthday) => __awaiter(void 0, void 0, void 0, function* () {
+const createAccount = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
     const encrypted = bcrypt_1.default.hashSync(password, bcrypt_1.default.genSaltSync());
     return yield db_1.Account.create({
         email: email,
-        password: encrypted,
-        birthday: birthday
+        password: encrypted
     });
 });
 exports.createAccount = createAccount;

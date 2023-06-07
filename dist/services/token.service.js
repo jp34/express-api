@@ -6,11 +6,11 @@ var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.refreshAccessToken = exports.generateRefreshToken = exports.generateAccessToken = exports.generateTokenPair = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const error_1 = require("../config/error");
-const ACCESS_SECRET = (_a = process.env.API_ACCESS_SECRET) !== null && _a !== void 0 ? _a : undefined;
-const REFRESH_SECRET = (_b = process.env.API_REFRESH_SECRET) !== null && _b !== void 0 ? _b : undefined;
-const ACCESS_EXP = (_c = process.env.API_ACCESS_EXP) !== null && _c !== void 0 ? _c : undefined;
-const REFRESH_EXP = (_d = process.env.API_REFRESH_EXP) !== null && _d !== void 0 ? _d : undefined;
+const error_1 = require("../models/error");
+const ACCESS_SECRET = (_a = process.env.AUTH_SERVICE_ACCESS_SECRET) !== null && _a !== void 0 ? _a : undefined;
+const REFRESH_SECRET = (_b = process.env.AUTH_SERVICE_REFRESH_SECRET) !== null && _b !== void 0 ? _b : undefined;
+const ACCESS_EXP = (_c = process.env.AUTH_SERVICE_ACCESS_EXP) !== null && _c !== void 0 ? _c : undefined;
+const REFRESH_EXP = (_d = process.env.AUTH_SERVICE_REFRESH_EXP) !== null && _d !== void 0 ? _d : undefined;
 const generateTokenPair = (accountId) => {
     return {
         access: (0, exports.generateAccessToken)(accountId),
