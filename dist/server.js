@@ -11,7 +11,7 @@ logger_1.default.debug(`API_ACCESS_SECRET: ${process.env.API_ACCESS_SECRET}`);
 logger_1.default.debug(`API_REFRESH_SECRET: ${process.env.API_REFRESH_SECRET}`);
 logger_1.default.debug(`API_ACCESS_EXP: ${process.env.API_ACCESS_EXP}`);
 logger_1.default.debug(`API_REFRESH_EXP: ${process.env.API_REFRESH_EXP}`);
-logger_1.default.debug(`MONGO_STRING: ${process.env.API_MONGO_STRING}`);
+logger_1.default.debug(`API_MONGO_STRING: ${process.env.API_MONGO_STRING}`);
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const morgan_1 = __importDefault(require("morgan"));
