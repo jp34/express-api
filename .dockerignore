@@ -1,4 +1,8 @@
 
 
 node_modules/
+scripts/
+data/
+dist/
 .env
+.gitignore

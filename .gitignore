@@ -1,6 +1,4 @@
 
-# Node
 node_modules/
-
-# Other
+data/db/
 .env

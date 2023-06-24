@@ -1,12 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config();
+import Env from "./config/env";
 import logger from "./config/logger";
-logger.debug(`API_PORT: ${process.env.API_PORT}`);
-logger.debug(`API_ACCESS_SECRET: ${process.env.API_ACCESS_SECRET}`);
-logger.debug(`API_REFRESH_SECRET: ${process.env.API_REFRESH_SECRET}`);
-logger.debug(`API_ACCESS_EXP: ${process.env.API_ACCESS_EXP}`);
-logger.debug(`API_REFRESH_EXP: ${process.env.API_REFRESH_EXP}`);
-logger.debug(`API_MONGO_STRING: ${process.env.API_MONGO_STRING}`);
 import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
@@ -19,7 +12,6 @@ connect();
 
 // Configure app
 const app = express();
-const port = process.env.API_PORT;
 
 // Configure middleware
 app.use(bodyParser.json());
@@ -30,6 +22,6 @@ app.use(api);
 app.use(handle);
 
 // Start app
-app.listen(port, () => {
-    logger.info(`Server starting on port ${port}...`);
+app.listen(Env.PORT, () => {
+    logger.info(`Server listening on port ${Env.PORT}...`);
 });
