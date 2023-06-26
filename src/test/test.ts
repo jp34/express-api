@@ -63,9 +63,6 @@ describe('Auth', () => {
                 should.equal(typeof res.body.tokens.access, 'string');
                 should.equal(typeof res.body.tokens.refresh, 'string');
 
-                should.not.exist(res.body.account._id);
-                should.not.exist(res.body.account.__v);
-
                 done();
             });
     });

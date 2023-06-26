@@ -43,14 +43,14 @@ class AuthController {
                     throw Error("Invalid credentials provided");
                 // Create jwt and return to user
                 const tokens = (0, token_service_1.generateTokenPair)(account.id);
-                response.status(200).json({ status: "success", account: account, tokens: tokens });
+                response.status(200).json({ account: account, tokens: tokens });
                 return next();
             }
             catch (err) {
                 if (err instanceof Error)
                     logger_1.default.warn(`Login attempt failed: ${err.message}`);
                 logger_1.default.error(err);
-                response.status(400).json({ status: "error", error: err });
+                response.status(400).json({ error: err });
                 return next(err);
             }
         });
@@ -73,14 +73,14 @@ class AuthController {
                 // Create user, tokens
                 const account = yield (0, accounts_service_1.createAccount)(data.email, data.password, data.username, data.phone, data.birthday);
                 const tokens = (0, token_service_1.generateTokenPair)(account.id);
-                response.status(200).json({ status: "success", account: account, tokens: tokens });
+                response.status(200).json({ account: account, tokens: tokens });
                 return next();
             }
             catch (err) {
                 if (err instanceof Error)
                     logger_1.default.warn(`Register attempt failed: ${err.message}`);
                 logger_1.default.error(err);
-                response.status(400).json({ status: "error", error: err });
+                response.status(400).json({ error: err });
                 return next();
             }
         });
@@ -99,14 +99,14 @@ class AuthController {
                     throw new error_1.InvalidInputError('refresh');
                 // Generate new access token
                 const token = (0, token_service_1.refreshAccessToken)(data.refresh);
-                response.status(200).json({ status: "success", tokens: { access: token } });
+                response.status(200).json({ tokens: { access: token } });
                 return next();
             }
             catch (err) {
                 if (err instanceof Error)
                     logger_1.default.warn(`Register attempt failed: ${err.message}`);
                 logger_1.default.error(err);
-                response.status(406).json({ status: "error", error: err });
+                response.status(406).json({ error: err });
                 return next(err);
             }
         });

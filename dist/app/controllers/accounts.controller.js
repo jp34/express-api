@@ -29,7 +29,7 @@ class AccountsController {
             if (request.query.limit)
                 limit = +request.query.limit;
             (0, accounts_service_1.findAccounts)(offset, limit).then(data => {
-                response.status(200).json({ status: "success", data: data });
+                response.status(200).json({ data: data });
                 next();
             }).catch(next);
         });
@@ -44,7 +44,7 @@ class AccountsController {
             if (!request.params.id)
                 throw new error_1.InvalidInputError("Id");
             (0, accounts_service_1.findAccountById)(request.params.id).then(data => {
-                response.status(200).json({ status: "success", data: data });
+                response.status(200).json({ data: data });
                 next();
             }).catch(next);
         });
@@ -63,7 +63,7 @@ class AccountsController {
             if (!data)
                 throw new error_1.InvalidInputError('data');
             (0, accounts_service_1.updateAccount)(id, data).then(data => {
-                response.status(200).json({ status: "success", data: data });
+                response.status(200).json({ data: data });
                 next();
             }).catch(next);
         });
@@ -79,7 +79,7 @@ class AccountsController {
             if (!(0, mongoose_1.isValidObjectId)(id))
                 throw new error_1.InvalidInputError("Id");
             (0, accounts_service_1.deleteAccount)(id).then(data => {
-                response.status(200).json({ status: "success", data: data });
+                response.status(200).json({ data: data });
                 next();
             }).catch(next);
         });

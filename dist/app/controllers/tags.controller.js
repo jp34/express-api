@@ -25,7 +25,7 @@ class TagsController {
             if (!data)
                 throw new error_1.InvalidInputError('data');
             (0, tags_service_1.createTag)(data.tag, data.label, data.plural, data.parent).then(data => {
-                response.status(200).json({ status: "success", data: data });
+                response.status(200).json({ data: data });
             }).catch(next);
         });
         /**
@@ -44,7 +44,7 @@ class TagsController {
                 limit = +request.query.limit;
             (0, tags_service_1.findTags)(offset, limit).then((data) => __awaiter(this, void 0, void 0, function* () {
                 const total = yield (0, tags_service_1.countTags)();
-                response.status(200).json({ status: "success", data: data, meta: { count: data.length, total: total } });
+                response.status(200).json({ data: data, meta: { count: data.length, total: total } });
             })).catch(next);
         });
         /**
@@ -58,7 +58,7 @@ class TagsController {
             if (!request.params.id)
                 throw new error_1.InvalidInputError("Id");
             (0, tags_service_1.locateTag)(request.params.id).then(data => {
-                response.status(200).json({ status: "success", data: data });
+                response.status(200).json({ data: data });
             }).catch(next);
         });
         /**
@@ -72,7 +72,7 @@ class TagsController {
             if (!request.params.id)
                 throw new error_1.InvalidInputError("Id");
             (0, tags_service_1.updateTag)(request.params.id).then(data => {
-                response.status(200).json({ status: "success", data: data });
+                response.status(200).json({ data: data });
             }).catch(next);
         });
         /**
@@ -86,7 +86,7 @@ class TagsController {
             if (!request.params.id)
                 throw new error_1.InvalidInputError("Id");
             (0, tags_service_1.deleteTag)(request.params.id).then(data => {
-                response.status(200).json({ status: "success", data: data });
+                response.status(200).json({ data: data });
             }).catch(next);
         });
     }

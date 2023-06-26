@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { Account } from "../../config/db";
 import { NonExistentResourceError } from "../models/error";
 import { UpdateAccountPayload } from "../models/io";
+import { IAccount } from "../models/account";
 
 // -- CREATE
 

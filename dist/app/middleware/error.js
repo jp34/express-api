@@ -18,13 +18,13 @@ const logger_1 = __importDefault(require("../../config/logger"));
 const handle = (err, request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
     logger_1.default.error(`${err.name} ocurred: ${err.message}`);
     if (err instanceof error_1.InvalidInputError) {
-        response.status(400).json({ status: "error", error: err.message });
+        response.status(400).json({ error: err.message });
     }
     else if (err instanceof error_1.UnauthorizedError) {
-        response.status(406).json({ status: "error", error: err.message });
+        response.status(406).json({ error: err.message });
     }
     else if (err instanceof error_1.ServerError) {
-        response.status(500).json({ status: "error", error: "Server error" });
+        response.status(500).json({ error: "Server error" });
     }
     next();
 });

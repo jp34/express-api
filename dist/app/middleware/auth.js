@@ -32,7 +32,7 @@ const authorize = (request, response, next) => __awaiter(void 0, void 0, void 0,
     const token = parseBearerToken(request.headers.authorization);
     jsonwebtoken_1.default.verify(token, SECRET, (err, decoded) => {
         if (err || !decoded || typeof decoded == "string") {
-            response.status(406).json({ status: "error", error: "Invalid or malformed access token provided" });
+            response.status(406).json({ error: "Invalid or malformed access token provided" });
         }
         else {
             request.user = { id: decoded.id };

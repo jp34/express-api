@@ -29,7 +29,6 @@ chai_1.default.use(chai_http_1.default);
             .set('Content-Type', 'application/json')
             .send({ data })
             .end((err, res) => {
-            console.log(res);
             should_1.default.equal(res.status, 200);
             should_1.default.exist(res.body);
             // Validate response schema
