@@ -15,7 +15,7 @@ var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authorize = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const error_1 = require("../../models/error");
+const error_1 = require("../models/error");
 const SECRET = (_a = process.env.API_ACCESS_SECRET) !== null && _a !== void 0 ? _a : undefined;
 /**
  * This middleware function authorizes the request via a access token.

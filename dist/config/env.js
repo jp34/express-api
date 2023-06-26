@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const logger_1 = __importDefault(require("../config/logger"));
-const error_1 = require("../models/error");
+const error_1 = require("../app/models/error");
 const PORT = process.env.API_PORT;
 if (!PORT)
     throw new error_1.ConfigurationError("Missing or invalid environment variable: API_PORT");

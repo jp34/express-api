@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handle = void 0;
-const error_1 = require("../../models/error");
+const error_1 = require("../models/error");
 const logger_1 = __importDefault(require("../../config/logger"));
 const handle = (err, request, response, next) => __awaiter(void 0, void 0, void 0, function* () {
     logger_1.default.error(`${err.name} ocurred: ${err.message}`);

@@ -25,3 +25,5 @@ app.use(handle);
 app.listen(Env.PORT, () => {
     logger.info(`Server listening on port ${Env.PORT}...`);
 });
+
+export default app;

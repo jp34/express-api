@@ -11,8 +11,8 @@ sudo docker run -d \
     mongo:6.0
 
 # Start sn-api
-sudo docker run -d \
-    --name sn-api \
-    -p 8000:8000 \
-    --env-file .env \
-    socialnet/sn-api
+# sudo docker run -d \
+#     --name sn-api \
+#     -p 8000:8000 \
+#     --env-file .env \
+#     socialnet/sn-api

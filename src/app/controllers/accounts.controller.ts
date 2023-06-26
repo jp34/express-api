@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { isValidObjectId } from "mongoose";
-import { UpdateAccountRequest, UpdateAccountPayload } from "../../models/io";
-import { findAccounts, findAccountById, updateAccount, deleteAccount } from "../../services/accounts.service";
-import { InvalidInputError } from "../../models/error";
+import { UpdateAccountRequest, UpdateAccountPayload } from "../models/io";
+import { findAccounts, findAccountById, updateAccount, deleteAccount } from "../services/accounts.service";
+import { InvalidInputError } from "../models/error";
 
 export default class AccountsController {
 
@@ -19,7 +19,7 @@ export default class AccountsController {
         if (request.query.offset) offset = +request.query.offset;
         if (request.query.limit) limit = +request.query.limit;
         findAccounts(offset, limit).then(data => {
-            response.status(200).json({ status: "success", data: data });
+            response.status(200).json({ data: data });
             next();
         }).catch(next);
     }
@@ -34,7 +34,7 @@ export default class AccountsController {
     public getOne = async (request: Request, response: Response, next: NextFunction) => {
         if (!request.params.id) throw new InvalidInputError("Id");
         findAccountById(request.params.id).then(data => {
-            response.status(200).json({ status: "success", data: data });
+            response.status(200).json({ data: data });
             next();
         }).catch(next);
     }
@@ -52,7 +52,7 @@ export default class AccountsController {
         if (!id) throw new InvalidInputError('id');
         if (!data) throw new InvalidInputError('data');
         updateAccount(id, data).then(data => {
-            response.status(200).json({ status: "success", data: data });
+            response.status(200).json({ data: data });
             next();
         }).catch(next);
     }
@@ -68,7 +68,7 @@ export default class AccountsController {
         const id: string = request.params.id;
         if (!isValidObjectId(id)) throw new InvalidInputError("Id");
         deleteAccount(id).then(data => {
-            response.status(200).json({ status: "success", data: data });
+            response.status(200).json({ data: data });
             next();
         }).catch(next);
     }

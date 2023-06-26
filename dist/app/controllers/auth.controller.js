@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const accounts_service_1 = require("../../services/accounts.service");
-const token_service_1 = require("../../services/token.service");
-const error_1 = require("../../models/error");
+const accounts_service_1 = require("../services/accounts.service");
+const token_service_1 = require("../services/token.service");
+const error_1 = require("../models/error");
 const logger_1 = __importDefault(require("../../config/logger"));
 class AuthController {
     constructor() {
@@ -71,7 +71,7 @@ class AuthController {
                 if (exists)
                     throw new Error(`Account already exists with email(${data.email})`);
                 // Create user, tokens
-                const account = yield (0, accounts_service_1.createAccount)(data.email, data.password);
+                const account = yield (0, accounts_service_1.createAccount)(data.email, data.password, data.username, data.phone, data.birthday);
                 const tokens = (0, token_service_1.generateTokenPair)(account.id);
                 response.status(200).json({ status: "success", account: account, tokens: tokens });
                 return next();

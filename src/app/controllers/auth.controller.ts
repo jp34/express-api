@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import { Response, NextFunction } from "express";
-import { findAccountByEmail, findAccountExistsWithEmail, createAccount } from "../../services/accounts.service";
-import { generateTokenPair, refreshAccessToken } from "../../services/token.service";
-import { LoginRequest, RefreshRequest, SignupRequest, CreateAccountPayload } from "../../models/io";
-import { InvalidInputError } from "../../models/error";
+import { findAccountByEmail, findAccountExistsWithEmail, createAccount } from "../services/accounts.service";
+import { generateTokenPair, refreshAccessToken } from "../services/token.service";
+import { LoginRequest, RefreshRequest, SignupRequest, CreateAccountPayload } from "../models/io";
+import { InvalidInputError } from "../models/error";
 import logger from "../../config/logger";
 
 export default class AuthController {
@@ -28,12 +28,12 @@ export default class AuthController {
             if (!result) throw Error("Invalid credentials provided");
             // Create jwt and return to user
             const tokens = generateTokenPair(account.id);
-            response.status(200).json({ status: "success", account: account, tokens: tokens });
+            response.status(200).json({ account: account, tokens: tokens });
             return next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Login attempt failed: ${err.message}`);
             logger.error(err);
-            response.status(400).json({ status: "error", error: err });
+            response.status(400).json({ error: err });
             return next(err);
         }
     }
@@ -53,14 +53,14 @@ export default class AuthController {
             const exists = await findAccountExistsWithEmail(data.email);
             if (exists) throw new Error(`Account already exists with email(${data.email})`);
             // Create user, tokens
-            const account = await createAccount(data.email, data.password);
+            const account = await createAccount(data.email, data.password, data.username, data.phone, data.birthday);
             const tokens = generateTokenPair(account.id);
-            response.status(200).json({ status: "success", account: account, tokens: tokens });
+            response.status(200).json({ account: account, tokens: tokens });
             return next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);
             logger.error(err);
-            response.status(400).json({ status: "error", error: err });
+            response.status(400).json({ error: err });
             return next();
         }
     }
@@ -79,12 +79,12 @@ export default class AuthController {
             if (!data.refresh) throw new InvalidInputError('refresh');
             // Generate new access token
             const token = refreshAccessToken(data.refresh);
-            response.status(200).json({ status: "success", tokens: { access: token }});
+            response.status(200).json({ tokens: { access: token }});
             return next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);
             logger.error(err);
-            response.status(406).json({ status: "error", error: err });
+            response.status(406).json({ error: err });
             return next(err);
         }
     }

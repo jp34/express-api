@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-const accounts_service_1 = require("../../services/accounts.service");
-const error_1 = require("../../models/error");
+const accounts_service_1 = require("../services/accounts.service");
+const error_1 = require("../models/error");
 class AccountsController {
     constructor() {
         /**

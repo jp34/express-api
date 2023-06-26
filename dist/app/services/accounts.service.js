@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAccount = exports.updateAccount = exports.findAccountExistsWithEmail = exports.findAccountExistsWithId = exports.findAccountByEmail = exports.findAccountById = exports.findAccounts = exports.createAccount = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const db_1 = require("../config/db");
+const db_1 = require("../../config/db");
 const error_1 = require("../models/error");
 // -- CREATE
 /**
@@ -26,11 +26,14 @@ const error_1 = require("../models/error");
  * @param birthday Birthday
  * @returns The newly created Account
  */
-const createAccount = (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+const createAccount = (email, password, username, phone, birthday) => __awaiter(void 0, void 0, void 0, function* () {
     const encrypted = bcrypt_1.default.hashSync(password, bcrypt_1.default.genSaltSync());
     return yield db_1.Account.create({
         email: email,
-        password: encrypted
+        password: encrypted,
+        username: username,
+        phone: phone,
+        birthday: birthday
     });
 });
 exports.createAccount = createAccount;
@@ -107,8 +110,8 @@ const updateAccount = (id, payload) => __awaiter(void 0, void 0, void 0, functio
         const encrypted = bcrypt_1.default.hashSync(payload.password, bcrypt_1.default.genSaltSync());
         account.password = encrypted;
     }
-    if (payload.name)
-        account.name = payload.name;
+    if (payload.username)
+        account.username = payload.username;
     if (payload.phone)
         account.phone = payload.phone;
     if (payload.birthday)

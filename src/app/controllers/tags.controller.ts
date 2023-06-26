@@ -6,9 +6,9 @@ import {
     updateTag,
     deleteTag,
     countTags
-} from "../../services/tags.service";
-import { CreateTagRequest, UpdateTagRequest, CreateTagPayload, UpdateTagPayload } from "../../models/io";
-import { InvalidInputError } from "../../models/error";
+} from "../services/tags.service";
+import { CreateTagRequest, UpdateTagRequest, CreateTagPayload, UpdateTagPayload } from "../models/io";
+import { InvalidInputError } from "../models/error";
 
 export default class TagsController {
 
@@ -23,7 +23,7 @@ export default class TagsController {
         const data: CreateTagPayload = request.body.data;
         if (!data) throw new InvalidInputError('data');
         createTag(data.tag, data.label, data.plural, data.parent).then(data => {
-            response.status(200).json({ status: "success", data: data});
+            response.status(200).json({ data: data});
         }).catch(next);
     }
 
@@ -41,7 +41,7 @@ export default class TagsController {
         if (request.query.limit) limit = +request.query.limit;
         findTags(offset, limit).then(async data => {
             const total = await countTags();
-            response.status(200).json({ status: "success", data: data, meta: { count: data.length, total: total }});
+            response.status(200).json({ data: data, meta: { count: data.length, total: total }});
         }).catch(next);
     }
 
@@ -55,7 +55,7 @@ export default class TagsController {
     public getOne = async (request: Request, response: Response, next: NextFunction) => {
         if (!request.params.id) throw new InvalidInputError("Id");
         locateTag(request.params.id).then(data => {
-            response.status(200).json({ status: "success", data: data });
+            response.status(200).json({ data: data });
         }).catch(next);
     }
 
@@ -69,7 +69,7 @@ export default class TagsController {
     public update = async (request: Request, response: Response, next: NextFunction) => {
         if (!request.params.id) throw new InvalidInputError("Id");
         updateTag(request.params.id).then(data => {
-            response.status(200).json({ status: "success", data: data });
+            response.status(200).json({ data: data });
         }).catch(next);
     }
 
@@ -83,7 +83,7 @@ export default class TagsController {
     public delete = async (request: Request, response: Response, next: NextFunction) => {
         if (!request.params.id) throw new InvalidInputError("Id");
         deleteTag(request.params.id).then(data => {
-            response.status(200).json({ status: "success", data: data });
+            response.status(200).json({ data: data });
         }).catch(next);
     }
 }

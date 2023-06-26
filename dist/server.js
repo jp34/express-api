@@ -25,3 +25,4 @@ app.use(error_1.handle);
 app.listen(env_1.default.PORT, () => {
     logger_1.default.info(`Server listening on port ${env_1.default.PORT}...`);
 });
+exports.default = app;

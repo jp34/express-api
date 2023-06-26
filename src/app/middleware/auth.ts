@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { InvalidInputError, ConfigurationError } from "../../models/error";
+import { InvalidInputError, ConfigurationError } from "../models/error";
 
 const SECRET = process.env.API_ACCESS_SECRET ?? undefined;
 
@@ -17,7 +17,7 @@ export const authorize = async (request: Request, response: Response, next: Next
     const token = parseBearerToken(request.headers.authorization);
     jwt.verify(token, SECRET, (err, decoded) => {
         if (err || !decoded || typeof decoded == "string") {
-            response.status(406).json({ status: "error", error: "Invalid or malformed access token provided"});
+            response.status(406).json({ error: "Invalid or malformed access token provided"});
         } else {
             request.user = { id: decoded.id };
         }

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import logger from "../config/logger";
-import { ConfigurationError } from "../models/error";
+import { ConfigurationError } from "../app/models/error";
 
 const PORT = process.env.API_PORT;
 if (!PORT) throw new ConfigurationError("Missing or invalid environment variable: API_PORT");

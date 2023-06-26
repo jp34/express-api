@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { Account } from "../config/db";
+import { Account } from "../../config/db";
 import { NonExistentResourceError } from "../models/error";
 import { UpdateAccountPayload } from "../models/io";
 
@@ -14,11 +14,14 @@ import { UpdateAccountPayload } from "../models/io";
  * @param birthday Birthday
  * @returns The newly created Account
  */
-export const createAccount = async (email: string, password: string) => {
+export const createAccount = async (email: string, password: string, username: string, phone: string, birthday: string) => {
     const encrypted = bcrypt.hashSync(password, bcrypt.genSaltSync());
     return await Account.create({
         email: email,
-        password: encrypted
+        password: encrypted,
+        username: username,
+        phone: phone,
+        birthday: birthday
     });
 }
 
@@ -92,7 +95,7 @@ export const updateAccount = async (id: string, payload: UpdateAccountPayload) =
         const encrypted = bcrypt.hashSync(payload.password, bcrypt.genSaltSync());
         account.password = encrypted;
     }
-    if (payload.name) account.name = payload.name;
+    if (payload.username) account.username = payload.username;
     if (payload.phone) account.phone = payload.phone;
     if (payload.birthday) account.birthday = payload.birthday;
     return await account.save();

@@ -1,5 +1,5 @@
 import { isValidObjectId } from "mongoose";
-import { Tag } from "../config/db";
+import { Tag } from "../../config/db";
 import { NonExistentResourceError } from "../models/error";
 
 /**

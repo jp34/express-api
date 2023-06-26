@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import { IAccount, AccountSchema } from "../models/account";
-import { ITag, TagSchema } from "../models/tag";
-import { IVenue, VenueSchema } from "../models/venue";
-import { ConfigurationError } from "../models/error";
+import { IAccount, AccountSchema } from "../app/models/account";
+import { ITag, TagSchema } from "../app/models/tag";
+import { IVenue, VenueSchema } from "../app/models/venue";
+import { ConfigurationError } from "../app/models/error";
 
 export const Account = mongoose.model<IAccount>("Account", AccountSchema);
 export const Tag = mongoose.model<ITag>("Tag", TagSchema);

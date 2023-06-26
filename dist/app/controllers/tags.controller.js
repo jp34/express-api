@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const tags_service_1 = require("../../services/tags.service");
-const error_1 = require("../../models/error");
+const tags_service_1 = require("../services/tags.service");
+const error_1 = require("../models/error");
 class TagsController {
     constructor() {
         /**

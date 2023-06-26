@@ -5,10 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connect = exports.Venue = exports.Tag = exports.Account = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const account_1 = require("../models/account");
-const tag_1 = require("../models/tag");
-const venue_1 = require("../models/venue");
-const error_1 = require("../models/error");
+const account_1 = require("../app/models/account");
+const tag_1 = require("../app/models/tag");
+const venue_1 = require("../app/models/venue");
+const error_1 = require("../app/models/error");
 exports.Account = mongoose_1.default.model("Account", account_1.AccountSchema);
 exports.Tag = mongoose_1.default.model("Tag", tag_1.TagSchema);
 exports.Venue = mongoose_1.default.model("Venue", venue_1.VenueSchema);
