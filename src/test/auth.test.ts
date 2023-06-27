@@ -20,13 +20,13 @@ let tokens = {
     refresh: ""
 };
 
-describe('Auth', () => {
+describe('[sn-api] Auth Service', () => {
 
-    before('Drop existing accounts', (done) => {
-        Account.deleteMany().then(() => {
+    after('Delete created account', (done) => {
+        Account.deleteOne({ email: account.email }).then(() => {
             done();
         });
-    })
+    });
 
     it('Create a new account', (done) => {
 
@@ -54,19 +54,19 @@ describe('Auth', () => {
                 should.equal(res.body.account.username, account.username);
                 should.equal(res.body.account.phone, account.phone);
                 should.equal(res.body.account.birthday, account.birthday);
-                should.equal(typeof res.body.account.password, 'string');
-                should.equal(typeof res.body.account.verified, 'boolean');
-                should.equal(typeof res.body.account.locked, 'boolean');
-                should.equal(typeof res.body.account.deactivated, 'boolean');
-                should.equal(typeof res.body.account.created, 'string');
-                should.equal(typeof res.body.account.modified, 'string');
+                res.body.account.password.should.be.String();
+                res.body.account.created.should.be.String();
+                res.body.account.modified.should.be.String();
+                res.body.account.verified.should.be.Boolean();
+                res.body.account.locked.should.be.Boolean();
+                res.body.account.deactivated.should.be.Boolean();
                 
                 // Validate tokens
                 should.exist(res.body.tokens);
                 should.exist(res.body.tokens.access);
                 should.exist(res.body.tokens.refresh);
-                should.equal(typeof res.body.tokens.access, 'string');
-                should.equal(typeof res.body.tokens.refresh, 'string');
+                res.body.tokens.access.should.be.String();
+                res.body.tokens.refresh.should.be.String();
 
                 done();
             });
@@ -88,8 +88,8 @@ describe('Auth', () => {
                 should.exist(res.body.tokens);
                 should.exist(res.body.tokens.access);
                 should.exist(res.body.tokens.refresh);
-                should.equal(typeof res.body.tokens.access, 'string');
-                should.equal(typeof res.body.tokens.refresh, 'string');
+                res.body.tokens.access.should.be.String();
+                res.body.tokens.refresh.should.be.String();
 
                 tokens.access = res.body.tokens.access;
                 tokens.refresh = res.body.tokens.refresh;
@@ -102,9 +102,17 @@ describe('Auth', () => {
         chai.request(server)
             .post('/api/auth/refresh')
             .set('Content-Type', 'application/json')
-            .send({ data: tokens.refresh })
+            .send({ data: {
+                refresh: tokens.refresh
+            }})
             .end((err, res) => {
-                
+                should.equal(res.status, 200);
+                should.exist(res.body);
+
+                // Validate access token
+                should.exist(res.body.tokens);
+                should.exist(res.body.tokens.access);
+                res.body.tokens.access.should.be.String();
 
                 done();
             });

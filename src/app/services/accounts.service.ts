@@ -110,5 +110,6 @@ export const updateAccount = async (id: string, payload: UpdateAccountPayload) =
  * @returns The deleted account
  */
 export const deleteAccount = async (id: string) => {
-    return await Account.deleteOne({ _id: id });
+    const result = await Account.deleteOne({ _id: id });
+    return (result.acknowledged && (result.deletedCount == 1));
 }
