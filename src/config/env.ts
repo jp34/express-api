@@ -3,6 +3,10 @@ dotenv.config();
 import logger from "../config/logger";
 import { ConfigurationError } from "../app/models/error";
 
+const HOST = process.env.API_HOST;
+if (!HOST) throw new ConfigurationError("Missing or invalid environment variable: API_HOST");
+logger.debug(`HOST: ${HOST}`);
+
 const PORT = process.env.API_PORT;
 if (!PORT) throw new ConfigurationError("Missing or invalid environment variable: API_PORT");
 logger.debug(`PORT: ${PORT}`);
@@ -28,6 +32,7 @@ if (!MONGO_STRING) throw new ConfigurationError("Missing or invalid environment 
 logger.debug(`MONGO_STRING: ${MONGO_STRING}`);
 
 const Env = {
+    HOST,
     PORT,
     ACCESS_SECRET,
     ACCESS_EXP,

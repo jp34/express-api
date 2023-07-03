@@ -22,7 +22,7 @@ app.use(api);
 app.use(handle);
 
 // Start app
-app.listen(Env.PORT, () => {
+app.listen(parseInt(Env.PORT), Env.HOST, () => {
     logger.info(`Server listening on port ${Env.PORT}...`);
 });
 
