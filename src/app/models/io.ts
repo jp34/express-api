@@ -28,6 +28,7 @@ export type TagResponse = {
 export type CreateAccountPayload = {
     email: string;
     password: string;
+    name: string;
     username: string;
     phone: string;
     birthday: string;
@@ -36,6 +37,7 @@ export type CreateAccountPayload = {
 export type UpdateAccountPayload = {
     email?: string;
     password?: string;
+    name?: string;
     username?: string;
     phone?: string;
     birthday?: string;
@@ -44,6 +46,7 @@ export type UpdateAccountPayload = {
 export type AccountResponse = {
     email: string;
     password: string;
+    name: string;
     username: string;
     phone?: string;
     birthday: string;

@@ -3,6 +3,7 @@ import { Schema } from "mongoose";
 export interface IAccount {
     email: string;
     password: string;
+    name: string;
     username: string;
     phone: string;
     birthday: string;
@@ -17,6 +18,7 @@ export const AccountSchema = new Schema<IAccount>({
     // Authentication Info
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    name: { type: String, required: true },
     username: { type: String, required: true },
     phone: { type: String },
     birthday: { type: String, required: true },

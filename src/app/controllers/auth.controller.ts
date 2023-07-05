@@ -53,7 +53,14 @@ export default class AuthController {
             const exists = await findAccountExistsWithEmail(data.email);
             if (exists) throw new Error(`Account already exists with email(${data.email})`);
             // Create user, tokens
-            const account = await createAccount(data.email, data.password, data.username, data.phone, data.birthday);
+            const account = await createAccount(
+                data.email,
+                data.password,
+                data.name,
+                data.username,
+                data.phone,
+                data.birthday
+            );
             const tokens = generateTokenPair(account.id);
             response.status(200).json({ account: account, tokens: tokens });
             return next();

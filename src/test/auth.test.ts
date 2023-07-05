@@ -10,7 +10,8 @@ chai.use(chaiHttp);
 let account = {
     email: "test@test.com",
     password: "password",
-    username: "test",
+    name: "test",
+    username: "testuser",
     phone: "1234567890",
     birthday: "2000-01-01",
 };
@@ -42,6 +43,7 @@ describe('[sn-api] Auth Service', () => {
                 should.exist(res.body.account);
                 should.exist(res.body.account.email);
                 should.exist(res.body.account.password);
+                should.exist(res.body.account.name);
                 should.exist(res.body.account.username);
                 should.exist(res.body.account.phone);
                 should.exist(res.body.account.birthday);
@@ -51,6 +53,7 @@ describe('[sn-api] Auth Service', () => {
                 should.exist(res.body.account.created);
                 should.exist(res.body.account.modified);
                 should.equal(res.body.account.email, account.email);
+                should.equal(res.body.account.name, account.name);
                 should.equal(res.body.account.username, account.username);
                 should.equal(res.body.account.phone, account.phone);
                 should.equal(res.body.account.birthday, account.birthday);

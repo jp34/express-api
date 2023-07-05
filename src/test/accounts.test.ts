@@ -11,7 +11,8 @@ let account = {
     _id: "",
     email: "test@test.com",
     password: "password",
-    username: "test",
+    name: "test",
+    username: "testuser",
     phone: "1234567890",
     birthday: "2000-01-01",
 };
@@ -53,6 +54,7 @@ describe('[sn-api] Accounts Service', () => {
 
                 res.body.data[0].email.should.be.String();
                 res.body.data[0].password.should.be.String();
+                res.body.data[0].name.should.be.String();
                 res.body.data[0].username.should.be.String();
                 res.body.data[0].phone.should.be.String();
                 res.body.data[0].birthday.should.be.String();
@@ -80,6 +82,7 @@ describe('[sn-api] Accounts Service', () => {
                 should.exist(res.body.data);
                 should.exist(res.body.data.email);
                 should.exist(res.body.data.password);
+                should.exist(res.body.data.name);
                 should.exist(res.body.data.username);
                 should.exist(res.body.data.phone);
                 should.exist(res.body.data.birthday);
@@ -89,6 +92,7 @@ describe('[sn-api] Accounts Service', () => {
                 should.exist(res.body.data.created);
                 should.exist(res.body.data.modified);
                 should.equal(res.body.data.email, account.email);
+                should.equal(res.body.data.name, account.name);
                 should.equal(res.body.data.username, account.username);
                 should.equal(res.body.data.phone, account.phone);
                 should.equal(res.body.data.birthday, account.birthday);
@@ -123,6 +127,7 @@ describe('[sn-api] Accounts Service', () => {
                 should.exist(res.body.data);
                 should.exist(res.body.data.email);
                 should.exist(res.body.data.password);
+                should.exist(res.body.data.name);
                 should.exist(res.body.data.username);
                 should.exist(res.body.data.phone);
                 should.exist(res.body.data.birthday);
@@ -132,6 +137,7 @@ describe('[sn-api] Accounts Service', () => {
                 should.exist(res.body.data.created);
                 should.exist(res.body.data.modified);
                 should.equal(res.body.data.email, account.email);
+                should.equal(res.body.data.name, account.name);
                 should.equal(res.body.data.username, account.username);
                 should.equal(res.body.data.phone, account.phone);
                 should.equal(res.body.data.birthday, account.birthday);
