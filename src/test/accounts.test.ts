@@ -1,8 +1,7 @@
 import { describe, it } from "mocha";
-import chai, { Assertion } from "chai";
+import chai from "chai";
 import chaiHttp from "chai-http";
 import server from "../server";
-import { Account } from "../config/db";
 import should from "should";
 
 chai.use(chaiHttp);
