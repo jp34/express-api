@@ -1,13 +1,10 @@
 #!/bin/bash
 
-sudo docker network create -d bridge sn
-
 # Start sn-api-mongo
 sudo docker run -d \
     --name sn-api-mongo \
     --network sn\
     -p 27017:27017 \
-    -v $(pwd)/data/db:/data/db \
     -e MONGO_INITDB_ROOT_USERNAME=root \
     -e MONGO_INITDB_ROOT_PASSWORD=password \
     -e MONGO_INITDB_DATABASE=sn-api \

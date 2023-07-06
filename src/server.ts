@@ -10,6 +10,10 @@ import { handle } from "./app/middleware/error";
 import { connect } from "./config/db";
 connect();
 
+// Seed database
+import { seed } from "./config/db";
+seed();
+
 // Configure app
 const app = express();
 

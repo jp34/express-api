@@ -1,0 +1,518 @@
+[
+    {
+        "tag": "tag",
+        "label": "label",
+        "parent": "parent",
+        "fsq_ref": "ref"
+    },
+    {
+        "tag": "string",
+        "label": "string",
+        "parent": "string",
+        "fsq_ref": "string"
+    },
+    {
+        "tag": "venue",
+        "label": "Venue",
+        "parent": "*",
+        "fsq_ref": "*"
+    },
+    {
+        "tag": "dining",
+        "label": "Dining",
+        "parent": "venue",
+        "fsq_ref": "13000"
+    },
+    {
+        "tag": "food_truck",
+        "label": "Food Truck",
+        "parent": "dining",
+        "fsq_ref": "13054"
+    },
+    {
+        "tag": "food_stand",
+        "label": "Food Stand",
+        "parent": "dining",
+        "fsq_ref": "13053"
+    },
+    {
+        "tag": "restaurant",
+        "label": "Restaurant",
+        "parent": "dining",
+        "fsq_ref": "13065"
+    },
+    {
+        "tag": "american",
+        "label": "American",
+        "parent": "restaurant",
+        "fsq_ref": "13068"
+    },
+    {
+        "tag": "asian",
+        "label": "Asian",
+        "parent": "restaurant",
+        "fsq_ref": "13072"
+    },
+    {
+        "tag": "african",
+        "label": "African",
+        "parent": "restaurant",
+        "fsq_ref": "13067"
+    },
+    {
+        "tag": "italian",
+        "label": "Italian",
+        "parent": "restaurant",
+        "fsq_ref": "13236"
+    },
+    {
+        "tag": "french",
+        "label": "French",
+        "parent": "restaurant",
+        "fsq_ref": "13148"
+    },
+    {
+        "tag": "cuban",
+        "label": "Cuban",
+        "parent": "restaurant",
+        "fsq_ref": "13135"
+    },
+    {
+        "tag": "german",
+        "label": "German",
+        "parent": "restaurant",
+        "fsq_ref": "13165"
+    },
+    {
+        "tag": "greek",
+        "label": "Greek",
+        "parent": "restaurant",
+        "fsq_ref": "13177"
+    },
+    {
+        "tag": "chinese",
+        "label": "Chinese",
+        "parent": "restaurant",
+        "fsq_ref": "13099"
+    },
+    {
+        "tag": "indian",
+        "label": "Indian",
+        "parent": "restaurant",
+        "fsq_ref": "13199"
+    },
+    {
+        "tag": "mexican",
+        "label": "Mexican",
+        "parent": "restaurant",
+        "fsq_ref": "13303"
+    },
+    {
+        "tag": "mediterranean",
+        "label": "Mediterranean",
+        "parent": "restaurant",
+        "fsq_ref": "13302"
+    },
+    {
+        "tag": "moroccan",
+        "label": "Moroccan",
+        "parent": "restaurant",
+        "fsq_ref": "13313"
+    },
+    {
+        "tag": "japanese",
+        "label": "Japanese",
+        "parent": "restaurant",
+        "fsq_ref": "13263"
+    },
+    {
+        "tag": "jewish",
+        "label": "Jewish",
+        "parent": "restaurant",
+        "fsq_ref": "13286"
+    },
+    {
+        "tag": "korean",
+        "label": "Korean",
+        "parent": "restaurant",
+        "fsq_ref": "13289"
+    },
+    {
+        "tag": "pizza",
+        "label": "Pizza",
+        "parent": "restaurant",
+        "fsq_ref": "13064"
+    },
+    {
+        "tag": "deli",
+        "label": "Deli",
+        "parent": "restaurant",
+        "fsq_ref": "13039"
+    },
+    {
+        "tag": "diner",
+        "label": "Diner",
+        "parent": "restaurant",
+        "fsq_ref": "13049"
+    },
+    {
+        "tag": "steak",
+        "label": "Steakhouse",
+        "parent": "restaurant",
+        "fsq_ref": "13383"
+    },
+    {
+        "tag": "sushi",
+        "label": "Sushi",
+        "parent": "restaurant",
+        "fsq_ref": "13276"
+    },
+    {
+        "tag": "seafood",
+        "label": "Seafood",
+        "parent": "restaurant",
+        "fsq_ref": "13338"
+    },
+    {
+        "tag": "southern",
+        "label": "Southern",
+        "parent": "restaurant",
+        "fsq_ref": "13344"
+    },
+    {
+        "tag": "spanish",
+        "label": "Spanish",
+        "parent": "restaurant",
+        "fsq_ref": "13345"
+    },
+    {
+        "tag": "barbecue",
+        "label": "Barbecue",
+        "parent": "restaurant",
+        "fsq_ref": "13026"
+    },
+    {
+        "tag": "burgers",
+        "label": "Burger",
+        "parent": "restaurant",
+        "fsq_ref": "13031"
+    },
+    {
+        "tag": "hot_dog",
+        "label": "Hot Dog",
+        "parent": "restaurant",
+        "fsq_ref": "13058"
+    },
+    {
+        "tag": "wings",
+        "label": "Wings",
+        "parent": "restaurant",
+        "fsq_ref": "13388"
+    },
+    {
+        "tag": "smoothie",
+        "label": "Smoothie",
+        "parent": "restaurant",
+        "fsq_ref": "13381"
+    },
+    {
+        "tag": "breakfast",
+        "label": "Breakfast",
+        "parent": "restaurant",
+        "fsq_ref": "13028"
+    },
+    {
+        "tag": "bakery",
+        "label": "Bakery",
+        "parent": "restaurant",
+        "fsq_ref": "13002"
+    },
+    {
+        "tag": "bagels",
+        "label": "Bagel",
+        "parent": "restaurant",
+        "fsq_ref": "13001"
+    },
+    {
+        "tag": "kosher",
+        "label": "Kosher",
+        "parent": "restaurant",
+        "fsq_ref": "13287"
+    },
+    {
+        "tag": "bistro",
+        "label": "Bistro",
+        "parent": "restaurant",
+        "fsq_ref": "13027"
+    },
+    {
+        "tag": "comfort",
+        "label": "Comfort Food",
+        "parent": "restaurant",
+        "fsq_ref": "13134"
+    },
+    {
+        "tag": "cafe",
+        "label": "Cafe",
+        "parent": "dining",
+        "fsq_ref": "13034"
+    },
+    {
+        "tag": "coffee",
+        "label": "Coffee Shop",
+        "parent": "cafe",
+        "fsq_ref": "13035"
+    },
+    {
+        "tag": "tea",
+        "label": "Tea Room",
+        "parent": "cafe",
+        "fsq_ref": "13036"
+    },
+    {
+        "tag": "bar",
+        "label": "Bar",
+        "parent": "dining",
+        "fsq_ref": "13003"
+    },
+    {
+        "tag": "sports_bar",
+        "label": "Sports Bar",
+        "parent": "bar",
+        "fsq_ref": "13022"
+    },
+    {
+        "tag": "wine_bar",
+        "label": "Wine Bar",
+        "parent": "bar",
+        "fsq_ref": "13025"
+    },
+    {
+        "tag": "rooftop_bar",
+        "label": "Rooftop Bar",
+        "parent": "bar",
+        "fsq_ref": "13019"
+    },
+    {
+        "tag": "dive_bar",
+        "label": "Dive Bar",
+        "parent": "bar",
+        "fsq_ref": "13010"
+    },
+    {
+        "tag": "pub",
+        "label": "Pub",
+        "parent": "bar",
+        "fsq_ref": "13018"
+    },
+    {
+        "tag": "speakeasy",
+        "label": "Speakeasy",
+        "parent": "bar",
+        "fsq_ref": "13021"
+    },
+    {
+        "tag": "gay_bar",
+        "label": "Gay Bar",
+        "parent": "bar",
+        "fsq_ref": "13011"
+    },
+    {
+        "tag": "dessert",
+        "label": "Dessert Shop",
+        "parent": "dining",
+        "fsq_ref": "13040"
+    },
+    {
+        "tag": "ice_cream",
+        "label": "Ice Cream Shop",
+        "parent": "dessert",
+        "fsq_ref": "13046"
+    },
+    {
+        "tag": "frozen_yogurt",
+        "label": "Frozen Yogurt",
+        "parent": "dessert",
+        "fsq_ref": "13044"
+    },
+    {
+        "tag": "donut",
+        "label": "Donut Shop",
+        "parent": "dessert",
+        "fsq_ref": "13043"
+    },
+    {
+        "tag": "cupcake",
+        "label": "Cupcake Shop",
+        "parent": "dessert",
+        "fsq_ref": "13042"
+    },
+    {
+        "tag": "pastry",
+        "label": "Pastry Shop",
+        "parent": "dessert",
+        "fsq_ref": "13047"
+    },
+    {
+        "tag": "social",
+        "label": "Social",
+        "parent": "venue",
+        "fsq_ref": ""
+    },
+    {
+        "tag": "bowling",
+        "label": "Bowling",
+        "parent": "social",
+        "fsq_ref": "10006"
+    },
+    {
+        "tag": "escape_room",
+        "label": "Escape Room",
+        "parent": "social",
+        "fsq_ref": "10015"
+    },
+    {
+        "tag": "go_kart",
+        "label": "Go Kart",
+        "parent": "social",
+        "fsq_ref": "10019"
+    },
+    {
+        "tag": "golf",
+        "label": "Golf",
+        "parent": "social",
+        "fsq_ref": ""
+    },
+    {
+        "tag": "mini_golf",
+        "label": "Mini Golf",
+        "parent": "social",
+        "fsq_ref": "10023"
+    },
+    {
+        "tag": "laser_tag",
+        "label": "Laser Tag",
+        "parent": "social",
+        "fsq_ref": "10022"
+    },
+    {
+        "tag": "night_club",
+        "label": "Night Club",
+        "parent": "social",
+        "fsq_ref": "10032"
+    },
+    {
+        "tag": "casino",
+        "label": "Casino",
+        "parent": "social",
+        "fsq_ref": "10008"
+    },
+    {
+        "tag": "karaoke",
+        "label": "Karaoke",
+        "parent": "social",
+        "fsq_ref": "10021"
+    },
+    {
+        "tag": "entertainment",
+        "label": "Entertainment",
+        "parent": "venue",
+        "fsq_ref": "10000"
+    },
+    {
+        "tag": "comedy_club",
+        "label": "Comedy Club",
+        "parent": "entertainment",
+        "fsq_ref": "10010"
+    },
+    {
+        "tag": "movie_theater",
+        "label": "Movie Theater",
+        "parent": "entertainment",
+        "fsq_ref": "10024"
+    },
+    {
+        "tag": "auto_theater",
+        "label": "Drive In Theater",
+        "parent": "entertainment",
+        "fsq_ref": "10025"
+    },
+    {
+        "tag": "zoo",
+        "label": "Zoo",
+        "parent": "entertainment",
+        "fsq_ref": "10056"
+    },
+    {
+        "tag": "museum",
+        "label": "Museum",
+        "parent": "entertainment",
+        "fsq_ref": "10027"
+    },
+    {
+        "tag": "art_museum",
+        "label": "Art Museum",
+        "parent": "museum",
+        "fsq_ref": "10028"
+    },
+    {
+        "tag": "history_museum",
+        "label": "History Museum",
+        "parent": "museum",
+        "fsq_ref": "10030"
+    },
+    {
+        "tag": "science_museum",
+        "label": "Science Museum",
+        "parent": "museum",
+        "fsq_ref": "10031"
+    },
+    {
+        "tag": "art_gallery",
+        "label": "Art Gallery",
+        "parent": "museum",
+        "fsq_ref": "10004"
+    },
+    {
+        "tag": "planetarium",
+        "label": "Planetarium",
+        "parent": "museum",
+        "fsq_ref": "10044"
+    },
+    {
+        "tag": "music",
+        "label": "Music",
+        "parent": "entertainment",
+        "fsq_ref": "10039"
+    },
+    {
+        "tag": "concert_hall",
+        "label": "Concert Hall",
+        "parent": "music",
+        "fsq_ref": "10037"
+    },
+    {
+        "tag": "rock_club",
+        "label": "Rock Club",
+        "parent": "music",
+        "fsq_ref": "10041"
+    },
+    {
+        "tag": "jazz_blues",
+        "label": "Jazz & Blues",
+        "parent": "music",
+        "fsq_ref": "10040"
+    },
+    {
+        "tag": "opera_house",
+        "label": "Opera House",
+        "parent": "music",
+        "fsq_ref": "10042"
+    },
+    {
+        "tag": "theater",
+        "label": "Theater",
+        "parent": "music",
+        "fsq_ref": "10043"
+    }
+]
