@@ -18,10 +18,10 @@ export default class AuthController {
     public login = async (request: LoginRequest, response: Response, next: NextFunction) => {
         try {
             const data = request.body.data;
-            if (!data.identifier) throw new InvalidInputError('email');
+            if (!data.email) throw new InvalidInputError('email');
             if (!data.password) throw new InvalidInputError('password');
             // Fetch account and verify it exists
-            const account = await findAccountByEmail(data.identifier);
+            const account = await findAccountByEmail(data.email);
             if (account == undefined) throw new Error("Invalid credentials provided");
             // Compare password
             const result = await bcrypt.compare(data.password, account.password);

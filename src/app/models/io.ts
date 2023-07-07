@@ -66,7 +66,7 @@ export interface SignupRequest extends Express.Request {
 export interface LoginRequest extends Express.Request {
     body: {
         data: {
-            identifier: string,
+            email: string,
             password: string
         }
     }
