@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Create sn network
+sudo docker network create sn
+
 # Start sn-api-mongo
 sudo docker run -d \
     --name sn-api-mongo \
