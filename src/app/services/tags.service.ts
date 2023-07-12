@@ -1,6 +1,6 @@
-import { isValidObjectId } from "mongoose";
 import { Tag } from "../../config/db";
 import { NonExistentResourceError } from "../models/error";
+import { CreateTagPayload, UpdateTagPayload } from "../models/io";
 
 /**
  * Creates a new tag objcet
@@ -10,17 +10,14 @@ import { NonExistentResourceError } from "../models/error";
  * @param parent Identifier of parent tag
  * @returns The newly created tag object
  */
-export const createTag = async (tag: string, label: string, plural: string, parent: string) => {
-    const actualParent = await Tag.findOne({ tag: parent });
-    if (!actualParent) throw new NonExistentResourceError("Tag", parent);
+export const createTag = async (data: CreateTagPayload) => {
+    const actualParent = await Tag.findOne({ name: data.parent });
+    if (!actualParent) throw new NonExistentResourceError("Tag", data.parent);
     return await Tag.create({
-        tag: tag,
-        label: label,
-        plural: plural,
-        level: (actualParent.level + 1),
-        parent: parent,
-        ref: "",
-        display: false
+        name: data.name,
+        label: data.label,
+        parent: data.parent,
+        ref: data.ref,
     });
 }
 
@@ -44,8 +41,8 @@ export const countTags = async () => {
  * @param tag Tag identifier
  * @returns Tag object if it exists
  */
-export const findTag = async (tag: string) => {
-    return await Tag.findOne({ tag: tag });
+export const findTag = async (name: string) => {
+    return await Tag.findOne({ name: name });
 }
 
 /**
@@ -57,41 +54,25 @@ export const findTagById = async (id: string) => {
     return await Tag.findOne({ _id: id });
 }
 
-/**
- * Locates a tag by either its id or unique identifier. If id is a valid
- * object id findById is attempted, otherwise it tries to locate the resource
- * by it's unique tag.
- * @param id Tag identifier (ID or unique tag)
- * @returns Tag object if it exists
- */
-export const locateTag = async (id: string) => {
-    let tag;
-    if (isValidObjectId(id)) tag = await Tag.findById(id);
-    else tag = await Tag.findOne({ tag: id });
-    if (!tag) throw new NonExistentResourceError("Tag", id);
-    return tag;
-}
-
-export const updateTag = async (id: string, tag?: string, label?: string, plural?: string, parent?: string, ref?: string, display?: boolean) => {
-    const obj = await Tag.findById(id);
-    if (!obj) throw new NonExistentResourceError("Tag", id);
-    if (tag) obj.tag = tag;
-    if (label) obj.label = label;
-    if (plural) obj.plural = plural;
-    if (parent) {
-        const actualParent = await Tag.findOne({ tag: parent });
-        if (!actualParent) throw new NonExistentResourceError("Tag", parent);
-        obj.parent = actualParent.tag;
+export const updateTag = async (name: string, data: UpdateTagPayload) => {
+    const tag = await findTag(name);
+    if (!tag) throw new NonExistentResourceError("Tag", name);
+    if (data.label) tag.label = data.label;
+    if (data.parent) {
+        const actualParent = await Tag.findOne({ name: data.parent });
+        if (!actualParent) throw new NonExistentResourceError("Tag", data.parent);
+        tag.parent = actualParent.name;
     }
-    if (ref) obj.ref = ref;
-    if (display) obj.display = display;
+    if (data.ref) tag.ref = data.ref;
+    return await tag.save();
 }
 
 /**
  * Delete a single tag by its identifier
- * @param tag Tag identifier
+ * @param id Tag identifier
  * @returns Result of deletion
  */
-export const deleteTag = async (tag: string) => {
-    return await Tag.deleteOne({ tag: tag });
+export const deleteTag = async (name: string) => {
+    const result = await Tag.deleteOne({ name: name });
+    return (result.acknowledged && (result.deletedCount == 1));
 }

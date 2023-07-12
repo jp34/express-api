@@ -21,10 +21,10 @@ router.put("/api/accounts/:id", authorize, accounts.update);
 router.delete("/api/accounts/:id", authorize, accounts.delete);
 
 // Tags API
-router.post("/tags", authorize, tags.create);
-router.get("/tags", authorize, tags.getMany);
-router.get("/tags/:id", authorize, tags.getOne);
-router.put("/tags/:id", authorize, tags.update);
-router.delete("/tags/:id", authorize, tags.delete);
+router.post("/api/tags", authorize, tags.create);
+router.get("/api/tags", authorize, tags.getMany);
+router.get("/api/tags/:name", authorize, tags.getOne);
+router.put("/api/tags/:name", authorize, tags.update);
+router.delete("/api/tags/:name", authorize, tags.delete);
 
 export default router;

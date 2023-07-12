@@ -23,14 +23,13 @@ let tokens = {
 
 describe('[sn-api] Auth Service', () => {
 
-    after('Delete created account', (done) => {
+    after('Tear Down: Delete created account', (done) => {
         Account.deleteOne({ email: account.email }).then(() => {
             done();
         });
     });
 
     it('Create a new account', (done) => {
-
         chai.request(server)
             .post('/api/auth/signup')
             .set('Content-Type', 'application/json')
@@ -80,7 +79,7 @@ describe('[sn-api] Auth Service', () => {
             .post('/api/auth/login')
             .set('Content-Type', 'application/json')
             .send({ data: {
-                identifier: account.email,
+                email: account.email,
                 password: account.password
             }})
             .end((err, res) => {

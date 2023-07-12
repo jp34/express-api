@@ -1,518 +1,506 @@
 [
     {
-        "tag": "tag",
-        "label": "label",
-        "parent": "parent",
-        "fsq_ref": "ref"
-    },
-    {
-        "tag": "string",
-        "label": "string",
-        "parent": "string",
-        "fsq_ref": "string"
-    },
-    {
-        "tag": "venue",
+        "name": "venue",
         "label": "Venue",
         "parent": "*",
-        "fsq_ref": "*"
+        "ref": "*"
     },
     {
-        "tag": "dining",
+        "name": "dining",
         "label": "Dining",
         "parent": "venue",
-        "fsq_ref": "13000"
+        "ref": "13000"
     },
     {
-        "tag": "food_truck",
+        "name": "food_truck",
         "label": "Food Truck",
         "parent": "dining",
-        "fsq_ref": "13054"
+        "ref": "13054"
     },
     {
-        "tag": "food_stand",
+        "name": "food_stand",
         "label": "Food Stand",
         "parent": "dining",
-        "fsq_ref": "13053"
+        "ref": "13053"
     },
     {
-        "tag": "restaurant",
+        "name": "restaurant",
         "label": "Restaurant",
         "parent": "dining",
-        "fsq_ref": "13065"
+        "ref": "13065"
     },
     {
-        "tag": "american",
+        "name": "american",
         "label": "American",
         "parent": "restaurant",
-        "fsq_ref": "13068"
+        "ref": "13068"
     },
     {
-        "tag": "asian",
+        "name": "asian",
         "label": "Asian",
         "parent": "restaurant",
-        "fsq_ref": "13072"
+        "ref": "13072"
     },
     {
-        "tag": "african",
+        "name": "african",
         "label": "African",
         "parent": "restaurant",
-        "fsq_ref": "13067"
+        "ref": "13067"
     },
     {
-        "tag": "italian",
+        "name": "italian",
         "label": "Italian",
         "parent": "restaurant",
-        "fsq_ref": "13236"
+        "ref": "13236"
     },
     {
-        "tag": "french",
+        "name": "french",
         "label": "French",
         "parent": "restaurant",
-        "fsq_ref": "13148"
+        "ref": "13148"
     },
     {
-        "tag": "cuban",
+        "name": "cuban",
         "label": "Cuban",
         "parent": "restaurant",
-        "fsq_ref": "13135"
+        "ref": "13135"
     },
     {
-        "tag": "german",
+        "name": "german",
         "label": "German",
         "parent": "restaurant",
-        "fsq_ref": "13165"
+        "ref": "13165"
     },
     {
-        "tag": "greek",
+        "name": "greek",
         "label": "Greek",
         "parent": "restaurant",
-        "fsq_ref": "13177"
+        "ref": "13177"
     },
     {
-        "tag": "chinese",
+        "name": "chinese",
         "label": "Chinese",
         "parent": "restaurant",
-        "fsq_ref": "13099"
+        "ref": "13099"
     },
     {
-        "tag": "indian",
+        "name": "indian",
         "label": "Indian",
         "parent": "restaurant",
-        "fsq_ref": "13199"
+        "ref": "13199"
     },
     {
-        "tag": "mexican",
+        "name": "mexican",
         "label": "Mexican",
         "parent": "restaurant",
-        "fsq_ref": "13303"
+        "ref": "13303"
     },
     {
-        "tag": "mediterranean",
+        "name": "mediterranean",
         "label": "Mediterranean",
         "parent": "restaurant",
-        "fsq_ref": "13302"
+        "ref": "13302"
     },
     {
-        "tag": "moroccan",
+        "name": "moroccan",
         "label": "Moroccan",
         "parent": "restaurant",
-        "fsq_ref": "13313"
+        "ref": "13313"
     },
     {
-        "tag": "japanese",
+        "name": "japanese",
         "label": "Japanese",
         "parent": "restaurant",
-        "fsq_ref": "13263"
+        "ref": "13263"
     },
     {
-        "tag": "jewish",
+        "name": "jewish",
         "label": "Jewish",
         "parent": "restaurant",
-        "fsq_ref": "13286"
+        "ref": "13286"
     },
     {
-        "tag": "korean",
+        "name": "korean",
         "label": "Korean",
         "parent": "restaurant",
-        "fsq_ref": "13289"
+        "ref": "13289"
     },
     {
-        "tag": "pizza",
+        "name": "pizza",
         "label": "Pizza",
         "parent": "restaurant",
-        "fsq_ref": "13064"
+        "ref": "13064"
     },
     {
-        "tag": "deli",
+        "name": "deli",
         "label": "Deli",
         "parent": "restaurant",
-        "fsq_ref": "13039"
+        "ref": "13039"
     },
     {
-        "tag": "diner",
+        "name": "diner",
         "label": "Diner",
         "parent": "restaurant",
-        "fsq_ref": "13049"
+        "ref": "13049"
     },
     {
-        "tag": "steak",
+        "name": "steak",
         "label": "Steakhouse",
         "parent": "restaurant",
-        "fsq_ref": "13383"
+        "ref": "13383"
     },
     {
-        "tag": "sushi",
+        "name": "sushi",
         "label": "Sushi",
         "parent": "restaurant",
-        "fsq_ref": "13276"
+        "ref": "13276"
     },
     {
-        "tag": "seafood",
+        "name": "seafood",
         "label": "Seafood",
         "parent": "restaurant",
-        "fsq_ref": "13338"
+        "ref": "13338"
     },
     {
-        "tag": "southern",
+        "name": "southern",
         "label": "Southern",
         "parent": "restaurant",
-        "fsq_ref": "13344"
+        "ref": "13344"
     },
     {
-        "tag": "spanish",
+        "name": "spanish",
         "label": "Spanish",
         "parent": "restaurant",
-        "fsq_ref": "13345"
+        "ref": "13345"
     },
     {
-        "tag": "barbecue",
+        "name": "barbecue",
         "label": "Barbecue",
         "parent": "restaurant",
-        "fsq_ref": "13026"
+        "ref": "13026"
     },
     {
-        "tag": "burgers",
+        "name": "burgers",
         "label": "Burger",
         "parent": "restaurant",
-        "fsq_ref": "13031"
+        "ref": "13031"
     },
     {
-        "tag": "hot_dog",
+        "name": "hot_dog",
         "label": "Hot Dog",
         "parent": "restaurant",
-        "fsq_ref": "13058"
+        "ref": "13058"
     },
     {
-        "tag": "wings",
+        "name": "wings",
         "label": "Wings",
         "parent": "restaurant",
-        "fsq_ref": "13388"
+        "ref": "13388"
     },
     {
-        "tag": "smoothie",
+        "name": "smoothie",
         "label": "Smoothie",
         "parent": "restaurant",
-        "fsq_ref": "13381"
+        "ref": "13381"
     },
     {
-        "tag": "breakfast",
+        "name": "breakfast",
         "label": "Breakfast",
         "parent": "restaurant",
-        "fsq_ref": "13028"
+        "ref": "13028"
     },
     {
-        "tag": "bakery",
+        "name": "bakery",
         "label": "Bakery",
         "parent": "restaurant",
-        "fsq_ref": "13002"
+        "ref": "13002"
     },
     {
-        "tag": "bagels",
+        "name": "bagels",
         "label": "Bagel",
         "parent": "restaurant",
-        "fsq_ref": "13001"
+        "ref": "13001"
     },
     {
-        "tag": "kosher",
+        "name": "kosher",
         "label": "Kosher",
         "parent": "restaurant",
-        "fsq_ref": "13287"
+        "ref": "13287"
     },
     {
-        "tag": "bistro",
+        "name": "bistro",
         "label": "Bistro",
         "parent": "restaurant",
-        "fsq_ref": "13027"
+        "ref": "13027"
     },
     {
-        "tag": "comfort",
+        "name": "comfort",
         "label": "Comfort Food",
         "parent": "restaurant",
-        "fsq_ref": "13134"
+        "ref": "13134"
     },
     {
-        "tag": "cafe",
+        "name": "cafe",
         "label": "Cafe",
         "parent": "dining",
-        "fsq_ref": "13034"
+        "ref": "13034"
     },
     {
-        "tag": "coffee",
+        "name": "coffee",
         "label": "Coffee Shop",
         "parent": "cafe",
-        "fsq_ref": "13035"
+        "ref": "13035"
     },
     {
-        "tag": "tea",
+        "name": "tea",
         "label": "Tea Room",
         "parent": "cafe",
-        "fsq_ref": "13036"
+        "ref": "13036"
     },
     {
-        "tag": "bar",
+        "name": "bar",
         "label": "Bar",
         "parent": "dining",
-        "fsq_ref": "13003"
+        "ref": "13003"
     },
     {
-        "tag": "sports_bar",
+        "name": "sports_bar",
         "label": "Sports Bar",
         "parent": "bar",
-        "fsq_ref": "13022"
+        "ref": "13022"
     },
     {
-        "tag": "wine_bar",
+        "name": "wine_bar",
         "label": "Wine Bar",
         "parent": "bar",
-        "fsq_ref": "13025"
+        "ref": "13025"
     },
     {
-        "tag": "rooftop_bar",
+        "name": "rooftop_bar",
         "label": "Rooftop Bar",
         "parent": "bar",
-        "fsq_ref": "13019"
+        "ref": "13019"
     },
     {
-        "tag": "dive_bar",
+        "name": "dive_bar",
         "label": "Dive Bar",
         "parent": "bar",
-        "fsq_ref": "13010"
+        "ref": "13010"
     },
     {
-        "tag": "pub",
+        "name": "pub",
         "label": "Pub",
         "parent": "bar",
-        "fsq_ref": "13018"
+        "ref": "13018"
     },
     {
-        "tag": "speakeasy",
+        "name": "speakeasy",
         "label": "Speakeasy",
         "parent": "bar",
-        "fsq_ref": "13021"
+        "ref": "13021"
     },
     {
-        "tag": "gay_bar",
+        "name": "gay_bar",
         "label": "Gay Bar",
         "parent": "bar",
-        "fsq_ref": "13011"
+        "ref": "13011"
     },
     {
-        "tag": "dessert",
+        "name": "dessert",
         "label": "Dessert Shop",
         "parent": "dining",
-        "fsq_ref": "13040"
+        "ref": "13040"
     },
     {
-        "tag": "ice_cream",
+        "name": "ice_cream",
         "label": "Ice Cream Shop",
         "parent": "dessert",
-        "fsq_ref": "13046"
+        "ref": "13046"
     },
     {
-        "tag": "frozen_yogurt",
+        "name": "frozen_yogurt",
         "label": "Frozen Yogurt",
         "parent": "dessert",
-        "fsq_ref": "13044"
+        "ref": "13044"
     },
     {
-        "tag": "donut",
+        "name": "donut",
         "label": "Donut Shop",
         "parent": "dessert",
-        "fsq_ref": "13043"
+        "ref": "13043"
     },
     {
-        "tag": "cupcake",
+        "name": "cupcake",
         "label": "Cupcake Shop",
         "parent": "dessert",
-        "fsq_ref": "13042"
+        "ref": "13042"
     },
     {
-        "tag": "pastry",
+        "name": "pastry",
         "label": "Pastry Shop",
         "parent": "dessert",
-        "fsq_ref": "13047"
+        "ref": "13047"
     },
     {
-        "tag": "social",
+        "name": "social",
         "label": "Social",
         "parent": "venue",
-        "fsq_ref": ""
+        "ref": ""
     },
     {
-        "tag": "bowling",
+        "name": "bowling",
         "label": "Bowling",
         "parent": "social",
-        "fsq_ref": "10006"
+        "ref": "10006"
     },
     {
-        "tag": "escape_room",
+        "name": "escape_room",
         "label": "Escape Room",
         "parent": "social",
-        "fsq_ref": "10015"
+        "ref": "10015"
     },
     {
-        "tag": "go_kart",
+        "name": "go_kart",
         "label": "Go Kart",
         "parent": "social",
-        "fsq_ref": "10019"
+        "ref": "10019"
     },
     {
-        "tag": "golf",
+        "name": "golf",
         "label": "Golf",
         "parent": "social",
-        "fsq_ref": ""
+        "ref": ""
     },
     {
-        "tag": "mini_golf",
+        "name": "mini_golf",
         "label": "Mini Golf",
         "parent": "social",
-        "fsq_ref": "10023"
+        "ref": "10023"
     },
     {
-        "tag": "laser_tag",
+        "name": "laser_tag",
         "label": "Laser Tag",
         "parent": "social",
-        "fsq_ref": "10022"
+        "ref": "10022"
     },
     {
-        "tag": "night_club",
+        "name": "night_club",
         "label": "Night Club",
         "parent": "social",
-        "fsq_ref": "10032"
+        "ref": "10032"
     },
     {
-        "tag": "casino",
+        "name": "casino",
         "label": "Casino",
         "parent": "social",
-        "fsq_ref": "10008"
+        "ref": "10008"
     },
     {
-        "tag": "karaoke",
+        "name": "karaoke",
         "label": "Karaoke",
         "parent": "social",
-        "fsq_ref": "10021"
+        "ref": "10021"
     },
     {
-        "tag": "entertainment",
+        "name": "entertainment",
         "label": "Entertainment",
         "parent": "venue",
-        "fsq_ref": "10000"
+        "ref": "10000"
     },
     {
-        "tag": "comedy_club",
+        "name": "comedy_club",
         "label": "Comedy Club",
         "parent": "entertainment",
-        "fsq_ref": "10010"
+        "ref": "10010"
     },
     {
-        "tag": "movie_theater",
+        "name": "movie_theater",
         "label": "Movie Theater",
         "parent": "entertainment",
-        "fsq_ref": "10024"
+        "ref": "10024"
     },
     {
-        "tag": "auto_theater",
+        "name": "auto_theater",
         "label": "Drive In Theater",
         "parent": "entertainment",
-        "fsq_ref": "10025"
+        "ref": "10025"
     },
     {
-        "tag": "zoo",
+        "name": "zoo",
         "label": "Zoo",
         "parent": "entertainment",
-        "fsq_ref": "10056"
+        "ref": "10056"
     },
     {
-        "tag": "museum",
+        "name": "museum",
         "label": "Museum",
         "parent": "entertainment",
-        "fsq_ref": "10027"
+        "ref": "10027"
     },
     {
-        "tag": "art_museum",
+        "name": "art_museum",
         "label": "Art Museum",
         "parent": "museum",
-        "fsq_ref": "10028"
+        "ref": "10028"
     },
     {
-        "tag": "history_museum",
+        "name": "history_museum",
         "label": "History Museum",
         "parent": "museum",
-        "fsq_ref": "10030"
+        "ref": "10030"
     },
     {
-        "tag": "science_museum",
+        "name": "science_museum",
         "label": "Science Museum",
         "parent": "museum",
-        "fsq_ref": "10031"
+        "ref": "10031"
     },
     {
-        "tag": "art_gallery",
+        "name": "art_gallery",
         "label": "Art Gallery",
         "parent": "museum",
-        "fsq_ref": "10004"
+        "ref": "10004"
     },
     {
-        "tag": "planetarium",
+        "name": "planetarium",
         "label": "Planetarium",
         "parent": "museum",
-        "fsq_ref": "10044"
+        "ref": "10044"
     },
     {
-        "tag": "music",
+        "name": "music",
         "label": "Music",
         "parent": "entertainment",
-        "fsq_ref": "10039"
+        "ref": "10039"
     },
     {
-        "tag": "concert_hall",
+        "name": "concert_hall",
         "label": "Concert Hall",
         "parent": "music",
-        "fsq_ref": "10037"
+        "ref": "10037"
     },
     {
-        "tag": "rock_club",
+        "name": "rock_club",
         "label": "Rock Club",
         "parent": "music",
-        "fsq_ref": "10041"
+        "ref": "10041"
     },
     {
-        "tag": "jazz_blues",
+        "name": "jazz_blues",
         "label": "Jazz & Blues",
         "parent": "music",
-        "fsq_ref": "10040"
+        "ref": "10040"
     },
     {
-        "tag": "opera_house",
+        "name": "opera_house",
         "label": "Opera House",
         "parent": "music",
-        "fsq_ref": "10042"
+        "ref": "10042"
     },
     {
-        "tag": "theater",
+        "name": "theater",
         "label": "Theater",
         "parent": "music",
-        "fsq_ref": "10043"
+        "ref": "10043"
     }
 ]

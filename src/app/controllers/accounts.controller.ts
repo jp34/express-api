@@ -19,7 +19,7 @@ export default class AccountsController {
         if (request.query.offset) offset = +request.query.offset;
         if (request.query.limit) limit = +request.query.limit;
         findAccounts(offset, limit).then(data => {
-            response.status(200).json(data);
+            response.status(200).json({ data });
             next();
         }).catch(next);
     }
@@ -34,7 +34,7 @@ export default class AccountsController {
     public getOne = async (request: Request, response: Response, next: NextFunction) => {
         if (!request.params.id) throw new InvalidInputError("Id");
         findAccountById(request.params.id).then(data => {
-            response.status(200).json(data);
+            response.status(200).json({ data });
             next();
         }).catch(next);
     }
@@ -52,7 +52,7 @@ export default class AccountsController {
         if (!id) throw new InvalidInputError('id');
         if (!data) throw new InvalidInputError('data');
         updateAccount(id, data).then(data => {
-            response.status(200).json(data);
+            response.status(200).json({ data });
             next();
         }).catch(next);
     }
@@ -68,7 +68,7 @@ export default class AccountsController {
         const id: string = request.params.id;
         if (!isValidObjectId(id)) throw new InvalidInputError("Id");
         deleteAccount(id).then((deleted) => {
-            response.status(200).json(deleted);
+            response.status(200).json({ deleted });
             next();
         }).catch(next);
     }

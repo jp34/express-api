@@ -2,27 +2,23 @@
 // Payload Types
 
 export type CreateTagPayload = {
-    tag: string;
+    name: string;
     label: string;
-    plural: string;
     parent: string;
     ref: string;
 }
 
 export type UpdateTagPayload = {
     label?: string;
-    plural?: string;
     parent?: string;
     ref?: string;
 }
 
 export type TagResponse = {
-    tag: string;
+    name: string;
     label: string;
-    plural: string;
-    level?: string;
-    parent?: string;
-    ref?: string;
+    parent: string;
+    ref: string;
 }
 
 export type CreateAccountPayload = {
@@ -97,7 +93,7 @@ export interface CreateTagRequest extends Express.Request {
 
 export interface UpdateTagRequest extends Express.Request {
     params: {
-        id: string
+        name: string
     },
     body: {
         data: UpdateTagPayload

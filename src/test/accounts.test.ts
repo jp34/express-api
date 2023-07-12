@@ -23,7 +23,7 @@ let tokens = {
 
 describe('[sn-api] Accounts Service', () => {
 
-    before('Create test account', (done) => {
+    before('Set Up: Create test account', (done) => {
         chai.request(server)
             .post('/api/auth/signup')
             .set('Content-Type', 'application/json')
@@ -41,7 +41,6 @@ describe('[sn-api] Accounts Service', () => {
             .get('/api/accounts')
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
-            .send({ data: account })
             .end((err, res) => {
                 should.equal(res.status, 200);
                 should.exist(res.body);
@@ -68,7 +67,7 @@ describe('[sn-api] Accounts Service', () => {
             });
     });
 
-    it('Retrieve an account', (done) => {
+    it('Retrieve one account', (done) => {
         chai.request(server)
             .get(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
@@ -156,13 +155,11 @@ describe('[sn-api] Accounts Service', () => {
             .delete(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
-            .send({ data: account })
             .end((err, res) => {
                 should.equal(res.status, 200);
                 should.exist(res.body);
 
-                // Validate deleted response
-                res.body.deleted.should.be.true();
+                should.equal(res.body.deleted, true);
 
                 done();
             });
