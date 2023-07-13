@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { InvalidInputError, ConfigurationError } from "../models/error";
+import { InvalidInputError, ConfigurationError, UnauthorizedError } from "../models/error";
 
 const SECRET = process.env.API_ACCESS_SECRET ?? undefined;
 
@@ -12,17 +12,21 @@ const SECRET = process.env.API_ACCESS_SECRET ?? undefined;
  * @returns Result of next middleware function, or bad request response
  */
 export const authorize = async (request: Request, response: Response, next: NextFunction) => {
-    if (SECRET == undefined) throw new ConfigurationError("Missing environment variable: API_ACCESS_SECRET");
-    if (!request.headers.authorization) throw new InvalidInputError("Missing authorization token: Bearer");
-    const token = parseBearerToken(request.headers.authorization);
-    jwt.verify(token, SECRET, (err, decoded) => {
-        if (err || !decoded || typeof decoded == "string") {
-            response.status(406).json({ error: "Invalid or malformed access token provided"});
-        } else {
-            request.user = { id: decoded.id };
-        }
-    });
-    next();
+    try {
+        if (SECRET == undefined) throw new ConfigurationError("Missing environment variable: API_ACCESS_SECRET");
+        if (!request.headers.authorization) throw new UnauthorizedError("Missing authorization token");
+        const token = parseBearerToken(request.headers.authorization);
+        jwt.verify(token, SECRET, (err, decoded) => {
+            if (err || !decoded || typeof decoded == "string") {
+                throw new UnauthorizedError("Invalid or malformed token provided");
+            } else {
+                request.user = { id: decoded.id };
+            }
+        });
+        next();
+    } catch (err: any) {
+        next(err);
+    }
 }
 
 /**

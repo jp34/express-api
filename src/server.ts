@@ -12,7 +12,7 @@ connect();
 
 // Seed database
 import { seed } from "./config/db";
-seed();
+if (Env.SEED_DB) seed();
 
 // Configure app
 const app = express();

@@ -29,7 +29,7 @@ describe('[sn-api] Auth Service', () => {
         });
     });
 
-    it('Create a new account', (done) => {
+    it('Registers a new account', (done) => {
         chai.request(server)
             .post('/api/auth/signup')
             .set('Content-Type', 'application/json')
@@ -74,7 +74,7 @@ describe('[sn-api] Auth Service', () => {
             });
     });
 
-    it('Log in with new account', (done) => {
+    it('Authorizes an account', (done) => {
         chai.request(server)
             .post('/api/auth/login')
             .set('Content-Type', 'application/json')
@@ -100,7 +100,7 @@ describe('[sn-api] Auth Service', () => {
             });
     });
 
-    it('Refresh account tokens', (done) => {
+    it('Refreshes account token', (done) => {
         chai.request(server)
             .post('/api/auth/refresh')
             .set('Content-Type', 'application/json')

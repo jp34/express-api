@@ -3,6 +3,14 @@ dotenv.config();
 import logger from "../config/logger";
 import { ConfigurationError } from "../app/models/error";
 
+if (!process.env.API_DEBUG) throw new ConfigurationError("Missing or invalid environment variable: API_DEBUG");
+const DEBUG = (process.env.API_DEBUG === 'true');
+logger.debug(`DEBUG: ${DEBUG}`);
+
+if (!process.env.API_SEED_DB) throw new ConfigurationError("Missing or invalid environment variable: API_SEED_DB");
+const SEED_DB = (process.env.API_SEED_DB === 'true');
+logger.debug(`SEED_DB: ${SEED_DB}`);
+
 const HOST = process.env.API_HOST;
 if (!HOST) throw new ConfigurationError("Missing or invalid environment variable: API_HOST");
 logger.debug(`HOST: ${HOST}`);
@@ -32,6 +40,8 @@ if (!MONGO_STRING) throw new ConfigurationError("Missing or invalid environment 
 logger.debug(`MONGO_STRING: ${MONGO_STRING}`);
 
 const Env = {
+    DEBUG,
+    SEED_DB,
     HOST,
     PORT,
     ACCESS_SECRET,

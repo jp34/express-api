@@ -36,7 +36,7 @@ describe('[sn-api] Accounts Service', () => {
             });
     });
 
-    it('Retrieve many accounts', (done) => {
+    it('Retrieves many accounts', (done) => {
         chai.request(server)
             .get('/api/accounts')
             .set('Content-Type', 'application/json')
@@ -67,7 +67,7 @@ describe('[sn-api] Accounts Service', () => {
             });
     });
 
-    it('Retrieve one account', (done) => {
+    it('Retrieves an account', (done) => {
         chai.request(server)
             .get(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
@@ -105,7 +105,7 @@ describe('[sn-api] Accounts Service', () => {
             })
     });
 
-    it('Update an account', (done) => {
+    it('Updates an account', (done) => {
         account.email = 'newEmail@test.com';
         account.password = 'newPassword';
         account.username = 'newUsername';
@@ -150,7 +150,7 @@ describe('[sn-api] Accounts Service', () => {
             });
     });
 
-    it('Delete an account', (done) => {
+    it('Deletes an account', (done) => {
         chai.request(server)
             .delete(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')

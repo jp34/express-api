@@ -49,7 +49,7 @@ describe('[sn-api] Tags Service', () => {
         });
     });
 
-    it('Create a new tag', (done) => {
+    it('Creates a new tag', (done) => {
         chai.request(server)
             .post('/api/tags')
             .set('Content-Type', 'application/json')
@@ -70,7 +70,7 @@ describe('[sn-api] Tags Service', () => {
             });
     });
 
-    it ('Retrieve many tags', (done) => {
+    it ('Retrieves many tags', (done) => {
         chai.request(server)
             .get('/api/tags')
             .set('Content-Type', 'application/json')
@@ -92,7 +92,7 @@ describe('[sn-api] Tags Service', () => {
             });
     });
 
-    it('Retrieve one tag', (done) => {
+    it('Retrieves one tag', (done) => {
         chai.request(server)
             .get(`/api/tags/${tag.name}`)
             .set('Content-Type', 'application/json')
@@ -117,7 +117,7 @@ describe('[sn-api] Tags Service', () => {
             });
     });
 
-    it('Update a tag', (done) => {
+    it('Updates a tag', (done) => {
         tag.label = "New tag label";
         tag.parent = "social";
         tag.ref = "333333";
@@ -151,7 +151,7 @@ describe('[sn-api] Tags Service', () => {
             });
     });
 
-    it ('Delete a tag', (done) => {
+    it ('Deletes a tag', (done) => {
         chai.request(server)
             .delete(`/api/tags/${tag.name}`)
             .set('Content-Type', 'application/json')
