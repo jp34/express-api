@@ -68,7 +68,7 @@ export default class AccountsController {
         const id: string = request.params.id;
         if (!isValidObjectId(id)) throw new InvalidInputError("Id");
         deleteAccount(id).then((deleted) => {
-            response.status(200).json({ deleted });
+            response.status(200).json({ data: { deleted }});
             next();
         }).catch(next);
     }

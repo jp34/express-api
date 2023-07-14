@@ -83,8 +83,8 @@ export default class TagsController {
      */
     public delete = async (request: Request, response: Response, next: NextFunction) => {
         if (!request.params.name) throw new InvalidInputError("Id");
-        deleteTag(request.params.name).then(data => {
-            response.status(200).json({ deleted: data });
+        deleteTag(request.params.name).then((deleted) => {
+            response.status(200).json({ data: { deleted }});
         }).catch(next);
     }
 }
