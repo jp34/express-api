@@ -2,12 +2,12 @@
     "name": "sn-api",
     "version": "1.0.0",
     "description": "",
-    "main": "./dist/server.js",
+    "main": "./lib/server.js",
     "scripts": {
-        "start": "node ./dist/server.js",
-        "build": "npx tsc",
-        "clean": "rm -r ./dist",
-        "test": "npx mocha './dist/test/*'"
+        "start": "node ./lib/server.js",
+        "build": "npx tsc --build",
+        "clean": "rm -r ./lib",
+        "test": "npx mocha './lib/test/*'"
     },
     "author": "Joe Kadlic",
     "license": "ISC",
