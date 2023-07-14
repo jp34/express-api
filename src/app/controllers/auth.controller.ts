@@ -28,7 +28,7 @@ export default class AuthController {
             if (!result) throw Error("Invalid credentials provided");
             // Create jwt and return to user
             const tokens = generateTokenPair(account.id);
-            response.status(200).json({ account: account, tokens: tokens });
+            response.status(200).json({ data: { account: account, tokens: tokens }});
             return next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Login attempt failed: ${err.message}`);
@@ -62,7 +62,7 @@ export default class AuthController {
                 data.birthday
             );
             const tokens = generateTokenPair(account.id);
-            response.status(200).json({ account: account, tokens: tokens });
+            response.status(200).json({ data: { account: account, tokens: tokens }});
             return next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);
@@ -86,7 +86,7 @@ export default class AuthController {
             if (!data.refresh) throw new InvalidInputError('refresh');
             // Generate new access token
             const token = refreshAccessToken(data.refresh);
-            response.status(200).json({ tokens: { access: token }});
+            response.status(200).json({ data: { tokens: { access: token }}});
             return next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);

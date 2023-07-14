@@ -29,9 +29,9 @@ describe('[sn-api] Accounts Service', () => {
             .set('Content-Type', 'application/json')
             .send({ data: account })
             .end((err, res) => {
-                account._id = res.body.account._id;
-                tokens.access = res.body.tokens.access;
-                tokens.refresh = res.body.tokens.refresh;
+                account._id = res.body.data.account._id;
+                tokens.access = res.body.data.tokens.access;
+                tokens.refresh = res.body.data.tokens.refresh;
                 done();
             });
     });

@@ -37,8 +37,8 @@ describe('[sn-api] Tags Service', () => {
         .set('Content-Type', 'application/json')
         .send({ data: account })
         .end((err, res) => {
-            tokens.access = res.body.tokens.access;
-            tokens.refresh = res.body.tokens.refresh;
+            tokens.access = res.body.data.tokens.access;
+            tokens.refresh = res.body.data.tokens.refresh;
             done();
         });
     });
