@@ -1,9 +1,9 @@
-import bcrypt from "bcrypt";
 import { Response, NextFunction } from "express";
-import { findAccountByEmail, findAccountExistsWithEmail, createAccount } from "../services/accounts.service";
+import { findAccountExistsWithEmail, createAccount, validateCredentials } from "../services/accounts.service";
 import { generateTokenPair, refreshAccessToken } from "../services/token.service";
-import { LoginRequest, RefreshRequest, SignupRequest, CreateAccountPayload } from "../models/io";
-import { InvalidInputError } from "../models/error";
+import { CreateAccountPayload } from "../models/account";
+import { LoginRequest, RefreshRequest, SignupRequest } from "../models/auth";
+import { InvalidInputError, ServerError } from "../models/error";
 import logger from "../../config/logger";
 
 export default class AuthController {
@@ -20,20 +20,17 @@ export default class AuthController {
             const data = request.body.data;
             if (!data.email) throw new InvalidInputError('email');
             if (!data.password) throw new InvalidInputError('password');
-            // Fetch account and verify it exists
-            const account = await findAccountByEmail(data.email);
-            if (account == undefined) throw new Error("Invalid credentials provided");
-            // Compare password
-            const result = await bcrypt.compare(data.password, account.password);
-            if (!result) throw Error("Invalid credentials provided");
-            // Create jwt and return to user
-            const tokens = generateTokenPair(account.id);
-            response.status(200).json({ data: { account: account, tokens: tokens }});
-            return next();
+            const account = await validateCredentials(data.email, data.password);
+            const tokens = generateTokenPair(account.uid);
+            response.status(200).json({ data: {
+                account: account,
+                tokens: tokens
+            }});
+            next();
         } catch (err: any) {
-            if (err instanceof Error) logger.warn(`Login attempt failed: ${err.message}`);
+            if (err instanceof Error) logger.warn(`Authentication attempt failed: ${err.message}`);
             logger.error(err);
-            response.status(400).json({ error: err });
+            response.status(400).json({ error: err.message });
             return next(err);
         }
     }
@@ -53,17 +50,11 @@ export default class AuthController {
             const exists = await findAccountExistsWithEmail(data.email);
             if (exists) throw new Error(`Account already exists with email(${data.email})`);
             // Create user, tokens
-            const account = await createAccount(
-                data.email,
-                data.password,
-                data.name,
-                data.username,
-                data.phone,
-                data.birthday
-            );
-            const tokens = generateTokenPair(account.id);
+            const account = await createAccount(data);
+            if (!account) throw new ServerError("Failed to create new account");
+            const tokens = generateTokenPair(account.uid);
             response.status(200).json({ data: { account: account, tokens: tokens }});
-            return next();
+            next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);
             logger.error(err);
@@ -87,7 +78,7 @@ export default class AuthController {
             // Generate new access token
             const token = refreshAccessToken(data.refresh);
             response.status(200).json({ data: { tokens: { access: token }}});
-            return next();
+            next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);
             logger.error(err);

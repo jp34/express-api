@@ -1,11 +1,13 @@
 import mongoose from "mongoose";
 import { IAccount, AccountSchema } from "../app/models/account";
+import { IUser, UserSchema } from "../app/models/user";
 import { ITag, TagSchema } from "../app/models/tag";
 import { IVenue, VenueSchema } from "../app/models/venue";
 import { ConfigurationError } from "../app/models/error";
 import tags from "../json/tags.json";
 
 export const Account = mongoose.model<IAccount>("Account", AccountSchema);
+export const User = mongoose.model<IUser>("User", UserSchema);
 export const Tag = mongoose.model<ITag>("Tag", TagSchema);
 export const Venue = mongoose.model<IVenue>("Venue", VenueSchema);
 

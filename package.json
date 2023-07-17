@@ -21,6 +21,7 @@
         "jsonwebtoken": "^9.0.0",
         "jwt-decode": "^3.1.2",
         "morgan": "^1.10.0",
+        "uuid": "^9.0.0",
         "winston": "^3.8.2"
     },
     "devDependencies": {
@@ -31,6 +32,7 @@
         "@types/mongoose": "^5.11.97",
         "@types/morgan": "^1.9.4",
         "@types/node": "^18.11.9",
+        "@types/uuid": "^9.0.2",
         "chai": "^4.3.7",
         "chai-http": "^4.4.0",
         "csv": "^6.3.1",

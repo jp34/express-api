@@ -1,10 +1,15 @@
 
-// Input Errors
-
 export class InvalidInputError extends Error {
     constructor(inputType: string) {
         super(`Invalid or malformed input provided: ${inputType}`);
         Object.setPrototypeOf(this, InvalidInputError.prototype);
+    }
+}
+
+export class InvalidOperationError extends Error {
+    constructor(message: string) {
+        super(message);
+        Object.setPrototypeOf(this, InvalidOperationError.prototype);
     }
 }
 
@@ -15,16 +20,12 @@ export class NonExistentResourceError extends Error {
     }
 }
 
-// Authorization Errors
-
 export class UnauthorizedError extends Error {
     constructor(message: string) {
         super(message);
         Object.setPrototypeOf(this, UnauthorizedError.prototype);
     }
 }
-
-// Server Errors
 
 export class ServerError extends Error {
     constructor(message: string) {

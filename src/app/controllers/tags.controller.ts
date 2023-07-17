@@ -6,7 +6,12 @@ import {
     updateTag,
     deleteTag,
 } from "../services/tags.service";
-import { CreateTagRequest, UpdateTagRequest, CreateTagPayload, UpdateTagPayload } from "../models/io";
+import {
+    CreateTagRequest,
+    UpdateTagRequest,
+    CreateTagPayload,
+    UpdateTagPayload
+} from "../models/tag";
 import { InvalidInputError } from "../models/error";
 
 export default class TagsController {
@@ -23,6 +28,7 @@ export default class TagsController {
         if (!data) throw new InvalidInputError('data');
         createTag(data).then(data => {
             response.status(200).json({ data });
+            next();
         }).catch(next);
     }
 
@@ -40,6 +46,7 @@ export default class TagsController {
         if (request.query.limit) limit = +request.query.limit;
         findTags(offset, limit).then(async data => {
             response.status(200).json({ data });
+            next();
         }).catch(next);
     }
 
@@ -54,6 +61,7 @@ export default class TagsController {
         if (!request.params.name) throw new InvalidInputError("Id");
         findTag(request.params.name).then(data => {
             response.status(200).json({ data });
+            next();
         }).catch(next);
     }
 
@@ -71,6 +79,7 @@ export default class TagsController {
         if (!data) throw new InvalidInputError('data');
         updateTag(name, data).then(data => {
             response.status(200).json({ data });
+            next();
         }).catch(next);
     }
 
@@ -85,6 +94,7 @@ export default class TagsController {
         if (!request.params.name) throw new InvalidInputError("Id");
         deleteTag(request.params.name).then((deleted) => {
             response.status(200).json({ data: { deleted }});
+            next();
         }).catch(next);
     }
 }

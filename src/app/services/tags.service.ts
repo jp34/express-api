@@ -1,6 +1,16 @@
 import { Tag } from "../../config/db";
 import { NonExistentResourceError } from "../models/error";
-import { CreateTagPayload, UpdateTagPayload } from "../models/io";
+import { CreateTagPayload, TagResponse, UpdateTagPayload } from "../models/tag";
+
+const sanitizeTag = (data: any): TagResponse => {
+    const tag: TagResponse = {
+        name: data.name,
+        label: data.label,
+        parent: data.parent,
+        ref: data.ref
+    };
+    return tag;
+}
 
 /**
  * Creates a new tag objcet
@@ -13,12 +23,13 @@ import { CreateTagPayload, UpdateTagPayload } from "../models/io";
 export const createTag = async (data: CreateTagPayload) => {
     const actualParent = await Tag.findOne({ name: data.parent });
     if (!actualParent) throw new NonExistentResourceError("Tag", data.parent);
-    return await Tag.create({
+    const tag = await Tag.create({
         name: data.name,
         label: data.label,
         parent: data.parent,
         ref: data.ref,
     });
+    return sanitizeTag(tag);
 }
 
 /**
@@ -26,10 +37,17 @@ export const createTag = async (data: CreateTagPayload) => {
  * @returns Array of tag objects
  */
 export const findTags = async (offset?: number, limit?: number) => {
-    if (offset && limit) return await Tag.find().skip(offset).limit(limit);
-    else if (offset && !limit) return await Tag.find().skip(offset);
-    else if (!offset && limit) return await Tag.find().limit(limit);
-    else return await Tag.find();
+    let results = [];
+    if (offset && limit) results = await Tag.find().skip(offset).limit(limit);
+    else if (offset && !limit) results = await Tag.find().skip(offset);
+    else if (!offset && limit) results = await Tag.find().limit(limit);
+    else results = await Tag.find();
+
+    let tags: [TagResponse?] = [];
+    results.forEach((result) => {
+        tags.push(sanitizeTag(result));
+    });
+    return tags;
 }
 
 export const countTags = async () => {
@@ -42,20 +60,12 @@ export const countTags = async () => {
  * @returns Tag object if it exists
  */
 export const findTag = async (name: string) => {
-    return await Tag.findOne({ name: name });
-}
-
-/**
- * Returns a single tag by its id
- * @param id Id of tag to return
- * @returns Tag object if it exists
- */
-export const findTagById = async (id: string) => {
-    return await Tag.findOne({ _id: id });
+    const tag = await Tag.findOne({ name });
+    return sanitizeTag(tag);
 }
 
 export const updateTag = async (name: string, data: UpdateTagPayload) => {
-    const tag = await findTag(name);
+    const tag = await Tag.findOne({ name });
     if (!tag) throw new NonExistentResourceError("Tag", name);
     if (data.label) tag.label = data.label;
     if (data.parent) {
@@ -64,7 +74,8 @@ export const updateTag = async (name: string, data: UpdateTagPayload) => {
         tag.parent = actualParent.name;
     }
     if (data.ref) tag.ref = data.ref;
-    return await tag.save();
+    const saved = await tag.save();
+    return sanitizeTag(saved);
 }
 
 /**
@@ -73,6 +84,6 @@ export const updateTag = async (name: string, data: UpdateTagPayload) => {
  * @returns Result of deletion
  */
 export const deleteTag = async (name: string) => {
-    const result = await Tag.deleteOne({ name: name });
+    const result = await Tag.deleteOne({ name });
     return (result.acknowledged && (result.deletedCount == 1));
 }

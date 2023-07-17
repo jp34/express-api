@@ -16,7 +16,6 @@ describe('[sn-api] Error Handling', () => {
                 should.equal(res.statusCode, 406);
                 should.equal(res.body.error, "Missing authorization token");
                 should.not.exist(res.body.data);
-
                 done();
             });
     });
@@ -30,7 +29,6 @@ describe('[sn-api] Error Handling', () => {
                 should.equal(res.statusCode, 406);
                 should.equal(res.body.error, "Invalid or malformed token provided");
                 should.not.exist(res.body.data);
-
                 done();
             });
     });
