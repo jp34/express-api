@@ -32,8 +32,7 @@ export const register = async (data: RegistrationPayload): Promise<AccountRespon
     // Create new user
     const user = await User.create({
         uid: uid,
-        username: data.username,
-        interests: data.interests,
+        username: data.username
     });
     if (!user) {
         logger.error('Registration attempt failed to create user', { uid });

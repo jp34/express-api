@@ -8,7 +8,6 @@ export type RegistrationPayload = {
     phone: string;
     birthday: string;
     username: string;
-    interests: string[];
 }
 
 export type AuthenticationPayload = {

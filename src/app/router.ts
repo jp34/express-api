@@ -27,6 +27,9 @@ router.get("/api/users", authorize, users.getMany);
 router.get("/api/users/:uid", authorize, users.getOne);
 router.put("/api/users/:uid", authorize, users.update);
 router.delete("/api/users/:uid", authorize, users.delete);
+router.get("/api/users/:uid/interests", authorize, users.getInterests);
+router.put("/api/users/:uid/interests", authorize, users.addInterests);
+router.delete("/api/users/:uid/interests", authorize, users.removeInterests);
 
 // Tags API
 router.post("/api/tags", authorize, tags.create);

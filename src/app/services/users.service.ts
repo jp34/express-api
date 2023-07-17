@@ -43,7 +43,7 @@ export const findUsers = async (offset?: number, limit?: number): Promise<[UserR
     return users;
 }
 
-export const findUserByUid = async (uid: string) => {
+export const findUserByUid = async (uid: string): Promise<UserResponse> => {
     const user = await User.findOne({ uid });
     return sanitizeUserResponse(user);
 }
@@ -58,23 +58,31 @@ export const updateUsername = async (uid: string, newname: string) => {
     return sanitizeUserResponse(saved);
 }
 
-export const addUserInterest = async (uid: string, interest: string) => {
-    const user = await User.findOne({ uid });
-    if (!user) throw new NonExistentResourceError("User", uid);
-    user.interests.push(interest);
-    const saved = await user.save();
-    return sanitizeUserResponse(saved);
+export const getUserInterests = async (uid: string) => {
+    const user = await findUserByUid(uid);
+    return user.interests;
 }
 
-export const addUserInterests = async (uid: string, interests: [string]) => {
+export const addUserInterests = async (uid: string, add: string[]) => {
     const user = await User.findOne({ uid });
     if (!user) throw new NonExistentResourceError("User", uid);
-    if (interests.length <= 0) throw new InvalidOperationError("No user interests specified"); 
-    interests.forEach((interest) => {
-        user.interests.push(interest);
+    if (add.length <= 0) throw new InvalidOperationError("No user interests specified"); 
+    add.forEach((a) => {
+        user.interests.push(a);
     });
     const saved = await user.save();
-    return sanitizeUserResponse(saved);
+    return sanitizeUserResponse(saved).interests;
+}
+
+export const removeUserInterests = async (uid: string, remove: string[]) => {
+    const user = await User.findOne({ uid });
+    if (!user) throw new NonExistentResourceError("User", uid);
+    if (remove.length <= 0) throw new InvalidOperationError("No user interests specified"); 
+    user.interests = user.interests.filter((i) => {
+        return !remove.includes(i);
+    })
+    const saved = await user.save();
+    return sanitizeUserResponse(saved).interests;
 }
 
 export const deleteUser = async (uid: string) => {

@@ -5,7 +5,7 @@ import { Schema } from "mongoose";
 export interface IUser {
     uid: string;
     username: string;
-    interests: [string?];
+    interests: string[];
     active: boolean;
     online: boolean
     created: Date;

@@ -24,6 +24,12 @@ let tokens = {
     refresh: ""
 };
 
+const isSameArray = (a: string[], b: string[]) => {
+    let same = true;
+    a.forEach((i) => { same = b.includes(i); });
+    return same;
+}
+
 describe('[sn-api] Users Service', () => {
     
     before('Set Up: Create test account', (done) => {
@@ -42,6 +48,54 @@ describe('[sn-api] Users Service', () => {
     after('Tear Down: Delete created account', async () => {
         await User.deleteOne({ username: account.username });
         await Account.deleteOne({ email: account.email });
+    });
+
+    it('Adds interests to a user', (done) => {
+        chai.request(server)
+            .put(`/api/users/${account.uid}/interests`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .send({ data: account.interests })
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body.data);
+                res.body.data.should.be.Array();
+                const same = isSameArray(res.body.data, account.interests);
+                should.equal(true, same);
+                done();
+            });
+    });
+
+    it('Retrieves user interests', (done) => {
+        chai.request(server)
+            .get(`/api/users/${account.uid}/interests`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body.data);
+                res.body.data.should.be.Array();
+                const same = isSameArray(res.body.data, account.interests);
+                should.equal(true, same);
+                done();
+            });
+    });
+
+    it('Removes an interest from a user', (done) => {
+        account.interests = ["dining", "food_truck"];
+        chai.request(server)
+            .delete(`/api/users/${account.uid}/interests`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .send({ data: ["restaurant"] })
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body.data);
+                res.body.data.should.be.Array();
+                const same = isSameArray(res.body.data, account.interests);
+                should.equal(true, same);
+                done();
+            });
     });
 
     it('Retrieves many users', (done) => {
