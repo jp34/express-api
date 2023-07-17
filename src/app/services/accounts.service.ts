@@ -1,10 +1,11 @@
 import bcrypt from "bcrypt";
-import { v4 } from "uuid";
 import { Account } from "../../config/db";
-import { InvalidOperationError, NonExistentResourceError } from "../models/error";
-import { CreateAccountPayload, AccountResponse, UpdateAccountPayload } from "../models/account";
+import { NonExistentResourceError, ServerError } from "../models/error";
+import { AccountResponse, UpdateAccountPayload } from "../models/account";
+import { deleteUser } from "./users.service";
+import logger from "../../config/logger";
 
-const sanitizeAccount = (data: any): AccountResponse => {
+export const sanitizeAccount = (data: any): AccountResponse => {
     const account: AccountResponse = {
         uid: data.uid,
         email: data.email,
@@ -18,30 +19,6 @@ const sanitizeAccount = (data: any): AccountResponse => {
         modified: data.modified
     };
     return account;
-}
-
-/**
- * This method creates a new account
- * @param email Email address
- * @param password Password
- * @param name Name
- * @param username Username
- * @param phone Phone
- * @param birthday Birthday
- * @returns The newly created Account
- */
-export const createAccount = async (data: CreateAccountPayload): Promise<AccountResponse> => {
-    const uid = v4();
-    const encrypted = bcrypt.hashSync(data.password, bcrypt.genSaltSync());
-    const account = await Account.create({
-        uid: uid,
-        email: data.email,
-        password: encrypted,
-        name: data.name,
-        phone: data.phone,
-        birthday: data.birthday
-    });
-    return sanitizeAccount(account);
 }
 
 /**
@@ -130,15 +107,11 @@ export const updateAccount = async (uid: string, payload: UpdateAccountPayload):
  * @returns The deleted account
  */
 export const deleteAccount = async (uid: string): Promise<Boolean> => {
+    const userResult = await deleteUser(uid);
+    if (!userResult) {
+        logger.error("Failed to delete user account", { uid });
+        throw new ServerError("Failed to delete user");
+    };
     const result = await Account.deleteOne({ uid });
     return (result.acknowledged && (result.deletedCount == 1));
 }
-
-export const validateCredentials = async (identifier: string, password: string): Promise<AccountResponse> => {
-    const account = await Account.findOne({ email: identifier });
-    if (!account) throw new InvalidOperationError("Account does not exist");
-    const valid = await bcrypt.compare(password, account.password);
-    if (!valid) throw new InvalidOperationError("Invalid credentials provided");
-    return sanitizeAccount(account);
-}
-

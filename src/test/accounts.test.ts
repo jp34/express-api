@@ -14,6 +14,8 @@ let account = {
     name: "test",
     phone: "1234567890",
     birthday: "2000-01-01",
+    username: "testuser",
+    interests: ["dining", "food_truck", "restaurant"],
 };
 
 let tokens = {
@@ -28,13 +30,7 @@ describe('[sn-api] Accounts Service', () => {
         chai.request(server)
             .post('/api/auth/signup')
             .set('Content-Type', 'application/json')
-            .send({ data: {
-                email: account.email,
-                password: account.password,
-                name: account.name,
-                phone: account.phone,
-                birthday: account.birthday
-            }})
+            .send({ data: account })
             .end((err, res) => {
                 account.uid = res.body.data.account.uid;
                 tokens.access = res.body.data.tokens.access;

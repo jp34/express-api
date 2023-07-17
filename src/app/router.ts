@@ -23,7 +23,6 @@ router.put("/api/accounts/:uid", authorize, accounts.update);
 router.delete("/api/accounts/:uid", authorize, accounts.delete);
 
 // Users API
-router.post("/api/users", authorize, users.create);
 router.get("/api/users", authorize, users.getMany);
 router.get("/api/users/:uid", authorize, users.getOne);
 router.put("/api/users/:uid", authorize, users.update);

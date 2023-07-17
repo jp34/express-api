@@ -1,10 +1,15 @@
 import { Response, NextFunction } from "express";
-import { findAccountExistsWithEmail, createAccount, validateCredentials } from "../services/accounts.service";
 import { generateTokenPair, refreshAccessToken } from "../services/token.service";
-import { CreateAccountPayload } from "../models/account";
-import { LoginRequest, RefreshRequest, SignupRequest } from "../models/auth";
-import { InvalidInputError, ServerError } from "../models/error";
+import {
+    AuthenticationPayload,
+    AuthenticationRequest,
+    RefreshRequest,
+    RegistrationPayload,
+    RegistrationRequest
+} from "../models/auth";
+import { InvalidInputError } from "../models/error";
 import logger from "../../config/logger";
+import { register, authenticate } from "../services/auth.service";
 
 export default class AuthController {
 
@@ -15,12 +20,12 @@ export default class AuthController {
      * @param response Http response
      * @param next Next middleware function
      */
-    public login = async (request: LoginRequest, response: Response, next: NextFunction) => {
+    public login = async (request: AuthenticationRequest, response: Response, next: NextFunction) => {
         try {
-            const data = request.body.data;
-            if (!data.email) throw new InvalidInputError('email');
+            const data: AuthenticationPayload = request.body.data;
+            if (!data.identifier) throw new InvalidInputError('identifier');
             if (!data.password) throw new InvalidInputError('password');
-            const account = await validateCredentials(data.email, data.password);
+            const account = await authenticate(data);
             const tokens = generateTokenPair(account.uid);
             response.status(200).json({ data: {
                 account: account,
@@ -42,16 +47,11 @@ export default class AuthController {
      * @param response Http response
      * @param next Next middleware function
      */
-    public signup = async (request: SignupRequest, response: Response, next: NextFunction) => {
+    public signup = async (request: RegistrationRequest, response: Response, next: NextFunction) => {
         try {
-            const data: CreateAccountPayload = request.body.data;
-            if (!data) throw new InvalidInputError('body');
-            // Validate user does not already exist
-            const exists = await findAccountExistsWithEmail(data.email);
-            if (exists) throw new Error(`Account already exists with email(${data.email})`);
-            // Create user, tokens
-            const account = await createAccount(data);
-            if (!account) throw new ServerError("Failed to create new account");
+            const data: RegistrationPayload = request.body.data;
+            if (!data) throw new InvalidInputError('data');
+            const account = await register(data);
             const tokens = generateTokenPair(account.uid);
             response.status(200).json({ data: { account: account, tokens: tokens }});
             next();

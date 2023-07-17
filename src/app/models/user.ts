@@ -48,12 +48,6 @@ export type UserResponse = {
 
 // User Request Interfaces
 
-export interface CreateUserRequest extends Express.Request {
-    body: {
-        data: CreateUserPayload
-    }
-}
-
 export interface UpdateUserRequest extends Express.Request {
     params: {
         uid: string;

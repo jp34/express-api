@@ -4,7 +4,7 @@ import chaiHttp from "chai-http";
 import server from "../server";
 import should from "should";
 import { validateUserResponse } from "../util/test";
-import { Account } from "../config/db";
+import { Account, User } from "../config/db";
 
 chai.use(chaiHttp);
 
@@ -15,9 +15,6 @@ let account = {
     name: "test",
     phone: "1234567890",
     birthday: "2000-01-01",
-};
-
-let user = {
     username: "testuser",
     interests: ["dining", "food_truck", "restaurant"],
 };
@@ -42,28 +39,9 @@ describe('[sn-api] Users Service', () => {
             });
     });
 
-    after('Tear Down: Delete created account', (done) => {
-        Account.deleteOne({ uid: account.uid }).then(() => {
-            done();
-        });
-    });
-
-    it('Creates a new user', (done) => {
-        chai.request(server)
-            .post('/api/users')
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${tokens.access}`)
-            .send({ data: {
-                uid: account.uid,
-                username: user.username,
-                interests: user.interests,
-            }})
-            .end((err, res) => {
-                should.equal(res.status, 200);
-                should.exist(res.body);
-                validateUserResponse(res.body.data);
-                done();
-            });
+    after('Tear Down: Delete created account', async () => {
+        await User.deleteOne({ username: account.username });
+        await Account.deleteOne({ email: account.email });
     });
 
     it('Retrieves many users', (done) => {

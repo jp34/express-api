@@ -1,5 +1,4 @@
 import { User } from "../../config/db";
-import logger from "../../config/logger";
 import { InvalidOperationError, NonExistentResourceError } from "../models/error";
 import { CreateUserPayload, UserResponse } from "../models/user";
 import { findAccountByUid } from "./accounts.service";

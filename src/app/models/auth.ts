@@ -1,19 +1,32 @@
-import { CreateAccountPayload } from "./account"
+
+// Auth Payload Types
+
+export type RegistrationPayload = {
+    email: string;
+    password: string;
+    name: string;
+    phone: string;
+    birthday: string;
+    username: string;
+    interests: string[];
+}
+
+export type AuthenticationPayload = {
+    identifier: string;
+    password: string;
+};
 
 // Auth Request Interfaces
 
-export interface SignupRequest extends Express.Request {
+export interface RegistrationRequest extends Express.Request {
     body: {
-        data: CreateAccountPayload
+        data: RegistrationPayload
     }
 }
 
-export interface LoginRequest extends Express.Request {
+export interface AuthenticationRequest extends Express.Request {
     body: {
-        data: {
-            email: string,
-            password: string
-        }
+        data: AuthenticationPayload
     }
 }
 

@@ -2,7 +2,7 @@ import { describe, it } from "mocha";
 import chai from "chai";
 import chaiHttp from "chai-http";
 import server from "../server";
-import { Account } from "../config/db";
+import { Account, User } from "../config/db";
 import should from "should";
 import { validateTagResponse } from "../util/test";
 
@@ -12,9 +12,10 @@ let account = {
     email: "test@test.com",
     password: "password",
     name: "test",
-    username: "testuser",
     phone: "1234567890",
     birthday: "2000-01-01",
+    username: "testuser",
+    interests: ["dining", "food_truck", "restaurant"],
 };
 
 let tokens = {
@@ -43,10 +44,9 @@ describe('[sn-api] Tags Service', () => {
         });
     });
 
-    after('Tear Down: Delete created account', (done) => {
-        Account.deleteOne({ email: account.email }).then(() => {
-            done();
-        });
+    after('Tear Down: Delete created account', async () => {
+        await User.deleteOne({ username: account.username });
+        await Account.deleteOne({ email: account.email });
     });
 
     it('Creates a new tag', (done) => {
@@ -56,7 +56,6 @@ describe('[sn-api] Tags Service', () => {
             .set('Authorization', `Bearer ${tokens.access}`)
             .send({ data: tag })
             .end((err, res) => {
-                console.log(res.body.data);
                 should.equal(res.status, 200);
                 should.exist(res.body);
                 validateTagResponse(res.body.data);

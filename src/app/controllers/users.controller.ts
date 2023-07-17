@@ -1,18 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser, deleteUser, findUserByUid, findUsers, updateUsername } from "../services/users.service";
-import { CreateUserPayload, CreateUserRequest, UpdateUserPayload, UpdateUserRequest } from "../models/user";
+import { deleteUser, findUserByUid, findUsers, updateUsername } from "../services/users.service";
+import { UpdateUserPayload, UpdateUserRequest } from "../models/user";
 import { InvalidInputError } from "../models/error";
 
 export default class UsersController {
-
-    public create = async (request: CreateUserRequest, response: Response, next: NextFunction) => {
-        const data: CreateUserPayload = request.body.data;
-        if (!data) throw new InvalidInputError('data');
-        createUser(data).then((data) => {
-            response.status(200).json({ data });
-            next();
-        }).catch(next);
-    }
 
     public getMany = async (request: Request, response: Response, next: NextFunction) => {
         let offset;

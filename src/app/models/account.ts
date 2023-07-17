@@ -35,14 +35,6 @@ export const AccountSchema = new Schema<IAccount>({
 
 // Account Payload Types
 
-export type CreateAccountPayload = {
-    email: string;
-    password: string;
-    name: string;
-    phone: string;
-    birthday: string;
-}
-
 export type UpdateAccountPayload = {
     email?: string;
     password?: string;
