@@ -28,13 +28,6 @@ export const validateTokenResponse = (tokens: any) => {
     return true;
 }
 
-export const validateRefreshResponse = (tokens: any) => {
-    should.exist(tokens);
-    should.not.exist(tokens.refresh);
-    tokens.access.should.be.String();
-    return true;
-}
-
 // User Response Validators
 
 export const validateUserResponse = (user: any) => {

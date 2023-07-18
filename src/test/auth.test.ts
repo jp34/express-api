@@ -6,8 +6,7 @@ import { Account, User } from "../config/db";
 import should from "should";
 import {
     validateAccountResponse,
-    validateTokenResponse,
-    validateRefreshResponse
+    validateTokenResponse
 } from "../util/test";
 
 chai.use(chaiHttp);
@@ -104,7 +103,7 @@ describe('[sn-api] Auth Service', () => {
             .end((err, res) => {
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
-                validateRefreshResponse(res.body.data.tokens);
+                validateTokenResponse(res.body.data.tokens);
                 done();
             });
     });

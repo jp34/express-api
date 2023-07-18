@@ -77,7 +77,7 @@ export default class AuthController {
             if (!data.refresh) throw new InvalidInputError('refresh');
             // Generate new access token
             const token = refreshAccessToken(data.refresh);
-            response.status(200).json({ data: { tokens: { access: token }}});
+            response.status(200).json({ data: { tokens: { access: token, refresh: data.refresh }}});
             next();
         } catch (err: any) {
             if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);
