@@ -1,11 +1,11 @@
 import axios from "axios";
-import { ConfigurationError, ServerError } from "../../models/error";
+import { ConfigurationError, ServerError } from "../models/error";
 
 const API_FOURSQUARE_KEY = process.env.API_FOURSQUARE_KEY ?? undefined;
 
 export type PlacesSearchOptions = {
-    query: string | undefined,
-    categories: string | undefined,
+    query?: string,
+    categories?: string,
     geo: {
         latitude: string,
         longitude: string
