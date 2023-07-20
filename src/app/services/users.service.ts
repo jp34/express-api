@@ -24,7 +24,6 @@ export const createUser = async (payload: CreateUserPayload): Promise<UserRespon
     const created = await User.create({
         uid: account.uid,
         username: payload.username,
-        interests: payload.interests,
     });
     return sanitizeUserResponse(created);
 }

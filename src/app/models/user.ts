@@ -6,6 +6,8 @@ export interface IUser {
     uid: string;
     username: string;
     interests: string[];
+    interestsIntake: boolean;
+    friendsIntake: boolean;
     active: boolean;
     online: boolean
     created: Date;
@@ -16,6 +18,8 @@ export const UserSchema = new Schema<IUser>({
     uid: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     interests: { type: [String], default: [] },
+    interestsIntake: { type: Boolean, default: false },
+    friendsIntake: { type: Boolean, default: false },
     active: { type: Boolean, default: false },
     online: { type: Boolean, default: false },
     created: { type: Date, default: Date.now() },
@@ -27,7 +31,6 @@ export const UserSchema = new Schema<IUser>({
 export type CreateUserPayload = {
     uid: string;
     username: string;
-    interests: [string];
 };
 
 export type UpdateUserPayload = {
