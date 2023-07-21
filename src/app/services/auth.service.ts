@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 import { v4 } from "uuid";
-import { Account, User } from "../../config/db";
+import { Account } from "../../config/db";
 import { InvalidOperationError } from "../models/error";
-import { sanitizeAccount, findAccountExistsWithEmail } from "./accounts.service";
+import { sanitizeAccountResponse, findAccountExistsWithEmail } from "./accounts.service";
 import { AccountResponse } from "../models/account";
 import { RegistrationPayload, AuthenticationPayload } from "../models/auth";
 import logger from "../../config/logger";
@@ -26,19 +26,10 @@ export const register = async (data: RegistrationPayload): Promise<AccountRespon
         birthday: data.birthday
     });
     if (!account) {
-        logger.error('Registration attempt failed to create account', { uid });
+        logger.warn('Registration attempt failed to create account', { uid });
         throw new ServerError('Registration attempt failed');
     }
-    // Create new user
-    const user = await User.create({
-        uid: uid,
-        username: data.username
-    });
-    if (!user) {
-        logger.error('Registration attempt failed to create user', { uid });
-        throw new ServerError('Registration attempt failed');
-    }
-    return sanitizeAccount(account);
+    return sanitizeAccountResponse(account);
 }
 
 export const authenticate = async (data: AuthenticationPayload): Promise<AccountResponse> => {
@@ -46,6 +37,5 @@ export const authenticate = async (data: AuthenticationPayload): Promise<Account
     if (!account) throw new InvalidOperationError("Account does not exist");
     const valid = await bcrypt.compare(data.password, account.password);
     if (!valid) throw new InvalidOperationError("Invalid credentials provided");
-    return sanitizeAccount(account);
+    return sanitizeAccountResponse(account);
 }
-

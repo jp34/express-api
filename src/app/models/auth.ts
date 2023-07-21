@@ -7,7 +7,6 @@ export type RegistrationPayload = {
     name: string;
     phone: string;
     birthday: string;
-    username: string;
 }
 
 export type AuthenticationPayload = {

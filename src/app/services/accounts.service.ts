@@ -5,7 +5,7 @@ import { AccountResponse, UpdateAccountPayload } from "../models/account";
 import { deleteUser } from "./users.service";
 import logger from "../../config/logger";
 
-export const sanitizeAccount = (data: any): AccountResponse => {
+export const sanitizeAccountResponse = (data: any): AccountResponse => {
     const account: AccountResponse = {
         uid: data.uid,
         email: data.email,
@@ -34,7 +34,7 @@ export const findAccounts = async (offset?: number, limit?: number): Promise<[Ac
 
     let accounts: [AccountResponse?] = [];
     results.forEach((result) => {
-        accounts.push(sanitizeAccount(result));
+        accounts.push(sanitizeAccountResponse(result));
     });
     return accounts;
 }
@@ -46,7 +46,7 @@ export const findAccounts = async (offset?: number, limit?: number): Promise<[Ac
  */
 export const findAccountByUid = async (uid: string): Promise<AccountResponse> => {
     const account = await Account.findOne({ uid });
-    return sanitizeAccount(account);
+    return sanitizeAccountResponse(account);
 }
 
 /**
@@ -56,7 +56,7 @@ export const findAccountByUid = async (uid: string): Promise<AccountResponse> =>
  */
 export const findAccountByEmail = async (email: string): Promise<AccountResponse> => {
     const account = await Account.findOne({ email });
-    return sanitizeAccount(account);
+    return sanitizeAccountResponse(account);
 }
 
 /**
@@ -98,7 +98,7 @@ export const updateAccount = async (uid: string, payload: UpdateAccountPayload):
     if (payload.birthday) account.birthday = payload.birthday;
     if (account.isModified()) account.modified = new Date(Date.now());
     const saved = await account.save();
-    return sanitizeAccount(saved);
+    return sanitizeAccountResponse(saved);
 }
 
 /**

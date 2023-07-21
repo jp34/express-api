@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { UpdateAccountRequest, UpdateAccountPayload } from "../models/account";
 import { findAccounts, findAccountByUid, updateAccount, deleteAccount } from "../services/accounts.service";
 import { InvalidInputError } from "../models/error";
-import logger from "../../config/logger";
 
 export default class AccountsController {
 

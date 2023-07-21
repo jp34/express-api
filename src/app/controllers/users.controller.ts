@@ -6,10 +6,13 @@ import {
     updateUsername,
     getUserInterests,
     addUserInterests,
-    removeUserInterests
+    removeUserInterests,
+    updateOnlineStatus,
+    updateActiveStatus
 } from "../services/users.service";
 import { UpdateUserPayload, UpdateUserRequest } from "../models/user";
 import { InvalidInputError } from "../models/error";
+import logger from "../../config/logger";
 
 export default class UsersController {
 
@@ -56,10 +59,15 @@ export default class UsersController {
         if (!uid) throw new InvalidInputError("uid");
         const data: UpdateUserPayload = request.body.data;
         if (!data) throw new InvalidInputError("data");
-        updateUsername(uid, data.username).then((data) => {
-            response.status(200).json({ data });
-            next();
-        }).catch(next);
+        try {
+            if (data.username) await updateUsername(uid, data.username);
+            if (data.online) await updateOnlineStatus(uid, data.online);
+            if (data.active) await updateActiveStatus(uid, data.active);
+            else throw new InvalidInputError("No update parameter provided");
+        } catch (err: any) {
+            logger.info(`Failed update attempt: ${uid}`, { error: err.message });
+            response.status(400).json({ error: `Update attempt failed: ${err.message}`});
+        }
     }
 
     /**

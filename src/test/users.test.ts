@@ -50,6 +50,52 @@ describe('[sn-api] Users Service', () => {
         await Account.deleteOne({ email: account.email });
     });
 
+    // Read
+
+    it('Retrieves many users', (done) => {
+        chai.request(server)
+            .get('/api/users')
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body);
+                should.exist(res.body.data);
+                res.body.data.should.be.Array();
+                res.body.data.should.not.have.length(0);
+                validateUserResponse(res.body.data[0]);
+                done();
+            });
+    });
+
+    it('Retrieves a user', (done) => {
+        chai.request(server)
+            .get(`/api/users/${account.uid}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body);
+                validateUserResponse(res.body.data);
+                done();
+            })
+    });
+
+    // Update
+
+    it('Updates a user', (done) => {
+        chai.request(server)
+            .get(`/api/users/${account.uid}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body);
+                validateUserResponse(res.body.data);
+                done();
+            })
+    });
+
     it('Adds interests to a user', (done) => {
         chai.request(server)
             .put(`/api/users/${account.uid}/interests`)
@@ -98,34 +144,7 @@ describe('[sn-api] Users Service', () => {
             });
     });
 
-    it('Retrieves many users', (done) => {
-        chai.request(server)
-            .get('/api/users')
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${tokens.access}`)
-            .end((err, res) => {
-                should.equal(res.status, 200);
-                should.exist(res.body);
-                should.exist(res.body.data);
-                res.body.data.should.be.Array();
-                res.body.data.should.not.have.length(0);
-                validateUserResponse(res.body.data[0]);
-                done();
-            });
-    });
-
-    it('Retrieves a user', (done) => {
-        chai.request(server)
-            .get(`/api/users/${account.uid}`)
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${tokens.access}`)
-            .end((err, res) => {
-                should.equal(res.status, 200);
-                should.exist(res.body);
-                validateUserResponse(res.body.data);
-                done();
-            })
-    });
+    // Delete
 
     it('Deletes a user', (done) => {
         chai.request(server)
