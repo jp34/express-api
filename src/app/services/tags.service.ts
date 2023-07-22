@@ -1,6 +1,6 @@
-import { Tag } from "../../config/db";
-import { NonExistentResourceError } from "../models/error";
-import { CreateTagPayload, TagResponse, UpdateTagPayload } from "../models/tag";
+import { Tag } from "../../domain/domain";
+import { NonExistentResourceError } from "../../domain/models/error";
+import { CreateTagPayload, TagResponse, UpdateTagPayload } from "../../domain/models/tag";
 
 const sanitizeTag = (data: any): TagResponse => {
     const tag: TagResponse = {

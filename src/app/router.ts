@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authorize } from "./middleware/auth";
+import { authenticate } from "./middleware/auth";
 import AuthController from "./controllers/auth.controller";
 import AccountsController from "./controllers/accounts.controller";
 import UsersController from "./controllers/users.controller";
@@ -17,25 +17,29 @@ router.post("/api/auth/signup", auth.signup);
 router.post("/api/auth/refresh", auth.refresh);
 
 // Accounts API
-router.get("/api/accounts", authorize, accounts.getMany);
-router.get("/api/accounts/:uid", authorize, accounts.getOne);
-router.put("/api/accounts/:uid", authorize, accounts.update);
-router.delete("/api/accounts/:uid", authorize, accounts.delete);
+router.get("/api/accounts", authenticate, accounts.getMany);
+router.get("/api/accounts/:uid", authenticate, accounts.getOne);
+router.put("/api/accounts/:uid", authenticate, accounts.update);
+router.delete("/api/accounts/:uid", authenticate, accounts.delete);
 
 // Users API
-router.get("/api/users", authorize, users.getMany);
-router.get("/api/users/:uid", authorize, users.getOne);
-router.put("/api/users/:uid", authorize, users.update);
-router.delete("/api/users/:uid", authorize, users.delete);
-router.get("/api/users/:uid/interests", authorize, users.getInterests);
-router.put("/api/users/:uid/interests", authorize, users.addInterests);
-router.delete("/api/users/:uid/interests", authorize, users.removeInterests);
+router.post("/api/users/:uid", authenticate, users.create);
+router.get("/api/users", authenticate, users.getMany);
+router.get("/api/users/:uid", authenticate, users.getOne);
+router.put("/api/users/:uid", authenticate, users.update);
+router.delete("/api/users/:uid", authenticate, users.delete);
+router.get("/api/users/:uid/interests", authenticate, users.getInterests);
+router.put("/api/users/:uid/interests", authenticate, users.addInterests);
+router.get("/api/users/:uid/friends", authenticate, users.getFriends);
+router.get("/api/users/:uid/groups", authenticate, users.getGroups);
+router.get("/api/users/:uid/inbox", authenticate, users.getInbox);
+router.put("/api/users/:uid/inbox", authenticate, users.updateInbox);
 
 // Tags API
-router.post("/api/tags", authorize, tags.create);
-router.get("/api/tags", authorize, tags.getMany);
-router.get("/api/tags/:name", authorize, tags.getOne);
-router.put("/api/tags/:name", authorize, tags.update);
-router.delete("/api/tags/:name", authorize, tags.delete);
+router.post("/api/tags", authenticate, tags.create);
+router.get("/api/tags", authenticate, tags.getMany);
+router.get("/api/tags/:name", authenticate, tags.getOne);
+router.put("/api/tags/:name", authenticate, tags.update);
+router.delete("/api/tags/:name", authenticate, tags.delete);
 
 export default router;

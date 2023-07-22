@@ -11,8 +11,8 @@ import {
     UpdateTagRequest,
     CreateTagPayload,
     UpdateTagPayload
-} from "../models/tag";
-import { InvalidInputError } from "../models/error";
+} from "../../domain/models/tag";
+import { InvalidInputError } from "../../domain/models/error";
 
 export default class TagsController {
 

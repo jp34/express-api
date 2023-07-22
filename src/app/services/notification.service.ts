@@ -1,9 +1,16 @@
 import { v4 } from "uuid";
-import { Notification } from "../../config/db";
-import { InvalidOperationError, NonExistentResourceError } from "../models/error";
-import { INotification, NotificationType } from "../models/notification";
-import { addToUserInbox, getUserInbox, userExistsWithUid } from "./users.service";
+import { Notification } from "../../domain/domain";
+import { InvalidOperationError } from "../../domain/models/error";
+import { INotification, NotificationType } from "../../domain/models/notification";
+import { addToUserInbox } from "./users.service";
 
+// ---- Utility ------------
+
+/**
+ * This method will sanatize the given data and return a new INotification object
+ * @param data Object to be sanitized
+ * @returns INotification object
+ */
 export const sanitizeNotificationResponse = (data: any): INotification => {
     const note: INotification = {
         uid: data.uid,
@@ -15,13 +22,20 @@ export const sanitizeNotificationResponse = (data: any): INotification => {
     return note;
 }
 
+// ---- Notification ------------
+
+/**
+ * This method will create a new notification and notify the associated users
+ * @param actor Unique id of user who initiated operation
+ * @param notifiers Array of user uid's whom should be notified 
+ * @param type Type of notification to create
+ * @returns INotification object
+ */
 export const createNotification = async (
     actor: string,
     notifiers: string[],
     type: NotificationType
 ): Promise<INotification> => {
-    const actorExists = await userExistsWithUid(actor);
-    if (!actorExists) throw new NonExistentResourceError("User", actor);
     if (notifiers.length < 1) throw new InvalidOperationError("Notification must have at least one notifier");
     const note = await Notification.create({
         uid: v4(),
@@ -29,18 +43,23 @@ export const createNotification = async (
         notifiers,
         type
     });
-
     notifiers.forEach(async (n) => {
-        await addToUserInbox(n, note.uid);
+        await addToUserInbox(actor, n, note.uid);
     });
-
     return sanitizeNotificationResponse(note);
 }
 
-export const findNotificationByUid = async (uid: string): Promise<INotification> => {
-    const note = await Notification.findOne({ uid });
-    if (!note) throw new NonExistentResourceError("Notification", uid);
-    return sanitizeNotificationResponse(note);
+/**
+ * This method will try to find a notification with the given id (note). If the note cannot be
+ * found, it will return undefined.
+ * @param actor Unique id of user who initiated operation
+ * @param note Unique id of the notification to search for
+ * @returns INotification if found, otherwise false
+ */
+export const findNotification = async (actor: string, note: string): Promise<INotification | undefined> => {
+    const n = await Notification.findOne({ uid: note });
+    if (!n) return undefined;
+    return sanitizeNotificationResponse(n);
 }
 
 export const findNotifications = async (offset?: number, limit?: number): Promise<INotification[]> => {

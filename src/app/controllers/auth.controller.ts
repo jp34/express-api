@@ -6,8 +6,8 @@ import {
     RefreshRequest,
     RegistrationPayload,
     RegistrationRequest
-} from "../models/auth";
-import { InvalidInputError } from "../models/error";
+} from "../../domain/models/auth";
+import { InvalidInputError, InvalidOperationError } from "../../domain/models/error";
 import logger from "../../config/logger";
 import { register, authenticate } from "../services/auth.service";
 
@@ -21,23 +21,15 @@ export default class AuthController {
      * @param next Next middleware function
      */
     public login = async (request: AuthenticationRequest, response: Response, next: NextFunction) => {
-        try {
-            const data: AuthenticationPayload = request.body.data;
-            if (!data.identifier) throw new InvalidInputError('identifier');
-            if (!data.password) throw new InvalidInputError('password');
-            const account = await authenticate(data);
-            const tokens = generateTokenPair(account.uid);
-            response.status(200).json({ data: {
-                account: account,
-                tokens: tokens
-            }});
+        if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
+        const data: AuthenticationPayload = request.body.data;
+        if (!data.identifier) throw new InvalidInputError('identifier');
+        if (!data.password) throw new InvalidInputError('password');
+        authenticate(request.ip, data).then((data) => {
+            const tokens = generateTokenPair(data.uid);
+            response.status(200).json({ data: { account: data, tokens: tokens }});
             next();
-        } catch (err: any) {
-            if (err instanceof Error) logger.warn(`Authentication attempt failed: ${err.message}`);
-            logger.error(err);
-            response.status(400).json({ error: err.message });
-            return next(err);
-        }
+        }).catch(next);
     }
 
     /**
@@ -48,19 +40,14 @@ export default class AuthController {
      * @param next Next middleware function
      */
     public signup = async (request: RegistrationRequest, response: Response, next: NextFunction) => {
-        try {
-            const data: RegistrationPayload = request.body.data;
-            if (!data) throw new InvalidInputError('data');
-            const account = await register(data);
-            const tokens = generateTokenPair(account.uid);
-            response.status(200).json({ data: { account: account, tokens: tokens }});
+        if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
+        const data: RegistrationPayload = request.body.data;
+        if (!data) throw new InvalidInputError('data');
+        register(request.ip, data).then((data) => {
+            const tokens = generateTokenPair(data.uid);
+            response.status(200).json({ data: { account: data, tokens: tokens }});
             next();
-        } catch (err: any) {
-            if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);
-            logger.error(err);
-            response.status(400).json({ error: err });
-            return next();
-        }
+        }).catch(next);
     }
 
     /**

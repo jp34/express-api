@@ -12,6 +12,7 @@ connect();
 
 // Seed database
 import { seed } from "./config/db";
+import { verify } from "./app/middleware/verify";
 if (Env.SEED_DB) seed();
 
 // Configure app
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 app.use(morgan("combined"));
 
 // Configure root controller
+app.use(verify);
 app.use(api);
 app.use(handle);
 

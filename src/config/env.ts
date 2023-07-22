@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import logger from "../config/logger";
-import { ConfigurationError } from "../app/models/error";
+import { ConfigurationError } from "../domain/models/error";
 
 if (!process.env.API_DEBUG) throw new ConfigurationError("Missing or invalid environment variable: API_DEBUG");
 const DEBUG = (process.env.API_DEBUG === 'true');

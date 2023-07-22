@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ConfigurationError, ServerError } from "../models/error";
+import { ConfigurationError, ServerError } from "../../domain/models/error";
 
 const API_FOURSQUARE_KEY = process.env.API_FOURSQUARE_KEY ?? undefined;
 

@@ -43,21 +43,6 @@ export type UpdateAccountPayload = {
     birthday?: string;
 }
 
-// Account Response Types
-
-export type AccountResponse = {
-    uid: string;
-    email: string;
-    name: string;
-    phone: string;
-    birthday: string;
-    verified: boolean;
-    locked: boolean;
-    last_login: Date;
-    created?: Date;
-    modified?: Date;
-}
-
 // Account Request Interfaces
 
 export interface UpdateAccountRequest extends Express.Request {

@@ -17,18 +17,24 @@ export type AuthenticationPayload = {
 // Auth Request Interfaces
 
 export interface RegistrationRequest extends Express.Request {
+    user?: Record<string, any>
+    ip?: string
     body: {
         data: RegistrationPayload
     }
 }
 
 export interface AuthenticationRequest extends Express.Request {
+    user?: Record<string, any>
+    ip?: string
     body: {
         data: AuthenticationPayload
     }
 }
 
 export interface RefreshRequest extends Express.Request {
+    user?: Record<string, any>
+    ip?: string
     body: {
         data: {
             refresh: string
