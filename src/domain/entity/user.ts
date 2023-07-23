@@ -1,8 +1,8 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-// User Model
+// ---- User Model ----------------
 
-export interface IUser {
+export interface User {
     uid: string;
     username: string;
     interests: string[];
@@ -15,7 +15,14 @@ export interface IUser {
     modified: Date;
 }
 
-export const UserSchema = new Schema<IUser>({
+export type CreateUserPayload = {
+    username: string;
+    interests: string[];
+};
+
+// ---- Mongoose Model ------------
+
+export const UserSchema = new Schema<User>({
     uid: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     interests: { type: [String], required: true },
@@ -28,9 +35,4 @@ export const UserSchema = new Schema<IUser>({
     modified: { type: Date, default: Date.now() }
 });
 
-// User Payload Types
-
-export type CreateUserPayload = {
-    username: string;
-    interests: string[];
-};
+export const UserModel = mongoose.model<User>("User", UserSchema);

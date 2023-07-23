@@ -6,8 +6,8 @@ import {
     RefreshRequest,
     RegistrationPayload,
     RegistrationRequest
-} from "../../domain/models/auth";
-import { InvalidInputError, InvalidOperationError } from "../../domain/models/error";
+} from "../../domain/entity/auth";
+import { InvalidInputError, InvalidOperationError } from "../../domain/entity/error";
 import logger from "../../config/logger";
 import { register, authenticate } from "../services/auth.service";
 

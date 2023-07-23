@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { ConfigurationError } from "../domain/models/error";
-import { Tag } from "../domain/domain";
+import { ConfigurationError } from "../domain/entity/error";
+import { TagModel } from "../domain/entity/tag";
 import tags from "../domain/json/tags.json";
 
 export const connect = () => {
@@ -11,5 +11,5 @@ export const connect = () => {
 }
 
 export const seed = () => {
-    Tag.collection.insertMany(tags);
+    TagModel.collection.insertMany(tags);
 }

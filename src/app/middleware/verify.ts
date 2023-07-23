@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UnauthorizedError } from "../../domain/models/error";
+import { UnauthorizedError } from "../../domain/entity/error";
 
 export const verify = async (request: Request, response: Response, next: NextFunction) => {
     try {

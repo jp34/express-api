@@ -1,8 +1,8 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-// Account Model
+// ---- Account Model ------------
 
-export interface IAccount {
+export interface Account {
     uid: string;
     email: string;
     password: string;
@@ -16,16 +16,15 @@ export interface IAccount {
     modified: Date;
 }
 
-export const AccountSchema = new Schema<IAccount>({
-    // Authentication Info
+// ---- Mongoose Model ------------
+
+export const AccountSchema = new Schema<Account>({
     uid: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     name: { type: String, required: true },
     phone: { type: String },
     birthday: { type: String, required: true },
-
-    // Status Info
     verified: { type: Boolean, default: false },
     locked: { type: Boolean, default: false },
     last_login: { type: Date, default: null },
@@ -33,23 +32,4 @@ export const AccountSchema = new Schema<IAccount>({
     modified: { type: Date, default: Date.now() },
 });
 
-// Account Payload Types
-
-export type UpdateAccountPayload = {
-    email?: string;
-    password?: string;
-    name?: string;
-    phone?: string;
-    birthday?: string;
-}
-
-// Account Request Interfaces
-
-export interface UpdateAccountRequest extends Express.Request {
-    params: {
-        uid: string
-    },
-    body: {
-        data: UpdateAccountPayload
-    }
-}
+export const AccountModel = mongoose.model<Account>("Account", AccountSchema);

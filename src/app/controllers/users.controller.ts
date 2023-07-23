@@ -13,8 +13,8 @@ import {
     findUserGroups,
     findUserInbox
 } from "../services/users.service";
-import { CreateUserPayload } from "../../domain/models/user";
-import { InvalidInputError, InvalidOperationError } from "../../domain/models/error";
+import { CreateUserPayload } from "../../domain/entity/user";
+import { InvalidInputError, InvalidOperationError } from "../../domain/entity/error";
 import logger from "../../config/logger";
 
 export default class UsersController {

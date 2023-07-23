@@ -1,16 +1,14 @@
 import { v4 } from "uuid";
-import { CreateGroupPayload, IGroup } from "../../domain/models/group";
-import { Group } from "../../domain/domain";
+import { GroupModel, Group, CreateGroupPayload } from "../../domain/entity/group";
 import { findUser, userExists } from "./users.service";
-import { InvalidInputError, InvalidOperationError, NonExistentResourceError, ServerError } from "../../domain/models/error";
-import logger from "../../config/logger";
+import { InvalidOperationError, NonExistentResourceError } from "../../domain/entity/error";
 import { createNotification } from "./notification.service";
-import { NotificationType } from "../../domain/models/notification";
+import { NotificationType } from "../../domain/entity/notification";
 
-// UTILITY
+// ---- Utility ------------
 
-export const sanitizeGroupResponse = (data: any): IGroup => {
-    const group: IGroup = {
+export const sanitizeGroupResponse = (data: any): Group => {
+    const group: Group = {
         uid: data.uid,
         host: data.host,
         members: data.members,
@@ -20,9 +18,9 @@ export const sanitizeGroupResponse = (data: any): IGroup => {
     return group;
 }
 
-// CREATE
+// ---- Group ------------
 
-export const createGroup = async (actor: string, data: CreateGroupPayload): Promise<IGroup> => {
+export const createGroup = async (actor: string, data: CreateGroupPayload): Promise<Group> => {
     if (data.members.length < 2) throw new InvalidOperationError("Groups cannot have less than two members");
     const hostExists = await userExists(actor, data.host);
     if (!hostExists) throw new NonExistentResourceError("User", data.host);
@@ -32,7 +30,7 @@ export const createGroup = async (actor: string, data: CreateGroupPayload): Prom
         if (!user) throw new NonExistentResourceError("User", m);
         mems.push(user.uid);
     });
-    const group = Group.create({
+    const group = GroupModel.create({
         uid: v4(),
         host: data.host,
         members: mems,
@@ -46,25 +44,23 @@ export const inviteToGroup = async (actor: string, uid: string, groupId: string,
     if (!user) throw new NonExistentResourceError("User", uid);
     const t = await findUser(actor, uid);
     if (!t) throw new NonExistentResourceError("User", target);
-    const group = await Group.findOne({ uid: groupId });
+    const group = await GroupModel.findOne({ uid: groupId });
     if (!group) throw new NonExistentResourceError("Group", groupId);
     if (group.host != user.uid) throw new InvalidOperationError("Only a group host may invite more users");
     await createNotification(uid, [target], NotificationType.GROUP_INVITE);
     return true;
 }
 
-// READ
-
-export const findGroupByUid = async (actor: string, uid: string): Promise<IGroup | undefined> => {
-    const group = await Group.findOne({ uid });
+export const findGroupByUid = async (actor: string, uid: string): Promise<Group | undefined> => {
+    const group = await GroupModel.findOne({ uid });
     if (!group) return undefined;
     return sanitizeGroupResponse(group);
 }
 
-export const findGroupsByUser = async (actor: string, uid: string): Promise<IGroup[]> => {
+export const findGroupsByUser = async (actor: string, uid: string): Promise<Group[]> => {
     const user = await userExists(actor, uid);
     if (!user) throw new NonExistentResourceError("User", uid);
-    const groups = await Group.find({
+    const groups = await GroupModel.find({
         members: {
             $all: [
                 uid
@@ -74,9 +70,7 @@ export const findGroupsByUser = async (actor: string, uid: string): Promise<IGro
     return groups.map((group) => sanitizeGroupResponse(group));
 }
 
-// DELETE
-
 export const deleteGroup = async (actor: string, uid: string): Promise<Boolean> => {
-    const result = await Group.deleteOne({ uid });
+    const result = await GroupModel.deleteOne({ uid });
     return (result.acknowledged && (result.deletedCount == 1));
 }

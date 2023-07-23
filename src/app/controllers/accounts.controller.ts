@@ -1,7 +1,15 @@
 import { Request, Response, NextFunction } from "express";
-import { UpdateAccountRequest, UpdateAccountPayload } from "../../domain/models/account";
-import { findAccounts, findAccount, updateAccount, deleteAccount } from "../services/accounts.service";
-import { InvalidInputError, InvalidOperationError } from "../../domain/models/error";
+import {
+    findAccounts,
+    findAccount,
+    deleteAccount,
+    updateAccountEmail,
+    updateAccountPassword,
+    updateAccountVerified,
+    updateAccountLocked
+} from "../services/accounts.service";
+import { InvalidInputError, InvalidOperationError } from "../../domain/entity/error";
+import logger from "../../config/logger";
 
 export default class AccountsController {
 
@@ -48,16 +56,25 @@ export default class AccountsController {
      * @param response Http response object
      * @param next Next middleware function
      */
-    public update = async (request: UpdateAccountRequest, response: Response, next: NextFunction) => {
+    public update = async (request: Request, response: Response, next: NextFunction) => {
         if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid = request.params.uid;
-        const data: UpdateAccountPayload = request.body.data;
-        if (!uid) throw new InvalidInputError('uid');
-        if (!data) throw new InvalidInputError('data');
-        updateAccount(request.user.uid, uid, data).then(data => {
-            response.status(200).json({ data });
+        const uid: string = request.params.uid;
+        if (!uid) throw new InvalidInputError("uid");
+        try {
+            const actor = request.user.uid;
+            if (request.query.email) await updateAccountEmail(actor, uid, request.query.email.toString());
+            if (request.query.password) await updateAccountPassword(actor, uid, request.query.password.toString());
+            if (request.query.name) await updateAccountEmail(actor, uid, request.query.name.toString());
+            if (request.query.phone) await updateAccountEmail(actor, uid, request.query.phone.toString());
+            if (request.query.birthday) await updateAccountEmail(actor, uid, request.query.birthday.toString());
+            if (request.query.verified) await updateAccountVerified(actor, uid, (request.query.verified === 'true'));
+            if (request.query.locked) await updateAccountLocked(actor, uid, (request.query.locked === 'true'));
+            else throw new InvalidInputError("No update parameter provided");
+            response.status(200).json({ data: true });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**

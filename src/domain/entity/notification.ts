@@ -1,4 +1,6 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+
+// ---- Notification Model ----------------
 
 export enum NotificationType {
     NOTE = "NOTE",
@@ -8,7 +10,7 @@ export enum NotificationType {
     EVENT_INVITE = "EVENT_INVITE"
 }
 
-export interface INotification {
+export interface Notification {
     uid: string
     actor: string
     notifiers: string[]
@@ -17,7 +19,9 @@ export interface INotification {
     created: Date
 }
 
-export const NotificationSchema = new Schema<INotification>({
+// ---- Mongoose Model ----------------
+
+export const NotificationSchema = new Schema<Notification>({
     uid: { type: String, required: true, unique: true },
     actor: { type: String, required: true },
     notifiers: { type: [String], required: true },
@@ -25,3 +29,5 @@ export const NotificationSchema = new Schema<INotification>({
     accepted: { type: Boolean },
     created: { type: Date, required: true, default: Date.now() }
 });
+
+export const NotificationModel = mongoose.model<Notification>("Notification", NotificationSchema);
