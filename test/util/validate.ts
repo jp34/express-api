@@ -1,6 +1,17 @@
 import should from "should";
 
-// Account response validator
+export const validateAuthResponse = (data: any): Boolean => {
+    const validTokens = validateTokenResponse(data.tokens);
+    const validAccount = validateAccountResponse(data.account);
+    return (validAccount && validTokens);
+}
+
+export const validateTokenResponse = (tokens: any) => {
+    should.exist(tokens);
+    tokens.access.should.be.String();
+    tokens.refresh.should.be.String();
+    return true;
+}
 
 export const validateAccountResponse = (account: any) => {
     should.exist(account);
@@ -19,17 +30,6 @@ export const validateAccountResponse = (account: any) => {
     return true;
 }
 
-// Auth Response Validators
-
-export const validateTokenResponse = (tokens: any) => {
-    should.exist(tokens);
-    tokens.access.should.be.String();
-    tokens.refresh.should.be.String();
-    return true;
-}
-
-// User Response Validators
-
 export const validateUserResponse = (user: any) => {
     should.exist(user);
     should.not.exist(user._id);
@@ -43,8 +43,6 @@ export const validateUserResponse = (user: any) => {
     user.modified.should.be.String();
     return true;
 }
-
-// Tag Respose Validators
 
 export const validateTagResponse = (tag: any) => {
     should.exist(tag);

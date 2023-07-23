@@ -12,7 +12,7 @@ import {
     CreateTagRequest,
     CreateTagPayload,
 } from "../../domain/entity/tag";
-import { InvalidInputError, InvalidOperationError } from "../../domain/entity/error";
+import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 
 export default class TagsController {
 

@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { NotificationModel, Notification, NotificationType } from "../../domain/entity/notification";
-import { InvalidOperationError } from "../../domain/entity/error";
+import { InvalidOperationError } from "../../domain/error";
 import { addToUserInbox } from "./users.service";
 
 // ---- Utility ------------

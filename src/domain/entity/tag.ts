@@ -9,6 +9,25 @@ export interface Tag {
     ref: string;
 }
 
+// ---- DTO Model ------------
+
+export interface TagDTO {
+    name?: string;
+    label?: string;
+    parent?: string;
+    ref?: string;
+}
+
+export const toTagDTO = (data: Tag): TagDTO => {
+    let dto: TagDTO = {};
+    if (data.name) dto.name;
+    if (data.label) dto.label;
+    if (data.parent) dto.parent;
+    return dto;
+}
+
+// ---- Request Model ------------
+
 export type CreateTagPayload = {
     name: string;
     label: string;

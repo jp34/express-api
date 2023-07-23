@@ -1,13 +1,13 @@
 import { Response, NextFunction } from "express";
-import { generateTokenPair, refreshAccessToken } from "../services/token.service";
+import { refreshAccessToken } from "../services/token.service";
 import {
     AuthenticationPayload,
     AuthenticationRequest,
     RefreshRequest,
     RegistrationPayload,
     RegistrationRequest
-} from "../../domain/entity/auth";
-import { InvalidInputError, InvalidOperationError } from "../../domain/entity/error";
+} from "../../domain/auth";
+import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 import logger from "../../config/logger";
 import { register, authenticate } from "../services/auth.service";
 
@@ -26,8 +26,7 @@ export default class AuthController {
         if (!data.identifier) throw new InvalidInputError('identifier');
         if (!data.password) throw new InvalidInputError('password');
         authenticate(request.ip, data).then((data) => {
-            const tokens = generateTokenPair(data.uid);
-            response.status(200).json({ data: { account: data, tokens: tokens }});
+            response.status(200).json({ data });
             next();
         }).catch(next);
     }
@@ -44,8 +43,7 @@ export default class AuthController {
         const data: RegistrationPayload = request.body.data;
         if (!data) throw new InvalidInputError('data');
         register(request.ip, data).then((data) => {
-            const tokens = generateTokenPair(data.uid);
-            response.status(200).json({ data: { account: data, tokens: tokens }});
+            response.status(200).json({ data });
             next();
         }).catch(next);
     }

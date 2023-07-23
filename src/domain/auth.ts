@@ -1,3 +1,4 @@
+import { AccountDTO } from "./entity/account";
 
 // Auth Payload Types
 
@@ -12,6 +13,16 @@ export type RegistrationPayload = {
 export type AuthenticationPayload = {
     identifier: string;
     password: string;
+};
+
+// Auth Response Types
+
+export type AuthResponse = {
+    account: AccountDTO;
+    tokens: {
+        access: string
+        refresh: string
+    }
 };
 
 // Auth Request Interfaces

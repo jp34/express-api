@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { findAccount } from "../services/accounts.service";
-import { InvalidInputError, ConfigurationError, UnauthorizedError } from "../../domain/entity/error";
+import { InvalidInputError, ConfigurationError, UnauthorizedError } from "../../domain/error";
 
 const SECRET = process.env.API_ACCESS_SECRET ?? undefined;
 

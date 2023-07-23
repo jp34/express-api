@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ConfigurationError } from "../domain/entity/error";
+import { ConfigurationError } from "../domain/error";
 import { TagModel } from "../domain/entity/tag";
 import tags from "../domain/json/tags.json";
 

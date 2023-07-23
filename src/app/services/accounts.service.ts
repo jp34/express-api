@@ -1,47 +1,21 @@
 import bcrypt from "bcrypt";
-import { AccountModel, Account } from "../../domain/entity/account";
-import { InvalidOperationError } from "../../domain/entity/error";
-
-// ---- Utility ------------
-
-/**
- * This method will sanitize the given data and return an Account object
- * @param data Object to be sanitized
- * @returns Account object
- */
-export const sanitizeAccountResponse = (data: any): Account => {
-    const account: Account = {
-        uid: data.uid,
-        email: data.email,
-        password: data.password,
-        name: data.name,
-        phone: data.phone,
-        birthday: data.birthday,
-        verified: data.verified,
-        locked: data.locked,
-        last_login: data.last_login,
-        created: data.created,
-        modified: data.modified
-    };
-    return account;
-}
-
-// ---- Account ------------
+import { AccountModel, AccountDTO, toAccountDTO } from "../../domain/entity/account";
+import { InvalidOperationError } from "../../domain/error";
 
 /**
  * This method returns an array of accounts
  * @param actor Unique id of account that initiated the operation
  * @returns An array of accounts
  */
-export const findAccounts = async (actor: string, offset?: number, limit?: number): Promise<[Account?]> => {
+export const findAccounts = async (actor: string, offset?: number, limit?: number): Promise<AccountDTO[]> => {
     let results = [];
     if (offset && limit) results = await AccountModel.find().skip(offset).limit(limit);
     else if (offset && !limit) results = await AccountModel.find().skip(offset);
     else if (!offset && limit) results = await AccountModel.find().limit(limit);
     else results = await AccountModel.find();
-    let accounts: [Account?] = [];
+    let accounts: AccountDTO[] = [];
     results.forEach((result) => {
-        accounts.push(sanitizeAccountResponse(result));
+        accounts.push(toAccountDTO(result));
     });
     return accounts;
 }
@@ -52,10 +26,10 @@ export const findAccounts = async (actor: string, offset?: number, limit?: numbe
  * @param uid Unique id of requested account
  * @returns Account with matching unique id
  */
-export const findAccount = async (actor: string, uid: string): Promise<Account | undefined> => {
+export const findAccount = async (actor: string, uid: string): Promise<AccountDTO | undefined> => {
     const account = await AccountModel.findOne({ uid });
     if (!account) return undefined;
-    return sanitizeAccountResponse(account);
+    return toAccountDTO(account);
 }
 
 /**
@@ -64,10 +38,10 @@ export const findAccount = async (actor: string, uid: string): Promise<Account |
  * @param email Email of requested account
  * @returns Account with matching email
  */
-export const findAccountByEmail = async (actor: string, email: string): Promise<Account | undefined> => {
+export const findAccountByEmail = async (actor: string, email: string): Promise<AccountDTO | undefined> => {
     const account = await AccountModel.findOne({ email });
     if (!account) return undefined;
-    return sanitizeAccountResponse(account);
+    return toAccountDTO(account);
 }
 
 /**
@@ -190,7 +164,7 @@ export const updateAccountBirthday = async (actor: string, account: string, birt
  * @param verified New verified status
  * @returns True if update was successful, otherwise false
  */
-export const updateAccountVerified = async (actor: string, account: string, verified: boolean) => {
+export const updateAccountVerified = async (actor: string, account: string, verified: boolean): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
     if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
     a.verified = verified;
@@ -205,7 +179,7 @@ export const updateAccountVerified = async (actor: string, account: string, veri
  * @param verified New locked status
  * @returns True if update was successful, otherwise false
  */
-export const updateAccountLocked = async (actor: string, account: string, locked: boolean) => {
+export const updateAccountLocked = async (actor: string, account: string, locked: boolean): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
     if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
     a.locked = locked;

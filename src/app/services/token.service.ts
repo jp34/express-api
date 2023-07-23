@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { ConfigurationError, UnauthorizedError } from "../../domain/entity/error";
+import { ConfigurationError, UnauthorizedError } from "../../domain/error";
 
 const API_ACCESS_SECRET = process.env.API_ACCESS_SECRET ?? undefined;
 const API_REFRESH_SECRET = process.env.API_REFRESH_SECRET ?? undefined;

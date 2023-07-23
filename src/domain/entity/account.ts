@@ -16,6 +16,40 @@ export interface Account {
     modified: Date;
 }
 
+// ---- DTO Model ------------
+
+export interface AccountDTO {
+    uid: string;
+    email?: string;
+    password?: string;
+    name?: string;
+    phone?: string;
+    birthday?: string;
+    verified?: boolean;
+    locked?: boolean;
+    last_login?: Date;
+    created?: Date;
+    modified?: Date;
+}
+
+export const toAccountDTO = (data: Account): AccountDTO => {
+    let dto: AccountDTO = {
+        uid: data.uid
+    };
+    console.log(data);
+    if (data.email) dto.email = data.email;
+    if (data.password) dto.password = data.password;
+    if (data.name) dto.name = data.name;
+    if (data.phone) dto.phone = data.phone;
+    if (data.birthday) dto.birthday = data.birthday;
+    if (data.verified) dto.verified = data.verified;
+    if (data.locked) dto.locked = data.locked;
+    if (data.last_login) dto.last_login = data.last_login;
+    if (data.created) dto.created = data.created;
+    if (data.modified) dto.modified = data.modified;
+    return dto;
+}
+
 // ---- Mongoose Model ------------
 
 export const AccountSchema = new Schema<Account>({

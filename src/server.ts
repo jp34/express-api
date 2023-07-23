@@ -23,7 +23,6 @@ app.use(bodyParser.json());
 app.use(morgan("combined"));
 
 // Configure root controller
-app.use(verify);
 app.use(api);
 app.use(handle);
 

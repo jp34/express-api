@@ -1,26 +1,29 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 import chaiHttp from "chai-http";
-import server from "../server";
-import { Account, User } from "../config/db";
+import server from "../src/server";
 import should from "should";
-import { validateTagResponse } from "../util/test";
+import { validateTagResponse } from "./util/validate";
 
 chai.use(chaiHttp);
 
 let account = {
+    uid: "",
     email: "test@test.com",
     password: "password",
     name: "test",
     phone: "1234567890",
     birthday: "2000-01-01",
-    username: "testuser",
-    interests: ["dining", "food_truck", "restaurant"],
 };
 
 let tokens = {
     access: "",
     refresh: ""
+};
+
+let user = {
+    username: "testuser",
+    interests: ["dining", "food_truck", "restaurant"],
 };
 
 let tag = {
@@ -38,15 +41,23 @@ describe('[sn-api] Tags Service', () => {
         .set('Content-Type', 'application/json')
         .send({ data: account })
         .end((err, res) => {
+            account.uid = res.body.data.account.uid;
             tokens.access = res.body.data.tokens.access;
             tokens.refresh = res.body.data.tokens.refresh;
             done();
         });
     });
 
-    after('Tear Down: Delete created account', async () => {
-        await User.deleteOne({ username: account.username });
-        await Account.deleteOne({ email: account.email });
+    after('Tear Down: Delete test account', (done) => {
+        chai.request(server)
+            .delete(`/api/accounts/${account.uid}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.equal(res.body.data.deleted, true);
+                done();
+            });
     });
 
     it('Creates a new tag', (done) => {

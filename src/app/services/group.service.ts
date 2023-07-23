@@ -1,26 +1,11 @@
 import { v4 } from "uuid";
-import { GroupModel, Group, CreateGroupPayload } from "../../domain/entity/group";
+import { GroupModel, GroupDTO, CreateGroupPayload, toGroupDTO } from "../../domain/entity/group";
 import { findUser, userExists } from "./users.service";
-import { InvalidOperationError, NonExistentResourceError } from "../../domain/entity/error";
+import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
 import { createNotification } from "./notification.service";
 import { NotificationType } from "../../domain/entity/notification";
 
-// ---- Utility ------------
-
-export const sanitizeGroupResponse = (data: any): Group => {
-    const group: Group = {
-        uid: data.uid,
-        host: data.host,
-        members: data.members,
-        created: data.created,
-        modified: data.modified
-    };
-    return group;
-}
-
-// ---- Group ------------
-
-export const createGroup = async (actor: string, data: CreateGroupPayload): Promise<Group> => {
+export const createGroup = async (actor: string, data: CreateGroupPayload): Promise<GroupDTO> => {
     if (data.members.length < 2) throw new InvalidOperationError("Groups cannot have less than two members");
     const hostExists = await userExists(actor, data.host);
     if (!hostExists) throw new NonExistentResourceError("User", data.host);
@@ -28,15 +13,15 @@ export const createGroup = async (actor: string, data: CreateGroupPayload): Prom
     data.members.forEach(async (m) => {
         const user = await findUser(actor, m);
         if (!user) throw new NonExistentResourceError("User", m);
-        mems.push(user.uid);
+        if (user.uid) mems.push(user.uid);
     });
-    const group = GroupModel.create({
+    const group = await GroupModel.create({
         uid: v4(),
         host: data.host,
         members: mems,
     });
     await createNotification(data.host, mems, NotificationType.GROUP_INVITE);
-    return sanitizeGroupResponse(group);
+    return toGroupDTO(group);
 }
 
 export const inviteToGroup = async (actor: string, uid: string, groupId: string, target: string): Promise<Boolean> => {
@@ -51,13 +36,13 @@ export const inviteToGroup = async (actor: string, uid: string, groupId: string,
     return true;
 }
 
-export const findGroupByUid = async (actor: string, uid: string): Promise<Group | undefined> => {
+export const findGroupByUid = async (actor: string, uid: string): Promise<GroupDTO | undefined> => {
     const group = await GroupModel.findOne({ uid });
     if (!group) return undefined;
-    return sanitizeGroupResponse(group);
+    return toGroupDTO(group);
 }
 
-export const findGroupsByUser = async (actor: string, uid: string): Promise<Group[]> => {
+export const findGroupsByUser = async (actor: string, uid: string): Promise<GroupDTO[]> => {
     const user = await userExists(actor, uid);
     if (!user) throw new NonExistentResourceError("User", uid);
     const groups = await GroupModel.find({
@@ -67,7 +52,7 @@ export const findGroupsByUser = async (actor: string, uid: string): Promise<Grou
             ]
         }
     });
-    return groups.map((group) => sanitizeGroupResponse(group));
+    return groups.map((group) => toGroupDTO(group));
 }
 
 export const deleteGroup = async (actor: string, uid: string): Promise<Boolean> => {

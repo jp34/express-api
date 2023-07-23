@@ -1,5 +1,5 @@
 import { Tag, TagModel, CreateTagPayload } from "../../domain/entity/tag";
-import { NonExistentResourceError } from "../../domain/entity/error";
+import { NonExistentResourceError } from "../../domain/error";
 
 // ---- Utility ------------
 

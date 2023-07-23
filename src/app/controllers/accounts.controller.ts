@@ -8,8 +8,7 @@ import {
     updateAccountVerified,
     updateAccountLocked
 } from "../services/accounts.service";
-import { InvalidInputError, InvalidOperationError } from "../../domain/entity/error";
-import logger from "../../config/logger";
+import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 
 export default class AccountsController {
 

@@ -14,7 +14,7 @@ import {
     findUserInbox
 } from "../services/users.service";
 import { CreateUserPayload } from "../../domain/entity/user";
-import { InvalidInputError, InvalidOperationError } from "../../domain/entity/error";
+import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 import logger from "../../config/logger";
 
 export default class UsersController {

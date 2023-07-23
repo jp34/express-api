@@ -1,10 +1,9 @@
 import { describe, it } from "mocha";
 import chai from "chai";
 import chaiHttp from "chai-http";
-import server from "../server";
+import server from "../src/server";
 import should from "should";
-import { validateUserResponse } from "../util/test";
-import { Account, User } from "../config/db";
+import { validateUserResponse } from "./util/validate";
 
 chai.use(chaiHttp);
 
@@ -15,6 +14,9 @@ let account = {
     name: "test",
     phone: "1234567890",
     birthday: "2000-01-01",
+};
+
+let user = {
     username: "testuser",
     interests: ["dining", "food_truck", "restaurant"],
 };
@@ -45,12 +47,34 @@ describe('[sn-api] Users Service', () => {
             });
     });
 
-    after('Tear Down: Delete created account', async () => {
-        await User.deleteOne({ username: account.username });
-        await Account.deleteOne({ email: account.email });
+    after('Tear Down: Delete test account', (done) => {
+        chai.request(server)
+            .delete(`/api/accounts/${account.uid}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.equal(res.body.data.deleted, true);
+                done();
+            });
     });
 
-    // Read
+    it('Creates a new user', (done) => {
+        chai.request(server)
+            .post(`/api/users/${account.uid}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .send({
+                username: user.username,
+                interests: user.interests
+            })
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body.data);
+                validateUserResponse(res.body.data);
+                done();
+            });
+    });
 
     it('Retrieves many users', (done) => {
         chai.request(server)
@@ -81,32 +105,67 @@ describe('[sn-api] Users Service', () => {
             })
     });
 
-    // Update
-
-    it('Updates a user', (done) => {
+    it("Updates a user's username", (done) => {
+        user.username = "newusername";
         chai.request(server)
             .get(`/api/users/${account.uid}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
+            .query({
+                username: user.username
+            })
             .end((err, res) => {
                 should.equal(res.status, 200);
                 should.exist(res.body);
-                validateUserResponse(res.body.data);
+                should.equal(res.body.data, true);
+                done();
+            })
+    });
+
+    it("Updates a user's online status", (done) => {
+        chai.request(server)
+            .get(`/api/users/${account.uid}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .query({
+                online: true
+            })
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body);
+                should.equal(res.body.data, true);
+                done();
+            })
+    });
+
+    it("Updates a user's active status", (done) => {
+        chai.request(server)
+            .get(`/api/users/${account.uid}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .query({
+                active: true
+            })
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body);
+                should.equal(res.body.data, true);
                 done();
             })
     });
 
     it('Adds interests to a user', (done) => {
+        user.interests.push('greek');
         chai.request(server)
             .put(`/api/users/${account.uid}/interests`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
-            .send({ data: account.interests })
+            .send({ data: ['greek'] })
             .end((err, res) => {
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
                 res.body.data.should.be.Array();
-                const same = isSameArray(res.body.data, account.interests);
+                const same = isSameArray(res.body.data, user.interests);
                 should.equal(true, same);
                 done();
             });
@@ -121,14 +180,14 @@ describe('[sn-api] Users Service', () => {
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
                 res.body.data.should.be.Array();
-                const same = isSameArray(res.body.data, account.interests);
+                const same = isSameArray(res.body.data, user.interests);
                 should.equal(true, same);
                 done();
             });
     });
 
     it('Removes an interest from a user', (done) => {
-        account.interests = ["dining", "food_truck"];
+        user.interests = ["dining", "food_truck", "greek"];
         chai.request(server)
             .delete(`/api/users/${account.uid}/interests`)
             .set('Content-Type', 'application/json')
@@ -138,13 +197,11 @@ describe('[sn-api] Users Service', () => {
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
                 res.body.data.should.be.Array();
-                const same = isSameArray(res.body.data, account.interests);
+                const same = isSameArray(res.body.data, user.interests);
                 should.equal(true, same);
                 done();
             });
     });
-
-    // Delete
 
     it('Deletes a user', (done) => {
         chai.request(server)

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { InvalidInputError, ServerError, UnauthorizedError } from "../../domain/entity/error";
+import { InvalidInputError, ServerError, UnauthorizedError } from "../../domain/error";
 import logger from "../../config/logger";
 
 export const handle = async (error: Error, req: Request, res: Response, next: NextFunction) => {

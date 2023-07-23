@@ -1,31 +1,6 @@
-import { UserModel, User, CreateUserPayload } from "../../domain/entity/user";
-import { InvalidOperationError, NonExistentResourceError } from "../../domain/entity/error";
+import { UserModel, UserDTO, CreateUserPayload, toUserDTO } from "../../domain/entity/user";
+import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
 import { findAccount } from "./accounts.service";
-
-// ---- Utility ------------
-
-/**
- * This method will sanatize the given data and return a new User object
- * @param data Object to be sanitized
- * @returns User object
- */
-const sanitizeUserResponse = (data: any): User => {
-    const user: User = {
-        uid: data.uid,
-        username: data.username,
-        interests: data.interests,
-        friends: data.friends,
-        groups: data.groups,
-        inbox: data.inbox,
-        active: data.active,
-        online: data.online,
-        created: data.created,
-        modified: data.modified,
-    };
-    return user;
-}
-
-// ---- User ------------
 
 /**
  * This method will create a new user object with the given username and interests. A user can only be created for an
@@ -35,7 +10,7 @@ const sanitizeUserResponse = (data: any): User => {
  * @param data Create user payload
  * @returns User object
  */
-export const createUser = async (actor: string, uid: string, data: CreateUserPayload): Promise<User> => {
+export const createUser = async (actor: string, uid: string, data: CreateUserPayload): Promise<UserDTO> => {
     const account = await findAccount(actor, uid);
     if (!account) throw new InvalidOperationError('Cannot create user for nonexistent account');
     const user = await UserModel.findOne({ uid: account.uid });
@@ -45,7 +20,7 @@ export const createUser = async (actor: string, uid: string, data: CreateUserPay
         username: data.username,
         interests: data.interests
     });
-    return sanitizeUserResponse(created);
+    return toUserDTO(created);
 }
 
 /**
@@ -55,16 +30,16 @@ export const createUser = async (actor: string, uid: string, data: CreateUserPay
  * @param limit Number of users to return
  * @returns An array of users
  */
-export const findUsers = async (actor: string, offset?: number, limit?: number): Promise<User[]> => {
+export const findUsers = async (actor: string, offset?: number, limit?: number): Promise<UserDTO[]> => {
     let results = [];
     if (offset && limit) results = await UserModel.find().skip(offset).limit(limit);
     else if (offset && !limit) results = await UserModel.find().skip(offset);
     else if (!offset && limit) results = await UserModel.find().limit(limit);
     else results = await UserModel.find();
 
-    let users: User[] = [];
+    let users: UserDTO[] = [];
     results.forEach((result) => {
-        users.push(sanitizeUserResponse(result));
+        users.push(toUserDTO(result));
     });
     return users;
 }
@@ -75,10 +50,10 @@ export const findUsers = async (actor: string, offset?: number, limit?: number):
  * @param user User's unique id
  * @returns User or undefined
  */
-export const findUser = async (actor: string, user: string): Promise<User | undefined> => {
+export const findUser = async (actor: string, user: string): Promise<UserDTO | undefined> => {
     const u = await UserModel.findOne({ uid: user });
     if (!u) return undefined;
-    return sanitizeUserResponse(u);
+    return toUserDTO(u);
 }
 
 /**
@@ -171,7 +146,7 @@ export const deleteUser = async (actor: string, user: string): Promise<Boolean> 
  * @param add Array of tags to add as interests
  * @returns Array of tags
  */
-export const addUserInterests = async (actor: string, user: string, add: string[]): Promise<string[]> => {
+export const addUserInterests = async (actor: string, user: string, add: string[]): Promise<string[] | undefined> => {
     const u = await UserModel.findOne({ uid: user });
     if (!u) throw new NonExistentResourceError("User", user);
     if (add.length <= 0) throw new InvalidOperationError("No user interests specified"); 
@@ -179,7 +154,7 @@ export const addUserInterests = async (actor: string, user: string, add: string[
         u.interests.push(a);
     });
     const saved = await u.save();
-    return sanitizeUserResponse(saved).interests;
+    return toUserDTO(saved).interests;
 }
 
 /**
@@ -188,7 +163,7 @@ export const addUserInterests = async (actor: string, user: string, add: string[
  * @param user User's unique id
  * @returns Array of tags
  */
-export const findUserInterests = async (actor: string, user: string): Promise<string[]> => {
+export const findUserInterests = async (actor: string, user: string): Promise<string[] | undefined> => {
     const u = await findUser(actor, user);
     if (!u) throw new NonExistentResourceError("User", user);
     return u.interests;
@@ -201,7 +176,7 @@ export const findUserInterests = async (actor: string, user: string): Promise<st
  * @param add Array of tags to remove as interests
  * @returns Array of tags
  */
-export const removeUserInterests = async (actor: string, user: string, remove: string[]): Promise<string[]> => {
+export const removeUserInterests = async (actor: string, user: string, remove: string[]): Promise<string[] | undefined> => {
     const u = await UserModel.findOne({ uid: user });
     if (!u) throw new NonExistentResourceError("User", user);
     if (remove.length <= 0) throw new InvalidOperationError("No user interests specified"); 
@@ -209,7 +184,7 @@ export const removeUserInterests = async (actor: string, user: string, remove: s
         return !remove.includes(i);
     })
     const saved = await u.save();
-    return sanitizeUserResponse(saved).interests;
+    return toUserDTO(saved).interests;
 }
 
 // ---- User Friends ------------
@@ -220,7 +195,7 @@ export const removeUserInterests = async (actor: string, user: string, remove: s
  * @param user User's unique id
  * @returns Array of connection id's
  */
-export const findUserFriends = async (actor: string, user: string): Promise<string[]> => {
+export const findUserFriends = async (actor: string, user: string): Promise<string[] | undefined> => {
     const u = await findUser(actor, user);
     if (!u) throw new NonExistentResourceError("User", user);
     return u.friends;
@@ -234,7 +209,7 @@ export const findUserFriends = async (actor: string, user: string): Promise<stri
  * @param user User's unique id
  * @returns Array of connection id's
  */
-export const findUserGroups = async (actor: string, user: string): Promise<string[]> => {
+export const findUserGroups = async (actor: string, user: string): Promise<string[] | undefined> => {
     const u = await findUser(actor, user);
     if (!u) throw new NonExistentResourceError("User", user);
     return u.groups;
@@ -248,7 +223,7 @@ export const findUserGroups = async (actor: string, user: string): Promise<strin
  * @param user User's unique id
  * @returns Array of notification id's
  */
-export const findUserInbox = async (actor: string, user: string): Promise<String[]> => {
+export const findUserInbox = async (actor: string, user: string): Promise<String[] | undefined> => {
     const u = await findUser(actor, user);
     if (!u) throw new NonExistentResourceError("User", user);
     return u.inbox;
