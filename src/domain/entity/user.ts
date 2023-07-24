@@ -43,8 +43,8 @@ export const toUserDTO = (data: User): UserDTO => {
     if (data.friends) dto.friends = data.friends;
     if (data.groups) dto.groups = data.groups;
     if (data.inbox) dto.inbox = data.inbox;
-    if (data.active) dto.active = data.active;
-    if (data.online) dto.online = data.online;
+    if (data.active != undefined) dto.active = data.active;
+    if (data.online != undefined) dto.online = data.online;
     if (data.created) dto.created = data.created;
     if (data.modified) dto.modified = data.modified;
     return dto;

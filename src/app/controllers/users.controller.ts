@@ -28,15 +28,17 @@ export default class UsersController {
      * @param next 
      */
     public create = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid: string = request.params.uid;
-        if (!uid) throw new InvalidInputError("uid");
-        const data: CreateUserPayload = request.body.data;
-        if (!data) throw new InvalidInputError("data");
-        createUser(request.user.uid, uid, data).then((data) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid: string = request.params.uid;
+            if (!uid) throw new InvalidInputError("uid");
+            const payload: CreateUserPayload = request.body.data;
+            if (!payload) throw new InvalidInputError("data");
+            const data = await createUser(request.user.uid, uid, payload);
             response.status(200).json({ data });
-            next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }        
     }
 
     /**
@@ -88,7 +90,6 @@ export default class UsersController {
             if (request.query.username) await updateUsername(actor, uid, request.query.username.toString());
             if (request.query.online) await updateOnlineStatus(actor, uid, (request.query.online === 'true'));
             if (request.query.active) await updateActiveStatus(actor, uid, (request.query.active === 'true'));
-            else throw new InvalidInputError("No update parameter provided");
             response.status(200).json({ data: true });
             next();
         } catch (err: any) {
