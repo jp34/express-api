@@ -25,8 +25,8 @@ export const authenticate = async (request: Request, response: Response, next: N
                 if (!account) throw new UnauthorizedError(`Account no longer exists: ${decoded.id}`);
                 request.user = { uid: account.uid };
             }
+            next();
         });
-        next();
     } catch (err: any) {
         next(err);
     }

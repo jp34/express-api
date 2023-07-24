@@ -46,8 +46,8 @@ export const register = async (actor: string, data: RegistrationPayload): Promis
  * @returns AccountResponse if authentication was successful
  */
 export const authenticate = async (actor: string, data: AuthenticationPayload): Promise<AuthResponse> => {
-    const a = await AccountModel.findOne({ uid: data.identifier });
-    if (!a) throw new InvalidOperationError("Account does not exist");
+    const a = await AccountModel.findOne({ email: data.identifier });
+    if (!a) throw new InvalidOperationError(`Account does not exist: ${data.identifier}`);
     const valid = await bcrypt.compare(data.password, a.password);
     if (!valid) throw new InvalidOperationError("Invalid credentials provided");
     const tokens = generateTokenPair(a.uid);

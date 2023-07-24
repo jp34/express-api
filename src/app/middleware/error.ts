@@ -1,19 +1,36 @@
 import { Request, Response, NextFunction } from "express";
-import { InvalidInputError, ServerError, UnauthorizedError } from "../../domain/error";
+import { InvalidInputError, InvalidOperationError, UnauthorizedError } from "../../domain/error";
 import logger from "../../config/logger";
 
 export const handle = async (error: Error, req: Request, res: Response, next: NextFunction) => {
-    if (error instanceof InvalidInputError) {
-        res.status(400).json({ error: error.message });
-    } else if (error instanceof UnauthorizedError) {
+    if (error instanceof UnauthorizedError) {
         res.status(406).json({ error: error.message });
-        logger.info('Unauthorized access attempted', {
-            reason: error.message,
+        logger.warn('Unauthorized access attempted', {
+            cause: error.message,
             ip: req.ip,
-            timestamp: Date.now(),
+            timestamp: Date.now()
         });
-    } else if (error instanceof ServerError) {
-        res.status(500).json({ error: "Server error" });
+    } else if (error instanceof InvalidInputError) {
+        res.status(400).json({ error: error.message });
+        logger.warn('Invalid input provided', {
+            cause: error.message,
+            ip: req.ip,
+            timestamp: Date.now()
+        });
+    } else if (error instanceof InvalidOperationError) {
+        res.status(400).json({ error: error.message });
+        logger.warn('Invalid operation attempted', {
+            cause: error.message,
+            ip: req.ip,
+            timestamp: Date.now()
+        });
+    } else {
+        res.status(400).json({ error: error.message });
+        logger.warn('Unknown error occured', {
+            cause: error.message,
+            ip: req.ip,
+            timestamp: Date.now()
+        });
     }
     next();
 }

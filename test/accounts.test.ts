@@ -153,7 +153,6 @@ describe('[sn-api] Accounts Service', () => {
     });
 
     it('Set account as verified', (done) => {
-        account.email = 'newEmail@test.com';
         chai.request(server)
             .put(`/api/accounts/${account.uid}`)
             .set('Content-Type', 'application/json')

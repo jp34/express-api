@@ -29,7 +29,6 @@ describe('[sn-api] Auth', () => {
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
-                console.log(res.body);
                 should.equal(res.status, 200);
                 should.equal(res.body.data.deleted, true);
                 done();
@@ -42,7 +41,6 @@ describe('[sn-api] Auth', () => {
             .set('Content-Type', 'application/json')
             .send({ data: account })
             .end((err, res) => {
-                console.log(res.body);
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
                 validateAuthResponse(res.body.data);
@@ -59,7 +57,6 @@ describe('[sn-api] Auth', () => {
                 password: account.password
             }})
             .end((err, res) => {
-                console.log(res.body);
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
                 validateAuthResponse(res.body.data);
@@ -76,10 +73,11 @@ describe('[sn-api] Auth', () => {
             .set('Content-Type', 'application/json')
             .send({ data: { identifier: "invalid@invalid.com", password: "invalid" }})
             .end((err, res) => {
+                console.log(res.body);
                 should.equal(res.status, 400);
                 should.not.exist(res.body.data);
                 should.exist(res.body.error);
-                should.equal(res.body.error, "Account does not exist");
+                should.equal(res.body.error, "Account does not exist: invalid@invalid.com");
                 done();
             });
     });
@@ -90,6 +88,7 @@ describe('[sn-api] Auth', () => {
             .set('Content-Type', 'application/json')
             .send({ data: { identifier: account.email, password: "invalid" }})
             .end((err, res) => {
+                console.log(res.body);
                 should.equal(res.status, 400);
                 should.not.exist(res.body.data);
                 should.exist(res.body.error);

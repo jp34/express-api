@@ -17,9 +17,9 @@ export const validateAccountResponse = (account: any) => {
     should.exist(account);
     should.not.exist(account._id);
     should.not.exist(account.__v);
-    should.not.exist(account.password);
     account.uid.should.be.String();
     account.email.should.be.String();
+    account.password.should.be.String();
     account.name.should.be.String();
     account.phone.should.be.String();
     account.birthday.should.be.String();

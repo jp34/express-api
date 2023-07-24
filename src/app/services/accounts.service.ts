@@ -190,10 +190,10 @@ export const updateAccountLocked = async (actor: string, account: string, locked
 /**
  * This method deletes a single account
  * @param actor Unique id of account that initiated the operation
- * @param id ID of account to delete
+ * @param account Unique id of the account to update
  * @returns The deleted account
  */
-export const deleteAccount = async (actor: string, uid: string): Promise<Boolean> => {
-    const result = await AccountModel.deleteOne({ uid });
+export const deleteAccount = async (actor: string, account: string): Promise<Boolean> => {
+    const result = await AccountModel.deleteOne({ uid: account });
     return (result.acknowledged && (result.deletedCount == 1));
 }
