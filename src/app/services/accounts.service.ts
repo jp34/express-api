@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { AccountModel, AccountDTO, toAccountDTO } from "../../domain/entity/account";
-import { InvalidOperationError } from "../../domain/error";
+import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
 
 /**
  * This method returns an array of accounts
@@ -86,7 +86,7 @@ export const accountExistsWithPhone = async (actor: string, phone: string): Prom
  */
 export const updateAccountEmail = async (actor: string, account: string, email: string): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
+    if (!a) throw new NonExistentResourceError('account', account);
     const exists = await accountExistsWithEmail(actor, email);
     if (exists) throw new InvalidOperationError(`Account already exists with email: ${email}`);
     a.email = email;
@@ -103,7 +103,7 @@ export const updateAccountEmail = async (actor: string, account: string, email: 
  */
 export const updateAccountPassword = async (actor: string, account: string, password: string): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
+    if (!a) throw new NonExistentResourceError('account', account);
     const encrypted = bcrypt.hashSync(password, bcrypt.genSaltSync());
     a.password = encrypted;
     await a.save();
@@ -119,7 +119,7 @@ export const updateAccountPassword = async (actor: string, account: string, pass
  */
 export const updateAccountName = async (actor: string, account: string, name: string): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
+    if (!a) throw new NonExistentResourceError('account', account);
     a.name = name;
     await a.save();
     return true;
@@ -134,7 +134,7 @@ export const updateAccountName = async (actor: string, account: string, name: st
  */
 export const updateAccountPhone = async (actor: string, account: string, phone: string): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
+    if (!a) throw new NonExistentResourceError('account', account);
     const exists = await accountExistsWithPhone(actor, phone);
     if (exists) throw new InvalidOperationError(`Account already exists with phone: ${phone}`);
     a.phone = phone;
@@ -151,7 +151,7 @@ export const updateAccountPhone = async (actor: string, account: string, phone: 
  */
 export const updateAccountBirthday = async (actor: string, account: string, birthday: string): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
+    if (!a) throw new NonExistentResourceError('account', account);
     a.birthday = birthday;
     await a.save();
     return true;
@@ -166,7 +166,7 @@ export const updateAccountBirthday = async (actor: string, account: string, birt
  */
 export const updateAccountVerified = async (actor: string, account: string, verified: boolean): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
+    if (!a) throw new NonExistentResourceError('account', account);
     a.verified = verified;
     await a.save();
     return true;
@@ -181,7 +181,7 @@ export const updateAccountVerified = async (actor: string, account: string, veri
  */
 export const updateAccountLocked = async (actor: string, account: string, locked: boolean): Promise<Boolean> => {
     const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new InvalidOperationError(`Account does not exist: ${account}`);
+    if (!a) throw new NonExistentResourceError('account', account);
     a.locked = locked;
     await a.save();
     return true;

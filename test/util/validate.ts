@@ -37,6 +37,9 @@ export const validateUserResponse = (user: any) => {
     user.uid.should.be.String();
     user.username.should.be.String();
     user.interests.should.be.Array();
+    user.friends.should.be.Array();
+    user.groups.should.be.Array();
+    user.inbox.should.be.Array();
     user.online.should.be.Boolean();
     user.active.should.be.Boolean();
     user.created.should.be.String();

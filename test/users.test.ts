@@ -69,6 +69,7 @@ describe('[sn-api] Users Service', () => {
                 interests: user.interests
             })
             .end((err, res) => {
+                console.log(res.body);
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
                 validateUserResponse(res.body.data);

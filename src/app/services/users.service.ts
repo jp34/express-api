@@ -87,7 +87,7 @@ export const userExistsWithUsername = async (actor: string, username: string): P
  */
 export const updateUsername = async (actor: string, user: string, newname: string): Promise<Boolean> => {
     const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     if (u.username === newname) throw new InvalidOperationError("New username must be different from current");
     u.username = newname;
     u.modified = new Date(Date.now());
@@ -104,7 +104,7 @@ export const updateUsername = async (actor: string, user: string, newname: strin
  */
 export const updateOnlineStatus = async (actor: string, user: string, status: boolean): Promise<Boolean> => {
     const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     u.online = status;
     await u.save();
     return true;
@@ -119,7 +119,7 @@ export const updateOnlineStatus = async (actor: string, user: string, status: bo
  */
 export const updateActiveStatus = async (actor: string, user: string, status: boolean): Promise<Boolean> => {
     const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     u.active = status;
     await u.save();
     return true;
@@ -148,7 +148,7 @@ export const deleteUser = async (actor: string, user: string): Promise<Boolean> 
  */
 export const addUserInterests = async (actor: string, user: string, add: string[]): Promise<string[] | undefined> => {
     const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     if (add.length <= 0) throw new InvalidOperationError("No user interests specified"); 
     add.forEach((a) => {
         u.interests.push(a);
@@ -165,7 +165,7 @@ export const addUserInterests = async (actor: string, user: string, add: string[
  */
 export const findUserInterests = async (actor: string, user: string): Promise<string[] | undefined> => {
     const u = await findUser(actor, user);
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     return u.interests;
 }
 
@@ -178,7 +178,7 @@ export const findUserInterests = async (actor: string, user: string): Promise<st
  */
 export const removeUserInterests = async (actor: string, user: string, remove: string[]): Promise<string[] | undefined> => {
     const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     if (remove.length <= 0) throw new InvalidOperationError("No user interests specified"); 
     u.interests = u.interests.filter((i) => {
         return !remove.includes(i);
@@ -197,7 +197,7 @@ export const removeUserInterests = async (actor: string, user: string, remove: s
  */
 export const findUserFriends = async (actor: string, user: string): Promise<string[] | undefined> => {
     const u = await findUser(actor, user);
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     return u.friends;
 }
 
@@ -211,7 +211,7 @@ export const findUserFriends = async (actor: string, user: string): Promise<stri
  */
 export const findUserGroups = async (actor: string, user: string): Promise<string[] | undefined> => {
     const u = await findUser(actor, user);
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     return u.groups;
 }
 
@@ -225,7 +225,7 @@ export const findUserGroups = async (actor: string, user: string): Promise<strin
  */
 export const findUserInbox = async (actor: string, user: string): Promise<String[] | undefined> => {
     const u = await findUser(actor, user);
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     return u.inbox;
 }
 
@@ -238,7 +238,7 @@ export const findUserInbox = async (actor: string, user: string): Promise<String
  */
 export const addToUserInbox = async (actor: string, user: string, note: string): Promise<Boolean> => {
     const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("User", user);
+    if (!u) throw new NonExistentResourceError("user", user);
     u.inbox.push(note);
     await u.save();
     return true;

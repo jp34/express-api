@@ -1,11 +1,18 @@
 import { Request, Response, NextFunction } from "express";
-import { InvalidInputError, InvalidOperationError, UnauthorizedError } from "../../domain/error";
+import { InvalidInputError, InvalidOperationError, NonExistentResourceError, UnauthorizedError } from "../../domain/error";
 import logger from "../../config/logger";
 
 export const handle = async (error: Error, req: Request, res: Response, next: NextFunction) => {
     if (error instanceof UnauthorizedError) {
         res.status(406).json({ error: error.message });
         logger.warn('Unauthorized access attempted', {
+            cause: error.message,
+            ip: req.ip,
+            timestamp: Date.now()
+        });
+    } else if (error instanceof NonExistentResourceError) {
+        res.status(400).json({ error: error.message });
+        logger.warn('Nonexistent resource access attempt', {
             cause: error.message,
             ip: req.ip,
             timestamp: Date.now()
