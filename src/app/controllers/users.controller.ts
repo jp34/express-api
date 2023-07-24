@@ -36,6 +36,7 @@ export default class UsersController {
             if (!payload) throw new InvalidInputError("data");
             const data = await createUser(request.user.uid, uid, payload);
             response.status(200).json({ data });
+            next();
         } catch (err: any) {
             next(err);
         }        
@@ -48,15 +49,18 @@ export default class UsersController {
      * @param next 
      */
     public getMany = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        let offset;
-        let limit;
-        if (request.query.offset) offset = +request.query.offset;
-        if (request.query.limit) limit = +request.query.limit;
-        findUsers(request.user.uid, offset, limit).then((data) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            let offset;
+            let limit;
+            if (request.query.offset) offset = +request.query.offset;
+            if (request.query.limit) limit = +request.query.limit;
+            const data = await findUsers(request.user.uid, offset, limit);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**
@@ -66,13 +70,16 @@ export default class UsersController {
      * @param next 
      */
     public getOne = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid = request.params.uid;
-        if (!uid) throw new InvalidInputError("uid");
-        findUser(request.user.uid, uid).then((data) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid = request.params.uid;
+            if (!uid) throw new InvalidInputError("uid");
+            const data = await findUser(request.user.uid, uid);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**
@@ -82,10 +89,10 @@ export default class UsersController {
      * @param next 
      */
     public update = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid: string = request.params.uid;
-        if (!uid) throw new InvalidInputError("uid");
         try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid: string = request.params.uid;
+            if (!uid) throw new InvalidInputError("uid");
             const actor = request.user.uid;
             if (request.query.username) await updateUsername(actor, uid, request.query.username.toString());
             if (request.query.online) await updateOnlineStatus(actor, uid, (request.query.online === 'true'));
@@ -93,9 +100,7 @@ export default class UsersController {
             response.status(200).json({ data: true });
             next();
         } catch (err: any) {
-            logger.info(`Failed update attempt: ${uid}`, { error: err.message });
-            response.status(400).json({ error: `Update attempt failed: ${err.message}`});
-            next();
+            next(err);
         }
     }
 
@@ -106,13 +111,16 @@ export default class UsersController {
      * @param next 
      */
     public delete = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid: string = request.params.uid;
-        if (!uid) throw new InvalidInputError("uid");
-        deleteUser(request.user.uid, uid).then((deleted) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid: string = request.params.uid;
+            if (!uid) throw new InvalidInputError("uid");
+            const deleted = await deleteUser(request.user.uid, uid);
             response.status(200).json({ data: { deleted }});
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     // ---- User Interests ------------
@@ -124,13 +132,16 @@ export default class UsersController {
      * @param next 
      */
     public getInterests = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid: string = request.params.uid;
-        if (!uid) throw new InvalidInputError("uid");
-        findUserInterests(request.user.uid, uid).then((data) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid: string = request.params.uid;
+            if (!uid) throw new InvalidInputError("uid");
+            const data = await findUserInterests(request.user.uid, uid)
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**
@@ -140,15 +151,18 @@ export default class UsersController {
      * @param next 
      */
     public addInterests = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid: string = request.params.uid;
-        const data: string[] = request.body.data;
-        if (!uid) throw new InvalidInputError("uid");
-        if (!data) throw new InvalidInputError("data");
-        addUserInterests(request.user.uid, uid, data).then((data) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid: string = request.params.uid;
+            const payload: string[] = request.body.data;
+            if (!uid) throw new InvalidInputError("uid");
+            if (!payload) throw new InvalidInputError("data");
+            const data = await addUserInterests(request.user.uid, uid, payload);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     // ---- User Friends ------------
@@ -160,13 +174,16 @@ export default class UsersController {
      * @param next 
      */
     public getFriends = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid: string = request.params.uid;
-        if (!uid) throw new InvalidInputError("uid");
-        findUserFriends(request.user.uid, uid).then((data) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid: string = request.params.uid;
+            if (!uid) throw new InvalidInputError("uid");
+            const data = await findUserFriends(request.user.uid, uid);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     // ---- User Groups ------------
@@ -178,13 +195,16 @@ export default class UsersController {
      * @param next 
      */
     public getGroups = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid: string = request.params.uid;
-        if (!uid) throw new InvalidInputError("uid");
-        findUserGroups(request.user.uid, uid).then((data) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid: string = request.params.uid;
+            if (!uid) throw new InvalidInputError("uid");
+            const data = await findUserGroups(request.user.uid, uid);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     // ---- User Inbox ------------
@@ -196,13 +216,16 @@ export default class UsersController {
      * @param next 
      */
     public getInbox = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const uid: string = request.params.uid;
-        if (!uid) throw new InvalidInputError("uid");
-        findUserInbox(request.user.uid, uid).then((data) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const uid: string = request.params.uid;
+            if (!uid) throw new InvalidInputError("uid");
+            const data = await findUserInbox(request.user.uid, uid);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**

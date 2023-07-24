@@ -21,14 +21,17 @@ export default class AuthController {
      * @param next Next middleware function
      */
     public login = async (request: AuthenticationRequest, response: Response, next: NextFunction) => {
-        if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
-        const data: AuthenticationPayload = request.body.data;
-        if (!data.identifier) throw new InvalidInputError('identifier');
-        if (!data.password) throw new InvalidInputError('password');
-        authenticate(request.ip, data).then((data) => {
+        try {
+            if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
+            const payload: AuthenticationPayload = request.body.data;
+            if (!payload.identifier) throw new InvalidInputError('identifier');
+            if (!payload.password) throw new InvalidInputError('password');
+            const data = await authenticate(request.ip, payload);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**
@@ -39,13 +42,16 @@ export default class AuthController {
      * @param next Next middleware function
      */
     public signup = async (request: RegistrationRequest, response: Response, next: NextFunction) => {
-        if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
-        const data: RegistrationPayload = request.body.data;
-        if (!data) throw new InvalidInputError('data');
-        register(request.ip, data).then((data) => {
+        try {
+            if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
+            const payload: RegistrationPayload = request.body.data;
+            if (!payload) throw new InvalidInputError('data');
+            const data = await register(request.ip, payload);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**
@@ -57,17 +63,13 @@ export default class AuthController {
      */
     public refresh = async (request: RefreshRequest, response: Response, next: NextFunction) => {
         try {
-            // Extract refresh token and validate
+            if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
             const data = request.body.data;
             if (!data.refresh) throw new InvalidInputError('refresh');
-            // Generate new access token
             const token = refreshAccessToken(data.refresh);
             response.status(200).json({ data: { tokens: { access: token, refresh: data.refresh }}});
             next();
         } catch (err: any) {
-            if (err instanceof Error) logger.warn(`Register attempt failed: ${err.message}`);
-            logger.error(err);
-            response.status(406).json({ error: err });
             return next(err);
         }
     }

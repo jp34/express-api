@@ -24,13 +24,16 @@ export default class TagsController {
      * @param next Next middleware function
      */
     public create = async (request: CreateTagRequest, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const data: CreateTagPayload = request.body.data;
-        if (!data) throw new InvalidInputError('data');
-        createTag(request.user.uid, data).then(data => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const payload: CreateTagPayload = request.body.data;
+            if (!payload) throw new InvalidInputError('data');
+            const data = await createTag(request.user.uid, payload);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**
@@ -41,15 +44,18 @@ export default class TagsController {
      * @param next Next middleware function
      */
     public getMany = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        let offset;
-        let limit;
-        if (request.query.offset) offset = +request.query.offset;
-        if (request.query.limit) limit = +request.query.limit;
-        findTags(request.user.uid, offset, limit).then(async data => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            let offset;
+            let limit;
+            if (request.query.offset) offset = +request.query.offset;
+            if (request.query.limit) limit = +request.query.limit;
+            const data = await findTags(request.user.uid, offset, limit);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**
@@ -60,12 +66,15 @@ export default class TagsController {
      * @param next Next middleware function
      */
     public getOne = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        if (!request.params.name) throw new InvalidInputError("Id");
-        findTag(request.user.uid, request.params.name).then(data => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            if (!request.params.name) throw new InvalidInputError("Id");
+            const data = await findTag(request.user.uid, request.params.name);
             response.status(200).json({ data });
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 
     /**
@@ -76,10 +85,10 @@ export default class TagsController {
      * @param next Next middleware function
      */
     public update = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        const name: string = request.params.name;
-        if (!name) throw new InvalidInputError("name");
         try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            const name: string = request.params.name;
+            if (!name) throw new InvalidInputError("name");
             const actor = request.user.uid;
             if (request.query.label) await updateTagLabel(actor, name, request.query.label.toString());
             if (request.query.parent) await updateTagParent(actor, name, request.query.parent.toString());
@@ -99,11 +108,14 @@ export default class TagsController {
      * @param next Next middleware function
      */
     public delete = async (request: Request, response: Response, next: NextFunction) => {
-        if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
-        if (!request.params.name) throw new InvalidInputError("Id");
-        deleteTag(request.user.uid, request.params.name).then((deleted) => {
+        try {
+            if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
+            if (!request.params.name) throw new InvalidInputError("Id");
+            const deleted = await deleteTag(request.user.uid, request.params.name);
             response.status(200).json({ data: { deleted }});
             next();
-        }).catch(next);
+        } catch (err: any) {
+            next(err);
+        }
     }
 }
