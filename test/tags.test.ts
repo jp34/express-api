@@ -103,24 +103,66 @@ describe('[sn-api] Tags Service', () => {
             });
     });
 
-    it('Updates a tag', (done) => {
-        tag.label = "New tag label";
-        tag.parent = "social";
-        tag.ref = "333333";
-
+    it('Updates a tag label', (done) => {
+        tag.label = "New Label";
         chai.request(server)
             .put(`/api/tags/${tag.name}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
-            .send({ data: {
-                label: tag.label,
-                parent: tag.parent,
-                ref: tag.ref,
-            }})
+            .query({ label: tag.label })
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body);
+                should.equal(res.body.data, true);
+                done();
+            });
+    });
+
+    it('Updates a tag parent', (done) => {
+        tag.parent = "dining";
+        chai.request(server)
+            .put(`/api/tags/${tag.name}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .query({ parent: tag.parent })
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body);
+                should.equal(res.body.data, true);
+                done();
+            });
+    });
+
+    it('Updates a tag ref', (done) => {
+        tag.ref = "111111";
+        chai.request(server)
+            .put(`/api/tags/${tag.name}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
+            .query({
+                ref: "111111"
+            })
+            .end((err, res) => {
+                should.equal(res.status, 200);
+                should.exist(res.body);
+                should.equal(res.body.data, true);
+                done();
+            });
+    });
+
+    it('Verifies updated tag data', (done) => {
+        chai.request(server)
+            .get(`/api/tags/${tag.name}`)
+            .set('Content-Type', 'application/json')
+            .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
                 should.equal(res.status, 200);
                 should.exist(res.body);
                 validateTagResponse(res.body.data);
+                should.equal(res.body.data.name, tag.name);
+                should.equal(res.body.data.label, tag.label);
+                should.equal(res.body.data.parent, tag.parent);
+                should.equal(res.body.data.ref, tag.ref);
                 done();
             });
     });

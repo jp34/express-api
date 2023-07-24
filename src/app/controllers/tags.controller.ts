@@ -84,7 +84,6 @@ export default class TagsController {
             if (request.query.label) await updateTagLabel(actor, name, request.query.label.toString());
             if (request.query.parent) await updateTagParent(actor, name, request.query.parent.toString());
             if (request.query.ref) await updateTagRef(actor, name, request.query.ref.toString());
-            else throw new InvalidInputError("No update parameter provided");
             response.status(200).json({ data: true });
             next();
         } catch (err: any) {
