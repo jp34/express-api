@@ -14,7 +14,7 @@ describe('[sn-api] Error Handling', () => {
             .set('Content-Type', 'application/json')
             .end((err, res) => {
                 should.equal(res.statusCode, 406);
-                should.equal(res.body.error, "Missing authorization token");
+                should.equal(res.body.error, "Missing authentication token");
                 should.not.exist(res.body.data);
                 done();
             });

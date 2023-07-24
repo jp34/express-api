@@ -6,7 +6,10 @@ import {
     updateAccountEmail,
     updateAccountPassword,
     updateAccountVerified,
-    updateAccountLocked
+    updateAccountLocked,
+    updateAccountName,
+    updateAccountPhone,
+    updateAccountBirthday
 } from "../services/accounts.service";
 import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 
@@ -63,12 +66,11 @@ export default class AccountsController {
             const actor = request.user.uid;
             if (request.query.email) await updateAccountEmail(actor, uid, request.query.email.toString());
             if (request.query.password) await updateAccountPassword(actor, uid, request.query.password.toString());
-            if (request.query.name) await updateAccountEmail(actor, uid, request.query.name.toString());
-            if (request.query.phone) await updateAccountEmail(actor, uid, request.query.phone.toString());
-            if (request.query.birthday) await updateAccountEmail(actor, uid, request.query.birthday.toString());
+            if (request.query.name) await updateAccountName(actor, uid, request.query.name.toString());
+            if (request.query.phone) await updateAccountPhone(actor, uid, request.query.phone.toString());
+            if (request.query.birthday) await updateAccountBirthday(actor, uid, request.query.birthday.toString());
             if (request.query.verified) await updateAccountVerified(actor, uid, (request.query.verified === 'true'));
             if (request.query.locked) await updateAccountLocked(actor, uid, (request.query.locked === 'true'));
-            else throw new InvalidInputError("No update parameter provided");
             response.status(200).json({ data: true });
             next();
         } catch (err: any) {

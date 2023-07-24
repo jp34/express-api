@@ -152,7 +152,7 @@ describe('[sn-api] Accounts Service', () => {
             });
     });
 
-    it('Set account as verified', (done) => {
+    it('Sets account as verified', (done) => {
         chai.request(server)
             .put(`/api/accounts/${account.uid}`)
             .set('Content-Type', 'application/json')
@@ -168,7 +168,7 @@ describe('[sn-api] Accounts Service', () => {
             });
     });
 
-    it('Set account as locked', (done) => {
+    it('Sets account as locked', (done) => {
         chai.request(server)
             .put(`/api/accounts/${account.uid}`)
             .set('Content-Type', 'application/json')
