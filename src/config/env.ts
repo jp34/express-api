@@ -39,6 +39,10 @@ const MONGO_STRING = process.env.API_MONGO_STRING;
 if (!MONGO_STRING) throw new ConfigurationError("Missing or invalid environment variable: API_MONGO_STRING");
 logger.debug(`MONGO_STRING: ${MONGO_STRING}`);
 
+const FOURSQUARE_KEY = process.env.API_FOURSQUARE_KEY;
+if (!FOURSQUARE_KEY) throw new ConfigurationError("Missing or invalid environment variable: API_FOURSQUARE_KEY");
+logger.debug(`FOURSQUARE_KEY: ${FOURSQUARE_KEY}`);
+
 const Env = {
     DEBUG,
     SEED_DB,
@@ -48,7 +52,8 @@ const Env = {
     ACCESS_EXP,
     REFRESH_SECRET,
     REFRESH_EXP,
-    MONGO_STRING
+    MONGO_STRING,
+    FOURSQUARE_KEY
 };
 
 export default Env;

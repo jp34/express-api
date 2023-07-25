@@ -4,12 +4,14 @@ import AuthController from "./controllers/auth.controller";
 import AccountsController from "./controllers/accounts.controller";
 import UsersController from "./controllers/users.controller";
 import TagsController from "./controllers/tags.controller";
+import PlacesController from "./controllers/places.controller";
 
 const router = Router();
 const auth = new AuthController();
 const accounts = new AccountsController();
 const users = new UsersController();
 const tags = new TagsController();
+const places = new PlacesController();
 
 // Api Auth
 router.post("/api/auth/login", auth.login);
@@ -41,5 +43,9 @@ router.get("/api/tags", authenticate, tags.getMany);
 router.get("/api/tags/:name", authenticate, tags.getOne);
 router.put("/api/tags/:name", authenticate, tags.update);
 router.delete("/api/tags/:name", authenticate, tags.delete);
+
+// Places API
+router.get("/api/places/search", authenticate, places.search);
+router.get("/api/places/nearby", authenticate, places.nearby);
 
 export default router;

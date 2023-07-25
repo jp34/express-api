@@ -1,29 +1,18 @@
-import { Tag, TagModel, CreateTagPayload } from "../../domain/entity/tag";
+import { Tag, TagDTO, TagModel, CreateTagPayload } from "../../domain/entity/tag";
 import { NonExistentResourceError } from "../../domain/error";
-
-// ---- Utility ------------
-
-const sanitizeTag = (data: any): Tag => {
-    const tag: Tag = {
-        name: data.name,
-        label: data.label,
-        parent: data.parent,
-        ref: data.ref
-    };
-    return tag;
-}
-
-// ---- Tag ------------
+import { toTagDTO } from "../../domain/entity/tag";
+import logger from "../../config/logger";
 
 /**
  * Creates a new tag objcet
+ * @param actor Unique id of account that initiated the operation
  * @param tag Identifier of new tag
  * @param label Label of new tag
  * @param plural Plural label of new tag
  * @param parent Identifier of parent tag
  * @returns The newly created tag object
  */
-export const createTag = async (actor: string, data: CreateTagPayload): Promise<Tag> => {
+export const createTag = async (actor: string, data: CreateTagPayload): Promise<TagDTO> => {
     const actualParent = await TagModel.findOne({ name: data.parent });
     if (!actualParent) throw new NonExistentResourceError("Tag", data.parent);
     const tag = await TagModel.create({
@@ -32,24 +21,34 @@ export const createTag = async (actor: string, data: CreateTagPayload): Promise<
         parent: data.parent,
         ref: data.ref,
     });
-    return sanitizeTag(tag);
+    return toTagDTO(tag);
 }
 
 /**
  * Returns all existing tags
+ * @param actor Unique id of account that initiated the operation
  * @returns Array of tag objects
  */
-export const findTags = async (actor: string, offset?: number, limit?: number): Promise<Tag[]> => {
+export const findTags = async (actor: string, offset?: number, limit?: number): Promise<TagDTO[]> => {
     let results = [];
     if (offset && limit) results = await TagModel.find().skip(offset).limit(limit);
     else if (offset && !limit) results = await TagModel.find().skip(offset);
     else if (!offset && limit) results = await TagModel.find().limit(limit);
     else results = await TagModel.find();
-    let tags: Tag[] = [];
+    let tags: TagDTO[] = [];
     results.forEach((result) => {
-        tags.push(sanitizeTag(result));
+        tags.push(toTagDTO(result));
     });
     return tags;
+}
+
+export const findTagRefs = async (actor: string, tags: string[]): Promise<string[]> => {
+    const data = await TagModel.find({ 'name': { $in: tags }}).select('ref -_id');
+    let refs: string[] = [];
+    data.forEach((obj) => {
+        refs.push(obj.ref);
+    });
+    return refs;
 }
 
 /**
@@ -66,10 +65,10 @@ export const countTags = async (actor: string): Promise<Number> => {
  * @param name Name of the tag to find
  * @returns Tag object if it exists
  */
-export const findTag = async (actor: string, name: string): Promise<Tag | undefined> => {
+export const findTag = async (actor: string, name: string): Promise<TagDTO | undefined> => {
     const tag = await TagModel.findOne({ name });
     if (!tag) return undefined;
-    return sanitizeTag(tag);
+    return toTagDTO(tag);
 }
 
 /**
