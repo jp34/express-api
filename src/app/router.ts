@@ -16,6 +16,7 @@ const places = new PlacesController();
 // Api Auth
 router.post("/api/auth/login", auth.login);
 router.post("/api/auth/signup", auth.signup);
+router.post("/api/auth/signup/mobile", auth.mobileSignup);
 router.post("/api/auth/refresh", auth.refresh);
 
 // Accounts API

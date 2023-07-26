@@ -73,7 +73,6 @@ describe('[sn-api] Auth', () => {
             .set('Content-Type', 'application/json')
             .send({ data: { identifier: "invalid@invalid.com", password: "invalid" }})
             .end((err, res) => {
-                console.log(res.body);
                 should.equal(res.status, 400);
                 should.not.exist(res.body.data);
                 should.exist(res.body.error);
@@ -88,7 +87,6 @@ describe('[sn-api] Auth', () => {
             .set('Content-Type', 'application/json')
             .send({ data: { identifier: account.email, password: "invalid" }})
             .end((err, res) => {
-                console.log(res.body);
                 should.equal(res.status, 400);
                 should.not.exist(res.body.data);
                 should.exist(res.body.error);

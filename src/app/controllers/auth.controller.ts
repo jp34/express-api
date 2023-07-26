@@ -3,13 +3,15 @@ import { refreshAccessToken } from "../services/token.service";
 import {
     AuthenticationPayload,
     AuthenticationRequest,
+    MobileRegistrationPayload,
+    MobileRegistrationRequest,
     RefreshRequest,
     RegistrationPayload,
     RegistrationRequest
 } from "../../domain/auth";
 import { InvalidInputError, InvalidOperationError } from "../../domain/error";
-import logger from "../../config/logger";
 import { register, authenticate } from "../services/auth.service";
+import { createUser } from "../services/users.service";
 
 export default class AuthController {
 
@@ -47,6 +49,30 @@ export default class AuthController {
             const payload: RegistrationPayload = request.body.data;
             if (!payload) throw new InvalidInputError('data');
             const data = await register(request.ip, payload);
+            response.status(200).json({ data });
+            next();
+        } catch (err: any) {
+            next(err);
+        }
+    }
+
+    /**
+     * POST /auth/signup/mobile
+     * This route allows a user to create a new account and user profile at the same time
+     * @param request 
+     * @param response 
+     * @param next 
+     */
+    public mobileSignup = async (request: MobileRegistrationRequest, response: Response, next: NextFunction) => {
+        try {
+            if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
+            const payload: MobileRegistrationPayload = request.body.data;
+            if (!payload) throw new InvalidInputError('data');
+            const data = await register(request.ip, payload);
+            await createUser(request.ip, data.account.uid, {
+                username: payload.username,
+                interests: payload.interests
+            });
             response.status(200).json({ data });
             next();
         } catch (err: any) {

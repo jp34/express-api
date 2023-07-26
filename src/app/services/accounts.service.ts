@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import { AccountModel, AccountDTO, toAccountDTO } from "../../domain/entity/account";
 import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
+import { deleteUser, userExists } from "./users.service";
+import logger from "../../config/logger";
 
 /**
  * This method returns an array of accounts
@@ -194,6 +196,10 @@ export const updateAccountLocked = async (actor: string, account: string, locked
  * @returns The deleted account
  */
 export const deleteAccount = async (actor: string, account: string): Promise<Boolean> => {
+    if (await userExists(actor, account)) {
+        const userDeleted = await deleteUser(actor, account);
+        if (!userDeleted) logger.warn(`Failed to delete associated user profile: account:${account}`);
+    }
     const result = await AccountModel.deleteOne({ uid: account });
     return (result.acknowledged && (result.deletedCount == 1));
 }

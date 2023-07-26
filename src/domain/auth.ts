@@ -2,7 +2,7 @@ import { AccountDTO } from "./entity/account";
 
 // Auth Payload Types
 
-export type RegistrationPayload = {
+export interface RegistrationPayload {
     email: string;
     password: string;
     name: string;
@@ -10,7 +10,17 @@ export type RegistrationPayload = {
     birthday: string;
 }
 
-export type AuthenticationPayload = {
+export interface MobileRegistrationPayload extends RegistrationPayload{
+    email: string;
+    password: string;
+    name: string;
+    phone: string;
+    birthday: string;
+    username: string;
+    interests: string[];
+};
+
+export interface AuthenticationPayload {
     identifier: string;
     password: string;
 };
@@ -32,6 +42,14 @@ export interface RegistrationRequest extends Express.Request {
     ip?: string
     body: {
         data: RegistrationPayload
+    }
+}
+
+export interface MobileRegistrationRequest extends Express.Request {
+    user?: Record<string, any>
+    ip?: string
+    body: {
+        data: MobileRegistrationPayload
     }
 }
 
