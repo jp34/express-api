@@ -20,9 +20,10 @@ export interface TagDTO {
 
 export const toTagDTO = (data: Tag): TagDTO => {
     let dto: TagDTO = {};
-    if (data.name) dto.name;
-    if (data.label) dto.label;
-    if (data.parent) dto.parent;
+    if (data.name) dto.name = data.name;
+    if (data.label) dto.label = data.label;
+    if (data.parent) dto.parent = data.parent;
+    if (data.ref) dto.ref = data.ref;
     return dto;
 }
 
