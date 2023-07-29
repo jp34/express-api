@@ -9,10 +9,10 @@ export interface User {
     friends: string[];
     groups: string[];
     inbox: string[];
-    active: boolean;
-    online: boolean;
-    created: Date;
-    modified: Date;
+    isActive: boolean;
+    isOnline: boolean;
+    dateCreated: Date;
+    dateModified: Date;
 }
 
 export type CreateUserPayload = {
@@ -23,30 +23,31 @@ export type CreateUserPayload = {
 // ---- DTO Model ----------------
 
 export interface UserDTO {
-    uid?: string;
-    username?: string;
-    interests?: string[];
-    friends?: string[];
-    groups?: string[];
-    inbox?: string[];
-    active?: boolean;
-    online?: boolean;
-    created?: Date;
-    modified?: Date;
+    uid: string;
+    username: string;
+    interests: string[];
+    friends: string[];
+    groups: string[];
+    inbox: string[];
+    isActive: boolean;
+    isOnline: boolean;
+    dateCreated: Date;
+    dateModified: Date;
 }
 
 export const toUserDTO = (data: User): UserDTO => {
-    let dto: UserDTO = {};
-    if (data.uid) dto.uid = data.uid;
-    if (data.username) dto.username = data.username;
-    if (data.interests) dto.interests = data.interests;
-    if (data.friends) dto.friends = data.friends;
-    if (data.groups) dto.groups = data.groups;
-    if (data.inbox) dto.inbox = data.inbox;
-    if (data.active != undefined) dto.active = data.active;
-    if (data.online != undefined) dto.online = data.online;
-    if (data.created) dto.created = data.created;
-    if (data.modified) dto.modified = data.modified;
+    let dto: UserDTO = {
+        uid: data.uid,
+        username: data.username,
+        interests: data.interests,
+        friends: data.friends,
+        groups: data.groups,
+        inbox: data.inbox,
+        isActive: data.isActive,
+        isOnline: data.isOnline,
+        dateCreated: data.dateCreated,
+        dateModified: data.dateModified
+    };
     return dto;
 }
 
@@ -59,10 +60,10 @@ export const UserSchema = new Schema<User>({
     friends: { type: [String], default: [] },                       // User uid's
     groups: { type: [String], default: [] },                        // Group uid's
     inbox: { type: [String], default: [] },                         // Notification uid's
-    active: { type: Boolean, default: false },
-    online: { type: Boolean, default: false },
-    created: { type: Date, default: Date.now() },
-    modified: { type: Date, default: Date.now() }
+    isActive: { type: Boolean, default: false },
+    isOnline: { type: Boolean, default: false },
+    dateCreated: { type: Date, default: Date.now() },
+    dateModified: { type: Date, default: Date.now() }
 });
 
 export const UserModel = mongoose.model<User>("User", UserSchema);

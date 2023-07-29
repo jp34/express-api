@@ -152,38 +152,6 @@ describe('[sn-api] Accounts Service', () => {
             });
     });
 
-    it('Sets account as verified', (done) => {
-        chai.request(server)
-            .put(`/api/accounts/${account.uid}`)
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${tokens.access}`)
-            .query({
-                verified: true
-            })
-            .end((err, res) => {
-                should.equal(res.status, 200);
-                should.exist(res.body);
-                should.equal(res.body.data, true);
-                done();
-            });
-    });
-
-    it('Sets account as locked', (done) => {
-        chai.request(server)
-            .put(`/api/accounts/${account.uid}`)
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${tokens.access}`)
-            .query({
-                locked: true
-            })
-            .end((err, res) => {
-                should.equal(res.status, 200);
-                should.exist(res.body);
-                should.equal(res.body.data, true);
-                done();
-            });
-    });
-
     it('Verifies updated data', (done) => {
         chai.request(server)
             .get(`/api/accounts/${account.uid}`)
@@ -194,14 +162,10 @@ describe('[sn-api] Accounts Service', () => {
                 should.exist(res.body);
                 should.exist(res.body.data);
                 validateAccountResponse(res.body.data);
-
-                should.equal(res.body.data.email, account.email);
+                should.equal(res.body.data.email, account.email.toUpperCase());
                 should.equal(res.body.data.name, account.name);
                 should.equal(res.body.data.phone, account.phone);
                 should.equal(res.body.data.birthday, account.birthday);
-                should.equal(res.body.data.verified, true);
-                should.equal(res.body.data.locked, true);
-
                 done();
             });
     });

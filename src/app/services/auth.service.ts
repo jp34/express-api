@@ -1,12 +1,14 @@
 import bcrypt from "bcrypt";
 import { v4 } from "uuid";
 import { InvalidOperationError } from "../../domain/error";
-import { accountExistsWithEmail } from "./accounts.service";
-import { AccountModel, toAccountDTO } from "../../domain/entity/account";
+import { accountExistsWithEmail, findAccount, findAccountByEmail } from "./accounts.service";
+import { AccountDTO, AccountModel, toAccountDTO } from "../../domain/entity/account";
+import { findUserByUsername } from "./users.service";
 import { RegistrationPayload, AuthenticationPayload, AuthResponse } from "../../domain/auth";
 import logger from "../../config/logger";
 import { ServerError } from "../../domain/error";
 import { generateTokenPair } from "./token.service";
+import Regex from "../../domain/regex";
 
 /**
  * This method will register a new account using the provided data
@@ -24,7 +26,7 @@ export const register = async (actor: string, data: RegistrationPayload): Promis
     const encrypted = bcrypt.hashSync(data.password, bcrypt.genSaltSync());
     const a = await AccountModel.create({
         uid: uid,
-        email: data.email,
+        email: data.email.toUpperCase(),
         password: encrypted,
         name: data.name,
         phone: data.phone,
@@ -39,6 +41,15 @@ export const register = async (actor: string, data: RegistrationPayload): Promis
     return { account: toAccountDTO(a), tokens };
 }
 
+const locateAccount = async (actor: string, identifier: string): Promise<AccountDTO> => {
+    if (Regex.email.test(identifier)) {
+        return await findAccountByEmail(actor, identifier);
+    } else {
+        let user = await findUserByUsername(actor, identifier);
+        return await findAccount(actor, user.uid);
+    }
+}
+
 /**
  * This method will authenticate an account using the given credentials
  * @param actor Unique id of account that initiated the operation
@@ -46,7 +57,7 @@ export const register = async (actor: string, data: RegistrationPayload): Promis
  * @returns AccountResponse if authentication was successful
  */
 export const authenticate = async (actor: string, data: AuthenticationPayload): Promise<AuthResponse> => {
-    const a = await AccountModel.findOne({ email: data.identifier });
+    const a = await locateAccount(actor, data.identifier);
     if (!a) throw new InvalidOperationError(`Account does not exist: ${data.identifier}`);
     const valid = await bcrypt.compare(data.password, a.password);
     if (!valid) throw new InvalidOperationError("Invalid credentials provided");

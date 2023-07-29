@@ -28,9 +28,9 @@ export const findAccounts = async (actor: string, offset?: number, limit?: numbe
  * @param uid Unique id of requested account
  * @returns Account with matching unique id
  */
-export const findAccount = async (actor: string, uid: string): Promise<AccountDTO | undefined> => {
+export const findAccount = async (actor: string, uid: string): Promise<AccountDTO> => {
     const account = await AccountModel.findOne({ uid });
-    if (!account) return undefined;
+    if (!account) throw new NonExistentResourceError("account", uid);
     return toAccountDTO(account);
 }
 
@@ -40,9 +40,9 @@ export const findAccount = async (actor: string, uid: string): Promise<AccountDT
  * @param email Email of requested account
  * @returns Account with matching email
  */
-export const findAccountByEmail = async (actor: string, email: string): Promise<AccountDTO | undefined> => {
+export const findAccountByEmail = async (actor: string, email: string): Promise<AccountDTO> => {
     const account = await AccountModel.findOne({ email });
-    if (!account) return undefined;
+    if (!account) throw new NonExistentResourceError("account", email);
     return toAccountDTO(account);
 }
 
@@ -64,7 +64,7 @@ export const accountExists = async (actor: string, uid: string): Promise<Boolean
  * @returns True if an account exists with email, otherwise false
  */
 export const accountExistsWithEmail = async (actor: string, email: string): Promise<Boolean> => {
-    const result = await AccountModel.exists({ email });
+    const result = await AccountModel.exists({ email: email.toUpperCase() });
     return (result != undefined);
 }
 
@@ -91,7 +91,7 @@ export const updateAccountEmail = async (actor: string, account: string, email: 
     if (!a) throw new NonExistentResourceError('account', account);
     const exists = await accountExistsWithEmail(actor, email);
     if (exists) throw new InvalidOperationError(`Account already exists with email: ${email}`);
-    a.email = email;
+    a.email = email.toUpperCase();
     await a.save();
     return true;
 }
@@ -155,36 +155,6 @@ export const updateAccountBirthday = async (actor: string, account: string, birt
     const a = await AccountModel.findOne({ uid: account });
     if (!a) throw new NonExistentResourceError('account', account);
     a.birthday = birthday;
-    await a.save();
-    return true;
-}
-
-/**
- * This method will update the verified status of the given account
- * @param actor Unique id of account that initiated the operation
- * @param account Unique id of the account to update
- * @param verified New verified status
- * @returns True if update was successful, otherwise false
- */
-export const updateAccountVerified = async (actor: string, account: string, verified: boolean): Promise<Boolean> => {
-    const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new NonExistentResourceError('account', account);
-    a.verified = verified;
-    await a.save();
-    return true;
-}
-
-/**
- * This method will update the locked status of the given account
- * @param actor Unique id of account that initiated the operation
- * @param account Unique id of the account to update
- * @param verified New locked status
- * @returns True if update was successful, otherwise false
- */
-export const updateAccountLocked = async (actor: string, account: string, locked: boolean): Promise<Boolean> => {
-    const a = await AccountModel.findOne({ uid: account });
-    if (!a) throw new NonExistentResourceError('account', account);
-    a.locked = locked;
     await a.save();
     return true;
 }

@@ -122,38 +122,6 @@ describe('[sn-api] Users Service', () => {
             })
     });
 
-    it("Updates a user's online status", (done) => {
-        chai.request(server)
-            .put(`/api/users/${account.uid}`)
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${tokens.access}`)
-            .query({
-                online: true
-            })
-            .end((err, res) => {
-                should.equal(res.status, 200);
-                should.exist(res.body);
-                should.equal(res.body.data, true);
-                done();
-            })
-    });
-
-    it("Updates a user's active status", (done) => {
-        chai.request(server)
-            .put(`/api/users/${account.uid}`)
-            .set('Content-Type', 'application/json')
-            .set('Authorization', `Bearer ${tokens.access}`)
-            .query({
-                active: true
-            })
-            .end((err, res) => {
-                should.equal(res.status, 200);
-                should.exist(res.body);
-                should.equal(res.body.data, true);
-                done();
-            })
-    });
-
     it('Adds interests to a user', (done) => {
         user.interests.push('greek');
         chai.request(server)

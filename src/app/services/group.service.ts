@@ -36,9 +36,9 @@ export const inviteToGroup = async (actor: string, uid: string, groupId: string,
     return true;
 }
 
-export const findGroupByUid = async (actor: string, uid: string): Promise<GroupDTO | undefined> => {
+export const findGroupByUid = async (actor: string, uid: string): Promise<GroupDTO> => {
     const group = await GroupModel.findOne({ uid });
-    if (!group) return undefined;
+    if (!group) throw new NonExistentResourceError("group", uid);
     return toGroupDTO(group);
 }
 

@@ -1,7 +1,6 @@
-import { Tag, TagDTO, TagModel, CreateTagPayload } from "../../domain/entity/tag";
+import { TagDTO, TagModel, CreateTagPayload } from "../../domain/entity/tag";
 import { NonExistentResourceError } from "../../domain/error";
 import { toTagDTO } from "../../domain/entity/tag";
-import logger from "../../config/logger";
 
 /**
  * Creates a new tag objcet
@@ -65,9 +64,9 @@ export const countTags = async (actor: string): Promise<Number> => {
  * @param name Name of the tag to find
  * @returns Tag object if it exists
  */
-export const findTag = async (actor: string, name: string): Promise<TagDTO | undefined> => {
+export const findTag = async (actor: string, name: string): Promise<TagDTO> => {
     const tag = await TagModel.findOne({ name });
-    if (!tag) return undefined;
+    if (!tag) throw new NonExistentResourceError("tag", name);
     return toTagDTO(tag);
 }
 
@@ -122,7 +121,7 @@ export const updateTagRef = async (actor: string, name: string, newRef: string):
  * @param name Name of the tag to be deleted
  * @returns True if the deletion was successful, otherwise false
  */
-export const deleteTag = async (actor: string, name: string) => {
+export const deleteTag = async (actor: string, name: string): Promise<Boolean> => {
     const result = await TagModel.deleteOne({ name });
     return (result.acknowledged && (result.deletedCount == 1));
 }

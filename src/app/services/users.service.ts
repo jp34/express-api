@@ -48,11 +48,23 @@ export const findUsers = async (actor: string, offset?: number, limit?: number):
  * This method will return a user with the given uid, or undefined if one cannot be found.
  * @param actor Unique id of account that initiated the operation
  * @param user User's unique id
- * @returns User or undefined
+ * @returns UserDTO or undefined
  */
-export const findUser = async (actor: string, user: string): Promise<UserDTO | undefined> => {
+export const findUser = async (actor: string, user: string): Promise<UserDTO> => {
     const u = await UserModel.findOne({ uid: user });
-    if (!u) return undefined;
+    if (!u) throw new NonExistentResourceError("user", user);
+    return toUserDTO(u);
+}
+
+/**
+ * This method will locate and return a user by its username if it exists
+ * @param actor Unique id of account that initiated the operation
+ * @param username Username to search for
+ * @returns UserDTO or undefined
+ */
+export const findUserByUsername = async (actor: string, username: string): Promise<UserDTO> => {
+    const u = await UserModel.findOne({ username });
+    if (!u) throw new NonExistentResourceError("user", username);
     return toUserDTO(u);
 }
 
@@ -90,37 +102,7 @@ export const updateUsername = async (actor: string, user: string, newname: strin
     if (!u) throw new NonExistentResourceError("user", user);
     if (u.username === newname) throw new InvalidOperationError("New username must be different from current");
     u.username = newname;
-    u.modified = new Date(Date.now());
-    await u.save();
-    return true;
-}
-
-/**
- * This method will update a user's online status to the given status
- * @param actor Unique id of account that initiated the operation
- * @param user User's unique id
- * @param status New online status
- * @returns True if the update was successful, otherwise false
- */
-export const updateOnlineStatus = async (actor: string, user: string, status: boolean): Promise<Boolean> => {
-    const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("user", user);
-    u.online = status;
-    await u.save();
-    return true;
-}
-
-/**
- * This method will update a user's active status to the given status
- * @param actor Unique id of account that initiated the operation
- * @param user User's unique id
- * @param status New active status
- * @returns True if the update was successful, otherwise false
- */
-export const updateActiveStatus = async (actor: string, user: string, status: boolean): Promise<Boolean> => {
-    const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("user", user);
-    u.active = status;
+    u.dateModified = new Date(Date.now());
     await u.save();
     return true;
 }
@@ -146,13 +128,14 @@ export const deleteUser = async (actor: string, user: string): Promise<Boolean> 
  * @param add Array of tags to add as interests
  * @returns Array of tags
  */
-export const addUserInterests = async (actor: string, user: string, add: string[]): Promise<string[] | undefined> => {
+export const addUserInterests = async (actor: string, user: string, add: string[]): Promise<string[]> => {
     const u = await UserModel.findOne({ uid: user });
     if (!u) throw new NonExistentResourceError("user", user);
     if (add.length <= 0) throw new InvalidOperationError("No user interests specified"); 
     add.forEach((a) => {
         u.interests.push(a);
     });
+    u.dateModified = new Date(Date.now());
     const saved = await u.save();
     return toUserDTO(saved).interests;
 }
@@ -163,7 +146,7 @@ export const addUserInterests = async (actor: string, user: string, add: string[
  * @param user User's unique id
  * @returns Array of tags
  */
-export const findUserInterests = async (actor: string, user: string): Promise<string[] | undefined> => {
+export const findUserInterests = async (actor: string, user: string): Promise<string[]> => {
     const u = await findUser(actor, user);
     if (!u) throw new NonExistentResourceError("user", user);
     return u.interests;
@@ -176,13 +159,14 @@ export const findUserInterests = async (actor: string, user: string): Promise<st
  * @param add Array of tags to remove as interests
  * @returns Array of tags
  */
-export const removeUserInterests = async (actor: string, user: string, remove: string[]): Promise<string[] | undefined> => {
+export const removeUserInterests = async (actor: string, user: string, remove: string[]): Promise<string[]> => {
     const u = await UserModel.findOne({ uid: user });
     if (!u) throw new NonExistentResourceError("user", user);
     if (remove.length <= 0) throw new InvalidOperationError("No user interests specified"); 
     u.interests = u.interests.filter((i) => {
         return !remove.includes(i);
     })
+    u.dateModified = new Date(Date.now());
     const saved = await u.save();
     return toUserDTO(saved).interests;
 }
@@ -195,7 +179,7 @@ export const removeUserInterests = async (actor: string, user: string, remove: s
  * @param user User's unique id
  * @returns Array of connection id's
  */
-export const findUserFriends = async (actor: string, user: string): Promise<string[] | undefined> => {
+export const findUserFriends = async (actor: string, user: string): Promise<string[]> => {
     const u = await findUser(actor, user);
     if (!u) throw new NonExistentResourceError("user", user);
     return u.friends;
@@ -209,7 +193,7 @@ export const findUserFriends = async (actor: string, user: string): Promise<stri
  * @param user User's unique id
  * @returns Array of connection id's
  */
-export const findUserGroups = async (actor: string, user: string): Promise<string[] | undefined> => {
+export const findUserGroups = async (actor: string, user: string): Promise<string[]> => {
     const u = await findUser(actor, user);
     if (!u) throw new NonExistentResourceError("user", user);
     return u.groups;
@@ -223,7 +207,7 @@ export const findUserGroups = async (actor: string, user: string): Promise<strin
  * @param user User's unique id
  * @returns Array of notification id's
  */
-export const findUserInbox = async (actor: string, user: string): Promise<String[] | undefined> => {
+export const findUserInbox = async (actor: string, user: string): Promise<String[]> => {
     const u = await findUser(actor, user);
     if (!u) throw new NonExistentResourceError("user", user);
     return u.inbox;

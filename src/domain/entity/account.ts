@@ -9,43 +9,46 @@ export interface Account {
     name: string;
     phone: string;
     birthday: string;
-    verified: boolean;
-    locked: boolean;
-    last_login: Date;
-    created: Date;
-    modified: Date;
+    hasUser: boolean;
+    isVerified: boolean;
+    isLocked: boolean;
+    lastLogin: Date;
+    dateCreated: Date;
+    dateModified: Date;
 }
 
 // ---- DTO Model ------------
 
 export interface AccountDTO {
     uid: string;
-    email?: string;
-    password?: string;
-    name?: string;
-    phone?: string;
-    birthday?: string;
-    verified?: boolean;
-    locked?: boolean;
-    last_login?: Date;
-    created?: Date;
-    modified?: Date;
+    email: string;
+    password: string;
+    name: string;
+    phone: string;
+    birthday: string;
+    hasUser: boolean;
+    isVerified: boolean;
+    isLocked: boolean;
+    lastLogin: Date;
+    dateCreated: Date;
+    dateModified: Date;
 }
 
 export const toAccountDTO = (data: Account): AccountDTO => {
     let dto: AccountDTO = {
-        uid: data.uid
+        uid: data.uid,
+        email: data.email,
+        password: data.password,
+        name: data.name,
+        phone: data.phone,
+        birthday: data.birthday,
+        hasUser: data.hasUser,
+        isVerified: data.isVerified,
+        isLocked: data.isLocked,
+        lastLogin: data.lastLogin,
+        dateCreated: data.dateCreated,
+        dateModified: data.dateModified
     };
-    if (data.email) dto.email = data.email;
-    if (data.password) dto.password = data.password;
-    if (data.name) dto.name = data.name;
-    if (data.phone) dto.phone = data.phone;
-    if (data.birthday) dto.birthday = data.birthday;
-    if (data.verified != undefined) dto.verified = data.verified;
-    if (data.locked != undefined) dto.locked = data.locked;
-    if (data.last_login) dto.last_login = data.last_login;
-    if (data.created) dto.created = data.created;
-    if (data.modified) dto.modified = data.modified;
     return dto;
 }
 
@@ -58,11 +61,12 @@ export const AccountSchema = new Schema<Account>({
     name: { type: String, required: true },
     phone: { type: String },
     birthday: { type: String, required: true },
-    verified: { type: Boolean, default: false },
-    locked: { type: Boolean, default: false },
-    last_login: { type: Date, default: null },
-    created: { type: Date, default: Date.now() },
-    modified: { type: Date, default: Date.now() },
+    hasUser: { type: Boolean, default: false },
+    isVerified: { type: Boolean, default: false },
+    isLocked: { type: Boolean, default: false },
+    lastLogin: { type: Date, default: null },
+    dateCreated: { type: Date, default: Date.now() },
+    dateModified: { type: Date, default: Date.now() },
 });
 
 export const AccountModel = mongoose.model<Account>("Account", AccountSchema);

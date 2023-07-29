@@ -1,6 +1,6 @@
 import { v4 } from "uuid";
 import { NotificationModel, Notification, NotificationType } from "../../domain/entity/notification";
-import { InvalidOperationError } from "../../domain/error";
+import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
 import { addToUserInbox } from "./users.service";
 
 // ---- Utility ------------
@@ -16,7 +16,8 @@ export const sanitizeNotificationResponse = (data: any): Notification => {
         type: data.type,
         actor: data.actor,
         notifiers: data.notifiers,
-        created: data.created,
+        dateCreated: data.dateCreated,
+        dateModified: data.dateModified
     };
     return note;
 }
@@ -55,9 +56,9 @@ export const createNotification = async (
  * @param note Unique id of the notification to search for
  * @returns Notification if found, otherwise false
  */
-export const findNotification = async (actor: string, note: string): Promise<Notification | undefined> => {
+export const findNotification = async (actor: string, note: string): Promise<Notification> => {
     const n = await NotificationModel.findOne({ uid: note });
-    if (!n) return undefined;
+    if (!n) throw new NonExistentResourceError("notification", note);
     return sanitizeNotificationResponse(n);
 }
 

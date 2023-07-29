@@ -23,10 +23,11 @@ export const validateAccountResponse = (account: any) => {
     account.name.should.be.String();
     account.phone.should.be.String();
     account.birthday.should.be.String();
-    account.verified.should.be.Boolean();
-    account.locked.should.be.Boolean();
-    account.created.should.be.String();
-    account.modified.should.be.String();
+    account.hasUser.should.be.Boolean();
+    account.isVerified.should.be.Boolean();
+    account.isLocked.should.be.Boolean();
+    account.dateCreated.should.be.String();
+    account.dateModified.should.be.String();
     return true;
 }
 
@@ -40,10 +41,10 @@ export const validateUserResponse = (user: any) => {
     user.friends.should.be.Array();
     user.groups.should.be.Array();
     user.inbox.should.be.Array();
-    user.online.should.be.Boolean();
-    user.active.should.be.Boolean();
-    user.created.should.be.String();
-    user.modified.should.be.String();
+    user.isOnline.should.be.Boolean();
+    user.isActive.should.be.Boolean();
+    user.dateCreated.should.be.String();
+    user.dateModified.should.be.String();
     return true;
 }
 

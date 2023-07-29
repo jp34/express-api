@@ -6,8 +6,6 @@ import {
     updateUsername,
     findUserInterests,
     addUserInterests,
-    updateOnlineStatus,
-    updateActiveStatus,
     createUser,
     findUserFriends,
     findUserGroups,
@@ -94,8 +92,6 @@ export default class UsersController {
             if (!uid) throw new InvalidInputError("uid");
             const actor = request.user.uid;
             if (request.query.username) await updateUsername(actor, uid, request.query.username.toString());
-            if (request.query.online) await updateOnlineStatus(actor, uid, (request.query.online === 'true'));
-            if (request.query.active) await updateActiveStatus(actor, uid, (request.query.active === 'true'));
             response.status(200).json({ data: true });
             next();
         } catch (err: any) {

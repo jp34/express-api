@@ -57,30 +57,6 @@ export default class AuthController {
     }
 
     /**
-     * POST /auth/signup/mobile
-     * This route allows a user to create a new account and user profile at the same time
-     * @param request 
-     * @param response 
-     * @param next 
-     */
-    public mobileSignup = async (request: MobileRegistrationRequest, response: Response, next: NextFunction) => {
-        try {
-            if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
-            const payload: MobileRegistrationPayload = request.body.data;
-            if (!payload) throw new InvalidInputError('data');
-            const data = await register(request.ip, payload);
-            await createUser(request.ip, data.account.uid, {
-                username: payload.username,
-                interests: payload.interests
-            });
-            response.status(200).json({ data });
-            next();
-        } catch (err: any) {
-            next(err);
-        }
-    }
-
-    /**
      * POST /auth/refresh
      * This route allows a user to refresh their access token using a refresh token
      * @param request Http request

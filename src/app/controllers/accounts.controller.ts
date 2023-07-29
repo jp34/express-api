@@ -5,8 +5,6 @@ import {
     deleteAccount,
     updateAccountEmail,
     updateAccountPassword,
-    updateAccountVerified,
-    updateAccountLocked,
     updateAccountName,
     updateAccountPhone,
     updateAccountBirthday
@@ -75,8 +73,6 @@ export default class AccountsController {
             if (request.query.name) await updateAccountName(actor, uid, request.query.name.toString());
             if (request.query.phone) await updateAccountPhone(actor, uid, request.query.phone.toString());
             if (request.query.birthday) await updateAccountBirthday(actor, uid, request.query.birthday.toString());
-            if (request.query.verified) await updateAccountVerified(actor, uid, (request.query.verified === 'true'));
-            if (request.query.locked) await updateAccountLocked(actor, uid, (request.query.locked === 'true'));
             response.status(200).json({ data: true });
             next();
         } catch (err: any) {
