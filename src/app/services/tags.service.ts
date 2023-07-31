@@ -1,6 +1,7 @@
-import { TagDTO, TagModel, CreateTagPayload } from "../../domain/entity/tag";
+import { Tag, TagModel, CreateTagPayload } from "../../domain/entity/tag";
 import { NonExistentResourceError } from "../../domain/error";
-import { toTagDTO } from "../../domain/entity/tag";
+
+// ---- Create Methods ------------
 
 /**
  * Creates a new tag objcet
@@ -11,7 +12,7 @@ import { toTagDTO } from "../../domain/entity/tag";
  * @param parent Identifier of parent tag
  * @returns The newly created tag object
  */
-export const createTag = async (actor: string, data: CreateTagPayload): Promise<TagDTO> => {
+export const createTag = async (actor: string, data: CreateTagPayload): Promise<Tag> => {
     const actualParent = await TagModel.findOne({ name: data.parent });
     if (!actualParent) throw new NonExistentResourceError("Tag", data.parent);
     const tag = await TagModel.create({
@@ -20,23 +21,25 @@ export const createTag = async (actor: string, data: CreateTagPayload): Promise<
         parent: data.parent,
         ref: data.ref,
     });
-    return toTagDTO(tag);
+    return tag;
 }
+
+// ---- Read Methods ------------
 
 /**
  * Returns all existing tags
  * @param actor Unique id of account that initiated the operation
  * @returns Array of tag objects
  */
-export const findTags = async (actor: string, offset?: number, limit?: number): Promise<TagDTO[]> => {
+export const findTags = async (actor: string, offset?: number, limit?: number): Promise<Tag[]> => {
     let results = [];
     if (offset && limit) results = await TagModel.find().skip(offset).limit(limit);
     else if (offset && !limit) results = await TagModel.find().skip(offset);
     else if (!offset && limit) results = await TagModel.find().limit(limit);
     else results = await TagModel.find();
-    let tags: TagDTO[] = [];
+    let tags: Tag[] = [];
     results.forEach((result) => {
-        tags.push(toTagDTO(result));
+        tags.push(result);
     });
     return tags;
 }
@@ -64,11 +67,13 @@ export const countTags = async (actor: string): Promise<Number> => {
  * @param name Name of the tag to find
  * @returns Tag object if it exists
  */
-export const findTag = async (actor: string, name: string): Promise<TagDTO> => {
+export const findTag = async (actor: string, name: string): Promise<Tag> => {
     const tag = await TagModel.findOne({ name });
     if (!tag) throw new NonExistentResourceError("tag", name);
-    return toTagDTO(tag);
+    return tag;
 }
+
+// ---- Update Methods ------------
 
 /**
  * This method will update the label of the specified tag
@@ -114,6 +119,8 @@ export const updateTagRef = async (actor: string, name: string, newRef: string):
     await t.save();
     return true;
 }
+
+// ---- Delete Methods ------------
 
 /**
  * Delete a single tag by its identifier

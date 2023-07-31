@@ -1,23 +1,25 @@
 import bcrypt from "bcrypt";
-import { AccountModel, AccountDTO, toAccountDTO } from "../../domain/entity/account";
+import { Account, AccountModel } from "../../domain/entity/account";
 import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
 import { deleteUser, userExists } from "./users.service";
 import logger from "../../config/logger";
+
+// Read Methods
 
 /**
  * This method returns an array of accounts
  * @param actor Unique id of account that initiated the operation
  * @returns An array of accounts
  */
-export const findAccounts = async (actor: string, offset?: number, limit?: number): Promise<AccountDTO[]> => {
+export const findAccounts = async (actor: string, offset?: number, limit?: number): Promise<Account[]> => {
     let results = [];
     if (offset && limit) results = await AccountModel.find().skip(offset).limit(limit);
     else if (offset && !limit) results = await AccountModel.find().skip(offset);
     else if (!offset && limit) results = await AccountModel.find().limit(limit);
     else results = await AccountModel.find();
-    let accounts: AccountDTO[] = [];
+    let accounts: Account[] = [];
     results.forEach((result) => {
-        accounts.push(toAccountDTO(result));
+        accounts.push(result);
     });
     return accounts;
 }
@@ -28,10 +30,10 @@ export const findAccounts = async (actor: string, offset?: number, limit?: numbe
  * @param uid Unique id of requested account
  * @returns Account with matching unique id
  */
-export const findAccount = async (actor: string, uid: string): Promise<AccountDTO> => {
+export const findAccount = async (actor: string, uid: string): Promise<Account> => {
     const account = await AccountModel.findOne({ uid });
     if (!account) throw new NonExistentResourceError("account", uid);
-    return toAccountDTO(account);
+    return account;
 }
 
 /**
@@ -40,10 +42,10 @@ export const findAccount = async (actor: string, uid: string): Promise<AccountDT
  * @param email Email of requested account
  * @returns Account with matching email
  */
-export const findAccountByEmail = async (actor: string, email: string): Promise<AccountDTO> => {
+export const findAccountByEmail = async (actor: string, email: string): Promise<Account> => {
     const account = await AccountModel.findOne({ email });
     if (!account) throw new NonExistentResourceError("account", email);
-    return toAccountDTO(account);
+    return account;
 }
 
 /**
@@ -78,6 +80,8 @@ export const accountExistsWithPhone = async (actor: string, phone: string): Prom
     const result = await AccountModel.exists({ phone });
     return (result != undefined);
 }
+
+// Update Methods
 
 /**
  * This method will update the email of the given account

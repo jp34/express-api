@@ -22,31 +22,6 @@ export interface Notification {
 
 // ---- Mongoose Model ----------------
 
-export interface NotificationDTO {
-    uid: string
-    actor: string
-    notifiers: string[]
-    type: NotificationType
-    accepted?: boolean
-    dateCreated: Date
-    dateModified: Date
-}
-
-export const toNotificationDTO = (data: Notification): NotificationDTO => {
-    let dto: NotificationDTO = {
-        uid: data.uid,
-        actor: data.actor,
-        notifiers: data.notifiers,
-        type: data.type,
-        accepted: data.accepted,
-        dateCreated: data.dateCreated,
-        dateModified: data.dateModified
-    };
-    return dto;
-}
-
-// ---- Mongoose Model ----------------
-
 export const NotificationSchema = new Schema<Notification>({
     uid: { type: String, required: true, unique: true },
     actor: { type: String, required: true },

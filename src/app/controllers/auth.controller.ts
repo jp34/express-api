@@ -3,15 +3,12 @@ import { refreshAccessToken } from "../services/token.service";
 import {
     AuthenticationPayload,
     AuthenticationRequest,
-    MobileRegistrationPayload,
-    MobileRegistrationRequest,
     RefreshRequest,
     RegistrationPayload,
     RegistrationRequest
-} from "../../domain/auth";
+} from "../../domain/dto/auth";
 import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 import { register, authenticate } from "../services/auth.service";
-import { createUser } from "../services/users.service";
 
 export default class AuthController {
 

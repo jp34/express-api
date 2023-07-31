@@ -20,37 +20,6 @@ export type CreateUserPayload = {
     interests: string[];
 };
 
-// ---- DTO Model ----------------
-
-export interface UserDTO {
-    uid: string;
-    username: string;
-    interests: string[];
-    friends: string[];
-    groups: string[];
-    inbox: string[];
-    isActive: boolean;
-    isOnline: boolean;
-    dateCreated: Date;
-    dateModified: Date;
-}
-
-export const toUserDTO = (data: User): UserDTO => {
-    let dto: UserDTO = {
-        uid: data.uid,
-        username: data.username,
-        interests: data.interests,
-        friends: data.friends,
-        groups: data.groups,
-        inbox: data.inbox,
-        isActive: data.isActive,
-        isOnline: data.isOnline,
-        dateCreated: data.dateCreated,
-        dateModified: data.dateModified
-    };
-    return dto;
-}
-
 // ---- Mongoose Model ------------
 
 export const UserSchema = new Schema<User>({

@@ -10,27 +10,6 @@ export interface Group {
     dateModified: Date;
 }
 
-// ---- DTO Model ----------------
-
-export interface GroupDTO {
-    uid: string;
-    host: string;
-    members: string[];
-    dateCreated: Date;
-    dateModified: Date;
-}
-
-export const toGroupDTO = (data: Group): GroupDTO => {
-    let dto: GroupDTO = {
-        uid: data.uid,
-        host: data.host,
-        members: data.members,
-        dateCreated: data.dateCreated,
-        dateModified: data.dateModified
-    };
-    return dto;
-}
-
 // ---- Request Model ----------------
 
 export type CreateGroupPayload = {
