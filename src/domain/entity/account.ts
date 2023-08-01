@@ -9,8 +9,6 @@ export interface Account {
     phone: string
     birthday: string
     hasUser: boolean
-    isVerified: boolean
-    isLocked: boolean
     lastLogin: Date
     dateCreated: Date
     dateModified: Date
@@ -24,8 +22,6 @@ export const AccountSchema = new Schema<Account>({
     phone: { type: String },
     birthday: { type: String, required: true },
     hasUser: { type: Boolean, default: false },
-    isVerified: { type: Boolean, default: false },
-    isLocked: { type: Boolean, default: false },
     lastLogin: { type: Date, default: null },
     dateCreated: { type: Date, default: Date.now() },
     dateModified: { type: Date, default: Date.now() },
