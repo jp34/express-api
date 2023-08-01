@@ -21,7 +21,7 @@ export type PlacesSearchOptions = {
  * @returns 
  */
 export const nearbySuggestionSearch = async (actor: string, latitude: number, longitude: number) => {
-    const interests = await findUserInterests(actor, actor);
+    const interests = await findUserInterests(actor, { uid: actor });
     if (!interests) throw new NonExistentResourceError("user:interests", actor);
     const refs = await findTagRefs(actor, interests);
     const categories = refs.join(",");

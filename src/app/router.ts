@@ -35,7 +35,6 @@ router.put("/api/users/:uid/interests", authenticate, users.addInterests);
 router.get("/api/users/:uid/friends", authenticate, users.getFriends);
 router.get("/api/users/:uid/groups", authenticate, users.getGroups);
 router.get("/api/users/:uid/inbox", authenticate, users.getInbox);
-router.put("/api/users/:uid/inbox", authenticate, users.updateInbox);
 
 // Tags API
 router.post("/api/tags", authenticate, tags.create);

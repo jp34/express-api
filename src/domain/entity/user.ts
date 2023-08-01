@@ -1,7 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-// ---- User Model ----------------
-
 export interface User {
     uid: string;
     username: string;
@@ -14,13 +12,6 @@ export interface User {
     dateCreated: Date;
     dateModified: Date;
 }
-
-export type CreateUserPayload = {
-    username: string;
-    interests: string[];
-};
-
-// ---- Mongoose Model ------------
 
 export const UserSchema = new Schema<User>({
     uid: { type: String, required: true, unique: true },

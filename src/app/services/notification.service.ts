@@ -1,52 +1,36 @@
 import { v4 } from "uuid";
-import { NotificationModel, Notification, NotificationType } from "../../domain/entity/notification";
+import { NotificationModel, Notification } from "../../domain/entity/notification";
 import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
 import { addToUserInbox } from "./users.service";
-
-// ---- Utility ------------
-
-/**
- * This method will sanatize the given data and return a new Notification object
- * @param data Object to be sanitized
- * @returns Notification object
- */
-export const sanitizeNotificationResponse = (data: any): Notification => {
-    const note: Notification = {
-        uid: data.uid,
-        type: data.type,
-        actor: data.actor,
-        notifiers: data.notifiers,
-        dateCreated: data.dateCreated,
-        dateModified: data.dateModified
-    };
-    return note;
-}
-
-// ---- Notification ------------
+import { CreateNotificationPayload, NotificationSearchParams } from "../../domain/dto/notification.dto";
+import logger from "../../config/logger";
 
 /**
  * This method will create a new notification and notify the associated users
  * @param actor Unique id of account who initiated the operation
- * @param notifiers Array of user uid's whom should be notified 
- * @param type Type of notification to create
+ * @param payload Values to initialize notification with
  * @returns Notification object
  */
-export const createNotification = async (
-    actor: string,
-    notifiers: string[],
-    type: NotificationType
-): Promise<Notification> => {
-    if (notifiers.length < 1) throw new InvalidOperationError("Notification must have at least one notifier");
-    const note = await NotificationModel.create({
-        uid: v4(),
+export const createNotification = async (actor: string, payload: CreateNotificationPayload): Promise<Notification> => {
+    if (payload.notifiers.length < 1) throw new InvalidOperationError("Notification must have at least one notifier");
+    const uid = v4();
+    await NotificationModel.create({
+        uid,
         actor,
-        notifiers,
-        type
+        notifiers: payload.notifiers,
+        type: payload.type
     });
-    notifiers.forEach(async (n) => {
-        await addToUserInbox(actor, n, note.uid);
+    const note = await findNotification(actor, { uid });
+    payload.notifiers.forEach(async (n) => {
+        await addToUserInbox(actor, { uid: n }, note.uid);
     });
-    return sanitizeNotificationResponse(note);
+    logger.info({
+        operation: "createNotification",
+        actor,
+        payload,
+        resource: `note:${note.uid}`
+    });
+    return note;
 }
 
 /**
@@ -56,47 +40,27 @@ export const createNotification = async (
  * @param note Unique id of the notification to search for
  * @returns Notification if found, otherwise false
  */
-export const findNotification = async (actor: string, note: string): Promise<Notification> => {
-    const n = await NotificationModel.findOne({ uid: note });
-    if (!n) throw new NonExistentResourceError("notification", note);
-    return sanitizeNotificationResponse(n);
-}
-
-export const findNotifications = async (offset?: number, limit?: number): Promise<Notification[]> => {
-    const off = offset ?? 0;
-    const lim = limit ?? 10;
-    const results = await NotificationModel.find().limit(lim).skip(off);
-    let notes: Notification[] = [];
-    results.forEach((result) => {
-        notes.push(sanitizeNotificationResponse(result));
+export const findNotification = async (actor: string, params: NotificationSearchParams): Promise<Notification> => {
+    const note = await NotificationModel.findOne(params).select('-_id');
+    if (!note) throw new NonExistentResourceError("notification", JSON.stringify(params));
+    logger.info({
+        operation: "findNotification",
+        actor,
+        params,
+        resource: `note:${note.uid}`
     });
-    return notes;
+    return note;
 }
 
-export const findNotificationsByActor = async (actor: string, offset?: number, limit?: number): Promise<Notification[]> => {
+export const findNotifications = async (actor: string, params: NotificationSearchParams, offset?: number, limit?: number): Promise<Notification[]> => {
     const off = offset ?? 0;
     const lim = limit ?? 10;
-    const results = await NotificationModel.find({ actor }).limit(lim).skip(off);
-    let notes: Notification[] = [];
-    results.forEach((result) => {
-        notes.push(sanitizeNotificationResponse(result));
-    });
-    return notes;
-}
-
-export const findNotificationsByNotifier = async (notifier: string, offset?: number, limit?: number): Promise<Notification[]> => {
-    const off = offset ?? 0;
-    const lim = limit ?? 10;
-    const results = await NotificationModel.find({
-        notifiers: {
-            $all: [
-                notifier
-            ]
-        }
-    }).limit(lim).skip(off);
-    let notes: Notification[] = [];
-    results.forEach((result) => {
-        notes.push(sanitizeNotificationResponse(result));
+    const notes = await NotificationModel.find(params).limit(lim).skip(off).select('-_id');
+    logger.info({
+        operation: "findNotifications",
+        actor,
+        params,
+        additionalParams: { offset, limit }
     });
     return notes;
 }

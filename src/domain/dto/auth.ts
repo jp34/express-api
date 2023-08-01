@@ -1,21 +1,10 @@
 import { Account } from "../entity/account";
-
-// Auth Payload Types
-
-export interface RegistrationPayload {
-    email: string;
-    password: string;
-    name: string;
-    phone: string;
-    birthday: string;
-}
+import { CreateAccountPayload } from "./account.dto";
 
 export interface AuthenticationPayload {
     identifier: string;
     password: string;
 };
-
-// Auth Response Types
 
 export type AuthResponse = {
     account: Account;
@@ -31,7 +20,7 @@ export interface RegistrationRequest extends Express.Request {
     user?: Record<string, any>
     ip?: string
     body: {
-        data: RegistrationPayload
+        data: CreateAccountPayload
     }
 }
 

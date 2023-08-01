@@ -4,9 +4,9 @@ import {
     AuthenticationPayload,
     AuthenticationRequest,
     RefreshRequest,
-    RegistrationPayload,
     RegistrationRequest
 } from "../../domain/dto/auth";
+import { CreateAccountPayload } from "../../domain/dto/account.dto";
 import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 import { register, authenticate } from "../services/auth.service";
 
@@ -43,7 +43,7 @@ export default class AuthController {
     public signup = async (request: RegistrationRequest, response: Response, next: NextFunction) => {
         try {
             if (!request.ip) throw new InvalidOperationError("Request has not been verified yet");
-            const payload: RegistrationPayload = request.body.data;
+            const payload: CreateAccountPayload = request.body.data;
             if (!payload) throw new InvalidInputError('data');
             const data = await register(request.ip, payload);
             response.status(200).json({ data });

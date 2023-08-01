@@ -21,7 +21,6 @@ let tokens = {
     refresh: ""
 };
 
-
 describe('[sn-api] Accounts Service', () => {
 
     before('Set Up: Create test account', (done) => {
@@ -162,7 +161,7 @@ describe('[sn-api] Accounts Service', () => {
                 should.exist(res.body);
                 should.exist(res.body.data);
                 validateAccountResponse(res.body.data);
-                should.equal(res.body.data.email, account.email.toUpperCase());
+                should.equal(res.body.data.email, account.email.toLowerCase());
                 should.equal(res.body.data.name, account.name);
                 should.equal(res.body.data.phone, account.phone);
                 should.equal(res.body.data.birthday, account.birthday);

@@ -15,12 +15,14 @@ import { NonExistentResourceError } from "../../domain/error";
 export const createTag = async (actor: string, data: CreateTagPayload): Promise<Tag> => {
     const actualParent = await TagModel.findOne({ name: data.parent });
     if (!actualParent) throw new NonExistentResourceError("Tag", data.parent);
-    const tag = await TagModel.create({
+    await TagModel.create({
         name: data.name,
         label: data.label,
         parent: data.parent,
         ref: data.ref,
     });
+    const tag = await TagModel.findOne({ name: data.name }).select('-_id -__v');
+    if (!tag) throw new NonExistentResourceError("tag", data.name);
     return tag;
 }
 
@@ -32,15 +34,9 @@ export const createTag = async (actor: string, data: CreateTagPayload): Promise<
  * @returns Array of tag objects
  */
 export const findTags = async (actor: string, offset?: number, limit?: number): Promise<Tag[]> => {
-    let results = [];
-    if (offset && limit) results = await TagModel.find().skip(offset).limit(limit);
-    else if (offset && !limit) results = await TagModel.find().skip(offset);
-    else if (!offset && limit) results = await TagModel.find().limit(limit);
-    else results = await TagModel.find();
-    let tags: Tag[] = [];
-    results.forEach((result) => {
-        tags.push(result);
-    });
+    const off = offset ?? 0;
+    const lim = limit ?? 10;
+    const tags = await TagModel.find().skip(off).limit(lim).select('-_id -__v');
     return tags;
 }
 
@@ -68,7 +64,7 @@ export const countTags = async (actor: string): Promise<Number> => {
  * @returns Tag object if it exists
  */
 export const findTag = async (actor: string, name: string): Promise<Tag> => {
-    const tag = await TagModel.findOne({ name });
+    const tag = await TagModel.findOne({ name }).select('-_id -__v');
     if (!tag) throw new NonExistentResourceError("tag", name);
     return tag;
 }

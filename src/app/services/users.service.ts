@@ -1,66 +1,58 @@
-import { User, UserModel, CreateUserPayload } from "../../domain/entity/user";
+import { User, UserModel } from "../../domain/entity/user";
+import { CreateUserPayload, UserSearchParams } from "../../domain/dto/user.dto";
 import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
 import { findAccount } from "./accounts.service";
-
-// ---- Create Methods ------------
+import logger from "../../config/logger";
 
 /**
  * This method will create a new user object with the given username and interests. A user can only be created for an
  * account that is not yet associated with a user profile.
  * @param actor Unique id of account that initiated the operation
- * @param uid Unique id of the account to associate with the new user
- * @param data Create user payload
+ * @param uid Unique id of account to associate with new user
+ * @param payload Values to initialize new user
  * @returns User object
  */
-export const createUser = async (actor: string, uid: string, data: CreateUserPayload): Promise<User> => {
-    const account = await findAccount(actor, uid);
+export const createUser = async (actor: string, uid: string, payload: CreateUserPayload): Promise<User> => {
+    // Locate associated account
+    const account = await findAccount(actor, { uid });
     if (!account) throw new InvalidOperationError('Cannot create user for nonexistent account');
-    const user = await UserModel.findOne({ uid: account.uid });
-    if (user) throw new InvalidOperationError('User already exists');
-    return await UserModel.create({
+    const userExists = await findUserExists(actor, { uid });
+    if (userExists) throw new InvalidOperationError('Account is already associated with another user');
+    const usernameExists = await findUserExists(actor, { username: payload.username });
+    if (usernameExists) throw new InvalidOperationError(`User already exists with username: ${payload.username}`);
+    await UserModel.create({
         uid: account.uid,
-        username: data.username,
-        interests: data.interests
+        username: payload.username,
+        interests: payload.interests
     });
-}
-
-/**
- * This method will add one or more interests to a given user
- * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @param add Array of tags to add as interests
- * @returns Array of tags
- */
-export const addUserInterests = async (actor: string, uid: string, add: string[]): Promise<Boolean> => {
-    const user = await UserModel.findOne({ uid });
-    if (!user) throw new NonExistentResourceError("user", uid);
-    if (add.length <= 0) throw new InvalidOperationError("No user interests specified"); 
-    add.forEach((a) => {
-        user.interests.push(a);
+    const user = await findUser(actor, { uid: account.uid });
+    if (!user) throw new NonExistentResourceError("user", account.uid);
+    logger.info({
+        operation: "createUser",
+        actor,
+        payload,
+        resource: `user:${account.uid}`
     });
-    user.dateModified = new Date(Date.now());
-    const saved = await user.save();
-    return true;
+    return user;
 }
-
-// ---- Read Methods ------------
 
 /**
  * This method will return an array of users, pagination is enabled via offset & limit.
  * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate user by
  * @param offset Number of users to offset
  * @param limit Number of users to return
  * @returns An array of users
  */
-export const findUsers = async (actor: string, offset?: number, limit?: number): Promise<User[]> => {
-    let results = [];
-    if (offset && limit) results = await UserModel.find().skip(offset).limit(limit);
-    else if (offset && !limit) results = await UserModel.find().skip(offset);
-    else if (!offset && limit) results = await UserModel.find().limit(limit);
-    else results = await UserModel.find();
-    let users: User[] = [];
-    results.forEach((result) => {
-        users.push(result);
+export const findUsers = async (actor: string, params: UserSearchParams, offset?: number, limit?: number): Promise<User[]> => {
+    const off = offset ?? 0;
+    const lim = limit ?? 10;
+    const users = await UserModel.find(params).skip(off).limit(lim).select('-_id -__v');
+    logger.info({
+        operation: "findUsers",
+        actor,
+        params,
+        additionalParams: { offset, limit }
     });
     return users;
 }
@@ -68,160 +60,233 @@ export const findUsers = async (actor: string, offset?: number, limit?: number):
 /**
  * This method will return a user with the given uid, or undefined if one cannot be found.
  * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
+ * @param params Parameters to locate user by
  * @returns UserDTO or undefined
  */
-export const findUser = async (actor: string, uid: string): Promise<User> => {
-    const user = await UserModel.findOne({ uid });
-    if (!user) throw new NonExistentResourceError("user", uid);
-    return user;
-}
-
-/**
- * This method will locate and return a user by its username if it exists
- * @param actor Unique id of account that initiated the operation
- * @param uidname Username to search for
- * @returns UserDTO or undefined
- */
-export const findUserByUsername = async (actor: string, username: string): Promise<User> => {
-    const user = await UserModel.findOne({ username });
-    if (!user) throw new NonExistentResourceError("user", username);
+export const findUser = async (actor: string, params: UserSearchParams): Promise<User> => {
+    const user = await UserModel.findOne(params).select('-_id -__v');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    logger.info({
+        operation: "findUser",
+        actor,
+        params,
+        resource: `user:${user.uid}`
+    });
     return user;
 }
 
 /**
  * This method will determine if a user exists with a given uid
  * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @returns True if a user exists with that uid, otherwise false
+ * @param params Parameters to locate user by
+ * @returns True if a user exists with that uid
  */
-export const userExists = async (actor: string, uid: string): Promise<Boolean> => {
-    const result = await UserModel.exists({ uid });
-    return (result != undefined);
+export const findUserExists = async (actor: string, params: UserSearchParams): Promise<Boolean> => {
+    const user = await UserModel.findOne(params).select('uid');
+    if (user == undefined) return false;
+    logger.info({
+        operation: "findUserExists",
+        actor,
+        params,
+        resource: `user:${user.uid}`
+    });
+    return true;
 }
-
-/**
- * This method will determine if a user exists with a given username
- * @param actor Unique id of account that initiated the operation
- * @param uidname Username to check
- * @returns True if a user exists with that username, otherwise false
- */
-export const userExistsWithUsername = async (actor: string, username: string): Promise<Boolean> => {
-    const result = await UserModel.exists({ username });
-    return (result != undefined);
-}
-
-/**
- * This method will return a user's interests
- * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @returns Array of tags
- */
-export const findUserInterests = async (actor: string, user: string): Promise<string[]> => {
-    const u = await findUser(actor, user);
-    if (!u) throw new NonExistentResourceError("user", user);
-    return u.interests;
-}
-
-/**
- * This method will return a user's friends
- * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @returns Array of connection id's
- */
-export const findUserFriends = async (actor: string, user: string): Promise<string[]> => {
-    const u = await findUser(actor, user);
-    if (!u) throw new NonExistentResourceError("user", user);
-    return u.friends;
-}
-
-/**
- * This method will return a user's groups
- * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @returns Array of connection id's
- */
-export const findUserGroups = async (actor: string, user: string): Promise<string[]> => {
-    const u = await findUser(actor, user);
-    if (!u) throw new NonExistentResourceError("user", user);
-    return u.groups;
-}
-
-/**
- * This method will return the inbox of the given user
- * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @returns Array of notification id's
- */
-export const findUserInbox = async (actor: string, user: string): Promise<String[]> => {
-    const u = await findUser(actor, user);
-    if (!u) throw new NonExistentResourceError("user", user);
-    return u.inbox;
-}
-
-// ---- Update Methods ------------
 
 /**
  * This method will change the username of a given user
  * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @param newname New username
- * @returns True if the name change was successful, otherwise false
+ * @param params Parameters to locate user by
+ * @param username New username
+ * @returns True if the update was successful
  */
-export const updateUsername = async (actor: string, uid: string, newname: string): Promise<Boolean> => {
-    const user = await UserModel.findOne({ uid });
-    if (!user) throw new NonExistentResourceError("user", uid);
-    if (user.username === newname) throw new InvalidOperationError("New username must be different from current");
-    user.username = newname;
+export const updateUsername = async (actor: string, params: UserSearchParams, username: string): Promise<Boolean> => {
+    const user = await UserModel.findOne(params).select('uid username dateModified');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    if (user.username === username) throw new InvalidOperationError("New username must be different from current");
+    user.username = username;
     user.dateModified = new Date(Date.now());
     await user.save();
+    logger.info({
+        operation: "updateUsername",
+        actor,
+        params,
+        additionalParams: { username },
+        resource: `user:${user.uid}`,
+    });
     return true;
 }
-
-/**
- * This method will add a notification id to a user's inbox
- * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @param noteId Notification's unique id
- * @returns True if operation was successful, otherwise false
- */
-export const addToUserInbox = async (actor: string, user: string, note: string): Promise<Boolean> => {
-    const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("user", user);
-    u.inbox.push(note);
-    await u.save();
-    return true;
-}
-
-// ---- Delete Methods ------------
 
 /**
  * This method will delete a UserModel. Any user will be automatically deleted
  * when the associated account deleted.
  * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
- * @returns True if the delete was successful, otherwise false
+ * @param params Parameters to locate user by
+ * @returns True if the delete was successful
  */
-export const deleteUser = async (actor: string, uid: string): Promise<Boolean> => {
-    const result = await UserModel.deleteOne({ uid });
-    return (result.acknowledged && (result.deletedCount == 1));
+export const deleteUser = async (actor: string, params: UserSearchParams): Promise<Boolean> => {
+    const user = await UserModel.findOne(params).select('uid');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    await user.deleteOne();
+    logger.info({
+        operation: "deleteUser",
+        actor,
+        params,
+        resource: `user:${user.uid}`,
+    });
+    return true;
+}
+
+// ---- User Interests --------
+
+/**
+ * This method will return a user's interests
+ * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate user by
+ * @returns Array of tags
+ */
+export const findUserInterests = async (actor: string, params: UserSearchParams): Promise<string[]> => {
+    const user = await UserModel.findOne(params).select('uid interests');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    logger.info({
+        operation: "findUserInterests",
+        actor,
+        params,
+        resource: `user:${user.uid}`
+    });
+    return user.interests;
+}
+
+/**
+ * This method will add one or more interests to a given user
+ * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate user by
+ * @param add Array of tags to add as interests
+ * @returns Array of tags
+ */
+export const addUserInterests = async (actor: string, params: UserSearchParams, add: string[]): Promise<Boolean> => {
+    const user = await UserModel.findOne(params).select('uid interests dateModified');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    if (add.length <= 0) throw new InvalidOperationError("No user interests specified"); 
+    add.forEach((a) => {
+        user.interests.push(a);
+    });
+    user.dateModified = new Date(Date.now());
+    await user.save();
+    logger.info({
+        operation: "addUserInterests",
+        actor,
+        params,
+        additionalParams: { add },
+        resource: `user:${user.uid}`
+    });
+    return true;
 }
 
 /**
  * This method will remove one or more interests to a given user
  * @param actor Unique id of account that initiated the operation
- * @param uid User's unique id
+ * @param params Parameters to locate user by
  * @param add Array of tags to remove as interests
- * @returns Array of tags
+ * @returns True if the update was successful
  */
-export const removeUserInterests = async (actor: string, user: string, remove: string[]): Promise<Boolean> => {
-    const u = await UserModel.findOne({ uid: user });
-    if (!u) throw new NonExistentResourceError("user", user);
+export const removeUserInterests = async (actor: string, params: UserSearchParams, remove: string[]): Promise<Boolean> => {
+    const user = await UserModel.findOne(params).select('uid interests dateModified');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
     if (remove.length <= 0) throw new InvalidOperationError("No user interests specified"); 
-    u.interests = u.interests.filter((i) => {
-        return !remove.includes(i);
+    user.interests = user.interests.filter((i) => {
+        return (!remove.includes(i));
     })
-    u.dateModified = new Date(Date.now());
-    await u.save();
+    user.dateModified = new Date(Date.now());
+    await user.save();
+    logger.info({
+        operation: "removeUserInterests",
+        actor,
+        params,
+        additionalParams: { remove },
+        resource: `user:${user.uid}`
+    });
+    return true;
+}
+
+// ---- User Friends --------
+
+/**
+ * This method will return a user's friends
+ * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate user by
+ * @returns Array of connection id's
+ */
+export const findUserFriends = async (actor: string, params: UserSearchParams): Promise<string[]> => {
+    const user = await UserModel.findOne(params).select('uid friends');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    logger.info({
+        operation: "findUserFriends",
+        actor,
+        params,
+        resource: `user:${user.uid}`
+    });
+    return user.friends;
+}
+
+// ---- User Groups --------
+
+/**
+ * This method will return a user's groups
+ * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate user by
+ * @returns Array of connection id's
+ */
+export const findUserGroups = async (actor: string, params: UserSearchParams): Promise<string[]> => {
+    const user = await UserModel.findOne(params).select('uid groups');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    logger.info({
+        operation: "findUserGroups",
+        actor,
+        params,
+        resource: `user:${user.uid}`
+    });
+    return user.groups;
+}
+
+// ---- User Inbox --------
+
+/**
+ * This method will return the inbox of the given user
+ * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate user by
+ * @returns Array of notification id's
+ */
+export const findUserInbox = async (actor: string, params: UserSearchParams): Promise<String[]> => {
+    const user = await UserModel.findOne(params).select('uid inbox');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    logger.info({
+        operation: "findUserInbox",
+        actor,
+        params,
+        resource: `user:${user.uid}`
+    });
+    return user.inbox;
+}
+
+/**
+ * This method will add a notification id to a user's inbox
+ * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate user by
+ * @param note Notification's unique id
+ * @returns True if operation was successful
+ */
+export const addToUserInbox = async (actor: string, params: UserSearchParams, note: string): Promise<Boolean> => {
+    const user = await UserModel.findOne(params).select('uid inbox dateModified');
+    if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
+    user.inbox.push(note);
+    await user.save();
+    logger.info({
+        operation: "addToUserInbox",
+        actor,
+        params,
+        additionalParams: { note },
+        resource: `user:${user.uid}`
+    });
     return true;
 }

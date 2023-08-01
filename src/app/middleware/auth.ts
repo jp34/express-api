@@ -1,4 +1,4 @@
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { findAccount } from "../services/accounts.service";
 import { InvalidInputError, ConfigurationError, UnauthorizedError } from "../../domain/error";
@@ -20,7 +20,7 @@ export const authenticate = async (request: Request, response: Response, next: N
         jwt.verify(token, SECRET, async (err, decoded) => {
             try {
                 if (err || !decoded || typeof decoded == "string") throw new UnauthorizedError("Invalid or malformed token provided");
-                const account = await findAccount(request.ip, decoded.id);
+                const account = await findAccount(request.ip, { uid: decoded.id });
                 if (!account) throw new UnauthorizedError(`Account does not exist: ${decoded.id}`);
                 request.user = { uid: account.uid };
                 next();

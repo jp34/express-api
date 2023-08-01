@@ -11,12 +11,12 @@ import {
     findUserGroups,
     findUserInbox
 } from "../services/users.service";
-import { CreateUserPayload } from "../../domain/entity/user";
+import { CreateUserPayload } from "../../domain/dto/user.dto";
 import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 
 export default class UsersController {
 
-    // ---- User ------------
+    // ---- User --------
 
     /**
      * POST /users/:uid
@@ -52,7 +52,7 @@ export default class UsersController {
             let limit;
             if (request.query.offset) offset = +request.query.offset;
             if (request.query.limit) limit = +request.query.limit;
-            const data = await findUsers(request.user.uid, offset, limit);
+            const data = await findUsers(request.user.uid, { }, offset, limit);
             response.status(200).json({ data });
             next();
         } catch (err: any) {
@@ -71,7 +71,7 @@ export default class UsersController {
             if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
             const uid = request.params.uid;
             if (!uid) throw new InvalidInputError("uid");
-            const data = await findUser(request.user.uid, uid);
+            const data = await findUser(request.user.uid, { uid });
             response.status(200).json({ data });
             next();
         } catch (err: any) {
@@ -91,7 +91,7 @@ export default class UsersController {
             const uid: string = request.params.uid;
             if (!uid) throw new InvalidInputError("uid");
             const actor = request.user.uid;
-            if (request.query.username) await updateUsername(actor, uid, request.query.username.toString());
+            if (request.query.username) await updateUsername(actor, { uid }, request.query.username.toString());
             response.status(200).json({ data: true });
             next();
         } catch (err: any) {
@@ -110,7 +110,7 @@ export default class UsersController {
             if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
             const uid: string = request.params.uid;
             if (!uid) throw new InvalidInputError("uid");
-            const deleted = await deleteUser(request.user.uid, uid);
+            const deleted = await deleteUser(request.user.uid, { uid });
             response.status(200).json({ data: { deleted }});
             next();
         } catch (err: any) {
@@ -118,7 +118,7 @@ export default class UsersController {
         }
     }
 
-    // ---- User Interests ------------
+    // ---- User Interests --------
 
     /**
      * GET /users/:uid/interests
@@ -131,7 +131,7 @@ export default class UsersController {
             if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
             const uid: string = request.params.uid;
             if (!uid) throw new InvalidInputError("uid");
-            const data = await findUserInterests(request.user.uid, uid)
+            const data = await findUserInterests(request.user.uid, { uid })
             response.status(200).json({ data });
             next();
         } catch (err: any) {
@@ -152,7 +152,7 @@ export default class UsersController {
             const payload: string[] = request.body.data;
             if (!uid) throw new InvalidInputError("uid");
             if (!payload) throw new InvalidInputError("data");
-            const data = await addUserInterests(request.user.uid, uid, payload);
+            const data = await addUserInterests(request.user.uid, { uid }, payload);
             response.status(200).json({ data });
             next();
         } catch (err: any) {
@@ -160,7 +160,7 @@ export default class UsersController {
         }
     }
 
-    // ---- User Friends ------------
+    // ---- User Friends --------
 
     /**
      * GET /users/:uid/friends
@@ -173,7 +173,7 @@ export default class UsersController {
             if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
             const uid: string = request.params.uid;
             if (!uid) throw new InvalidInputError("uid");
-            const data = await findUserFriends(request.user.uid, uid);
+            const data = await findUserFriends(request.user.uid, { uid });
             response.status(200).json({ data });
             next();
         } catch (err: any) {
@@ -181,7 +181,7 @@ export default class UsersController {
         }
     }
 
-    // ---- User Groups ------------
+    // ---- User Groups --------
 
     /**
      * GET /users/:uid/groups
@@ -194,7 +194,7 @@ export default class UsersController {
             if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
             const uid: string = request.params.uid;
             if (!uid) throw new InvalidInputError("uid");
-            const data = await findUserGroups(request.user.uid, uid);
+            const data = await findUserGroups(request.user.uid, { uid });
             response.status(200).json({ data });
             next();
         } catch (err: any) {
@@ -202,7 +202,7 @@ export default class UsersController {
         }
     }
 
-    // ---- User Inbox ------------
+    // ---- User Inbox --------
 
     /**
      * GET /users/:uid/inbox
@@ -215,25 +215,11 @@ export default class UsersController {
             if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
             const uid: string = request.params.uid;
             if (!uid) throw new InvalidInputError("uid");
-            const data = await findUserInbox(request.user.uid, uid);
+            const data = await findUserInbox(request.user.uid, { uid });
             response.status(200).json({ data });
             next();
         } catch (err: any) {
             next(err);
         }
-    }
-
-    /**
-     * PUT /users/:uid/inbox
-     * @param request 
-     * @param response 
-     * @param next 
-     */
-    public updateInbox = async (request: Request, response: Response, next: NextFunction) => {
-        const note = request.query.note;
-        const action = request.query.action;
-        if (!note) throw new InvalidInputError("query:note");
-        if (!action) throw new InvalidInputError("query:action");
-        
     }
 }

@@ -1,7 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 
-// ---- Account Model ------------
-
 export interface Account {
     uid: string;
     email: string;
@@ -16,8 +14,6 @@ export interface Account {
     dateCreated: Date;
     dateModified: Date;
 }
-
-// ---- Mongoose Model ------------
 
 export const AccountSchema = new Schema<Account>({
     uid: { type: String, required: true, unique: true },

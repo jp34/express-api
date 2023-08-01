@@ -132,9 +132,7 @@ describe('[sn-api] Users Service', () => {
             .end((err, res) => {
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
-                res.body.data.should.be.Array();
-                const same = isSameArray(res.body.data, user.interests);
-                should.equal(true, same);
+                should.equal(res.body.data, true);
                 done();
             });
     });
