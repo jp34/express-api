@@ -1,11 +1,11 @@
 
-export type CreateUserPayload = {
+export interface CreateUserPayload {
     username: string
     interests: string[]
 };
 
-export type UserSearchParams = {
-    uid?: string
+export interface UserSearchParams {
+    _id?: string
     username?: string
     isActive?: boolean
     isOnline?: boolean

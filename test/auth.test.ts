@@ -8,7 +8,7 @@ import { validateAuthResponse, validateTokenResponse } from "./util/validate";
 chai.use(chaiHttp);
 
 let account = {
-    uid: "",
+    _id: "",
     email: "test@test.com",
     password: "password",
     name: "test",
@@ -25,11 +25,10 @@ describe('[sn-api] Auth', () => {
 
     after('Tear Down: Delete test account', (done) => {
         chai.request(server)
-            .delete(`/api/accounts/${account.uid}`)
+            .delete(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
-                console.log(res.body);
                 should.equal(res.status, 200);
                 should.equal(res.body.data.deleted, true);
                 done();
@@ -45,7 +44,7 @@ describe('[sn-api] Auth', () => {
                 should.equal(res.status, 200);
                 should.exist(res.body.data);
                 validateAuthResponse(res.body.data);
-                account.uid = res.body.data.account.uid;
+                account._id = res.body.data.account._id;
                 tokens.access = res.body.data.tokens.access;
                 tokens.refresh = res.body.data.tokens.refresh;
                 done();

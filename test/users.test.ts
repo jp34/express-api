@@ -8,7 +8,7 @@ import { validateUserResponse } from "./util/validate";
 chai.use(chaiHttp);
 
 let account = {
-    uid: "",
+    _id: "",
     email: "test@test.com",
     password: "password",
     name: "test",
@@ -40,7 +40,7 @@ describe('[sn-api] Users Service', () => {
             .set('Content-Type', 'application/json')
             .send({ data: account })
             .end((err, res) => {
-                account.uid = res.body.data.account.uid;
+                account._id = res.body.data.account._id;
                 tokens.access = res.body.data.tokens.access;
                 tokens.refresh = res.body.data.tokens.refresh;
                 done();
@@ -49,7 +49,7 @@ describe('[sn-api] Users Service', () => {
 
     after('Tear Down: Delete test account', (done) => {
         chai.request(server)
-            .delete(`/api/accounts/${account.uid}`)
+            .delete(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
@@ -61,7 +61,7 @@ describe('[sn-api] Users Service', () => {
 
     it('Creates a new user', (done) => {
         chai.request(server)
-            .post(`/api/users/${account.uid}`)
+            .post(`/api/users/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .send({ data: {
@@ -94,7 +94,7 @@ describe('[sn-api] Users Service', () => {
 
     it('Retrieves a user', (done) => {
         chai.request(server)
-            .get(`/api/users/${account.uid}`)
+            .get(`/api/users/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
@@ -108,7 +108,7 @@ describe('[sn-api] Users Service', () => {
     it("Updates a user's username", (done) => {
         user.username = "newusername";
         chai.request(server)
-            .put(`/api/users/${account.uid}`)
+            .put(`/api/users/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .query({
@@ -125,7 +125,7 @@ describe('[sn-api] Users Service', () => {
     it('Adds interests to a user', (done) => {
         user.interests.push('greek');
         chai.request(server)
-            .put(`/api/users/${account.uid}/interests`)
+            .put(`/api/users/${account._id}/interests`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .send({ data: ['greek'] })
@@ -139,7 +139,7 @@ describe('[sn-api] Users Service', () => {
 
     it('Retrieves user interests', (done) => {
         chai.request(server)
-            .get(`/api/users/${account.uid}/interests`)
+            .get(`/api/users/${account._id}/interests`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
@@ -154,7 +154,7 @@ describe('[sn-api] Users Service', () => {
 
     it('Deletes a user', (done) => {
         chai.request(server)
-            .delete(`/api/users/${account.uid}`)
+            .delete(`/api/users/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {

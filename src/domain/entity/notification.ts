@@ -1,6 +1,5 @@
+import { v4 } from "uuid";
 import mongoose, { Schema } from "mongoose";
-
-// ---- Notification Model ----------------
 
 export enum NotificationType {
     NOTE = "NOTE",
@@ -11,7 +10,7 @@ export enum NotificationType {
 }
 
 export interface Notification {
-    uid: string
+    _id: string
     actor: string
     notifiers: string[]
     type: NotificationType
@@ -20,10 +19,8 @@ export interface Notification {
     dateModified: Date
 }
 
-// ---- Mongoose Model ----------------
-
 export const NotificationSchema = new Schema<Notification>({
-    uid: { type: String, required: true, unique: true },
+    _id: { type: String, default: v4 },
     actor: { type: String, required: true },
     notifiers: { type: [String], required: true },
     type: { type: String, required: true },

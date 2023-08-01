@@ -1,22 +1,23 @@
+import { v4 } from "uuid";
 import mongoose, { Schema } from "mongoose";
 
 export interface Account {
-    uid: string;
-    email: string;
-    password: string;
-    name: string;
-    phone: string;
-    birthday: string;
-    hasUser: boolean;
-    isVerified: boolean;
-    isLocked: boolean;
-    lastLogin: Date;
-    dateCreated: Date;
-    dateModified: Date;
+    _id: string
+    email: string
+    password: string
+    name: string
+    phone: string
+    birthday: string
+    hasUser: boolean
+    isVerified: boolean
+    isLocked: boolean
+    lastLogin: Date
+    dateCreated: Date
+    dateModified: Date
 }
 
 export const AccountSchema = new Schema<Account>({
-    uid: { type: String, required: true, unique: true },
+    _id: { type: String, default: v4 },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     name: { type: String, required: true },

@@ -1,20 +1,17 @@
+import { v4 } from "uuid";
 import mongoose, { Schema } from "mongoose";
 
-// ---- Group Model ----------------
-
 export interface Group {
-    uid: string;
-    host: string;
-    members: string[];
-    dateCreated: Date;
-    dateModified: Date;
+    _id: string
+    host: string
+    members: string[]
+    dateCreated: Date
+    dateModified: Date
 }
 
-// ---- Request Model ----------------
-
-export type CreateGroupPayload = {
-    host: string;
-    members: string[];
+export interface CreateGroupPayload {
+    host: string
+    members: string[]
 }
 
 export interface CreateConnectionRequest extends Express.Request {
@@ -23,10 +20,8 @@ export interface CreateConnectionRequest extends Express.Request {
     }
 }
 
-// ---- Mongoose Model ----------------
-
 export const GroupSchema = new Schema<Group>({
-    uid: { type: String, required: true, unique: true },
+    _id: { type: String, default: v4 },
     host: { type: String, required: true },
     members: { type: [String], required: true, default: [] },
     dateCreated: { type: Date, required: true, default: Date.now() },

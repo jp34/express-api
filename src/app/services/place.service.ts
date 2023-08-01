@@ -1,8 +1,8 @@
 import axios from "axios";
 import Env from "../../config/env";
 import logger from "../../config/logger";
-import { findUserInterests } from "./users.service";
-import { findTagRefs } from "./tags.service";
+import { findUserInterests } from "./user.service";
+import { findTagRefs } from "./tag.service";
 import { NonExistentResourceError } from "../../domain/error";
 
 export type PlacesSearchOptions = {
@@ -21,7 +21,7 @@ export type PlacesSearchOptions = {
  * @returns 
  */
 export const nearbySuggestionSearch = async (actor: string, latitude: number, longitude: number) => {
-    const interests = await findUserInterests(actor, { uid: actor });
+    const interests = await findUserInterests(actor, { _id: actor });
     if (!interests) throw new NonExistentResourceError("user:interests", actor);
     const refs = await findTagRefs(actor, interests);
     const categories = refs.join(",");

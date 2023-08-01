@@ -15,9 +15,8 @@ export const validateTokenResponse = (tokens: any) => {
 
 export const validateAccountResponse = (account: any) => {
     should.exist(account);
-    should.not.exist(account._id);
     should.not.exist(account.__v);
-    account.uid.should.be.String();
+    account._id.should.be.String();
     account.email.should.be.String();
     account.password.should.be.String();
     account.name.should.be.String();
@@ -33,9 +32,8 @@ export const validateAccountResponse = (account: any) => {
 
 export const validateUserResponse = (user: any) => {
     should.exist(user);
-    should.not.exist(user._id);
     should.not.exist(user.__v);
-    user.uid.should.be.String();
+    user._id.should.be.String();
     user.username.should.be.String();
     user.interests.should.be.Array();
     user.friends.should.be.Array();
@@ -50,7 +48,6 @@ export const validateUserResponse = (user: any) => {
 
 export const validateTagResponse = (tag: any) => {
     should.exist(tag);
-    should.not.exist(tag._id);
     should.not.exist(tag.__v);
     tag.name.should.be.String();
     tag.label.should.be.String();

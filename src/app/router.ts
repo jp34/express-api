@@ -17,22 +17,22 @@ router.post("/api/auth/refresh", auth.refresh);
 // ---- Accounts --------
 const accounts = new AccountsController();
 router.get("/api/accounts", authenticate, accounts.getMany);
-router.get("/api/accounts/:uid", authenticate, accounts.getOne);
-router.put("/api/accounts/:uid", authenticate, accounts.update);
-router.delete("/api/accounts/:uid", authenticate, accounts.delete);
+router.get("/api/accounts/:id", authenticate, accounts.getOne);
+router.put("/api/accounts/:id", authenticate, accounts.update);
+router.delete("/api/accounts/:id", authenticate, accounts.delete);
 
 // ---- Users --------
 const users = new UsersController();
-router.post("/api/users/:uid", authenticate, users.create);
+router.post("/api/users/:id", authenticate, users.create);
 router.get("/api/users", authenticate, users.getMany);
-router.get("/api/users/:uid", authenticate, users.getOne);
-router.put("/api/users/:uid", authenticate, users.update);
-router.delete("/api/users/:uid", authenticate, users.delete);
-router.get("/api/users/:uid/interests", authenticate, users.getInterests);
-router.put("/api/users/:uid/interests", authenticate, users.addInterests);
-router.get("/api/users/:uid/friends", authenticate, users.getFriends);
-router.get("/api/users/:uid/groups", authenticate, users.getGroups);
-router.get("/api/users/:uid/inbox", authenticate, users.getInbox);
+router.get("/api/users/:id", authenticate, users.getOne);
+router.put("/api/users/:id", authenticate, users.update);
+router.delete("/api/users/:id", authenticate, users.delete);
+router.get("/api/users/:id/interests", authenticate, users.getInterests);
+router.put("/api/users/:id/interests", authenticate, users.addInterests);
+router.get("/api/users/:id/friends", authenticate, users.getFriends);
+router.get("/api/users/:id/groups", authenticate, users.getGroups);
+router.get("/api/users/:id/inbox", authenticate, users.getInbox);
 
 // ---- Tags --------
 const tags = new TagsController();

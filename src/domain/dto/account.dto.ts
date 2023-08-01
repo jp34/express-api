@@ -1,5 +1,5 @@
 
-export type CreateAccountPayload = {
+export interface CreateAccountPayload {
     email: string
     password: string
     name: string
@@ -7,8 +7,8 @@ export type CreateAccountPayload = {
     birthday: string
 };
 
-export type AccountSearchParams = {
-    uid?: string
+export interface AccountSearchParams {
+    _id?: string
     email?: string
     name?: string
     phone?: string

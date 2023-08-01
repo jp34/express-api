@@ -14,23 +14,20 @@ import { CreateAccountPayload, AccountSearchParams } from "../../domain/dto/acco
 export const createAccount = async (actor: string, payload: CreateAccountPayload): Promise<Account> => {
     const emailCheck = await findAccountExists(actor, { email: payload.email });
     if (emailCheck) throw new InvalidOperationError(`Account already exists with email: ${payload.email}`);
-    const uid = v4();
     const encrypted = bcrypt.hashSync(payload.password, bcrypt.genSaltSync());
-    await AccountModel.create({
-        uid: uid,
+    const account = await AccountModel.create({
         email: payload.email.toLowerCase(),
         password: encrypted,
         name: payload.name,
         phone: payload.phone,
         birthday: payload.birthday
     });
-    const account = await findAccount(actor, { uid });
-    if (!account) throw new NonExistentResourceError("account", uid);
+    account.__v = undefined;
     logger.info({
         operation: "createAccount",
         actor,
         payload,
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return account;
 }
@@ -47,7 +44,7 @@ export const createAccount = async (actor: string, payload: CreateAccountPayload
 export const findAccounts = async (actor: string, params: AccountSearchParams, offset?: number, limit?: number): Promise<Account[]> => {
     const off = offset ?? 0;
     const lim = limit ?? 10;
-    const accounts = await AccountModel.find(params).skip(off).limit(lim).select('-_id -__v').lean();
+    const accounts = await AccountModel.find(params).skip(off).limit(lim).select('-__v').lean();
     logger.info({
         operation: "findAccounts",
         actor,
@@ -65,13 +62,13 @@ export const findAccounts = async (actor: string, params: AccountSearchParams, o
  * @returns Account object or undefined
  */
 export const findAccount = async (actor: string, params: AccountSearchParams): Promise<Account | undefined> => {
-    const account = await AccountModel.findOne(params).select('-_id -__v').lean();
+    const account = await AccountModel.findOne(params).select('-__v').lean();
     if (!account) throw new NonExistentResourceError("account", JSON.stringify(params));
     logger.info({
         operation: "findAccount",
         actor,
         params,
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return account;
 }
@@ -83,13 +80,13 @@ export const findAccount = async (actor: string, params: AccountSearchParams): P
  * @returns True if a matching account exists, otherwise false
  */
 export const findAccountExists = async (actor: string, params: AccountSearchParams): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid').lean();
+    const account = await AccountModel.findOne(params).select('_id').lean();
     if (account == undefined) return false;
     logger.info({
         operation: "findAccountExists",
         actor,
         params,
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return true;
 }
@@ -102,13 +99,13 @@ export const findAccountExists = async (actor: string, params: AccountSearchPara
  * @returns True if account is associated with a user, otherwise false
  */
 export const findAccountHasUser = async (actor: string, params: AccountSearchParams): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid hasUser').lean();
+    const account = await AccountModel.findOne(params).select('_id hasUser').lean();
     if (!account) throw new NonExistentResourceError("account", JSON.stringify(params));
     logger.info({
         operation: "findAccountHasUser",
         actor,
         params,
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return account.hasUser;
 }
@@ -121,7 +118,7 @@ export const findAccountHasUser = async (actor: string, params: AccountSearchPar
  * @returns True if update was successful, otherwise false
  */
 export const updateAccountEmail = async (actor: string, params: AccountSearchParams, email: string): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid email dateModified');
+    const account = await AccountModel.findOne(params).select('_id email dateModified');
     if (!account) throw new NonExistentResourceError("account", JSON.stringify(params));
     const exists = await findAccountExists(actor, { email: email.toLowerCase() });
     if (exists) throw new InvalidOperationError(`Account already exists with email: ${email}`);
@@ -133,7 +130,7 @@ export const updateAccountEmail = async (actor: string, params: AccountSearchPar
         actor,
         params,
         additionalParams: { email },
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return true;
 }
@@ -146,7 +143,7 @@ export const updateAccountEmail = async (actor: string, params: AccountSearchPar
  * @returns True if update was successful, otherwise false
  */
 export const updateAccountPassword = async (actor: string, params: AccountSearchParams, password: string): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid password dateModified');
+    const account = await AccountModel.findOne(params).select('_id password dateModified');
     if (!account) throw new NonExistentResourceError('account', JSON.stringify(params));
     const encrypted = bcrypt.hashSync(password, bcrypt.genSaltSync());
     account.password = encrypted;
@@ -157,7 +154,7 @@ export const updateAccountPassword = async (actor: string, params: AccountSearch
         actor,
         params,
         additionalParams: { password },
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return true;
 }
@@ -170,7 +167,7 @@ export const updateAccountPassword = async (actor: string, params: AccountSearch
  * @returns True if update was successful, otherwise false
  */
 export const updateAccountName = async (actor: string, params: AccountSearchParams, name: string): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid name dateModified');
+    const account = await AccountModel.findOne(params).select('_id name dateModified');
     if (!account) throw new NonExistentResourceError('account', JSON.stringify(params));
     account.name = name;
     account.dateModified = new Date(Date.now());
@@ -180,7 +177,7 @@ export const updateAccountName = async (actor: string, params: AccountSearchPara
         actor,
         params,
         additionalParams: { name },
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return true;
 }
@@ -193,7 +190,7 @@ export const updateAccountName = async (actor: string, params: AccountSearchPara
  * @returns True if update was successful, otherwise false
  */
 export const updateAccountPhone = async (actor: string, params: AccountSearchParams, phone: string): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid phone dateModified');
+    const account = await AccountModel.findOne(params).select('_id phone dateModified');
     if (!account) throw new NonExistentResourceError('account', JSON.stringify(params));
     const exists = await findAccountExists(actor, { phone });
     if (exists) throw new InvalidOperationError(`Account already exists with phone: ${phone}`);
@@ -205,7 +202,7 @@ export const updateAccountPhone = async (actor: string, params: AccountSearchPar
         actor,
         params,
         additionalParams: { phone },
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return true;
 }
@@ -218,7 +215,7 @@ export const updateAccountPhone = async (actor: string, params: AccountSearchPar
  * @returns True if update was successful, otherwise false
  */
 export const updateAccountBirthday = async (actor: string, params: AccountSearchParams, birthday: string): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid birthday dateModified');
+    const account = await AccountModel.findOne(params).select('_id birthday dateModified');
     if (!account) throw new NonExistentResourceError("account", JSON.stringify(params));
     account.birthday = birthday;
     account.dateModified = new Date(Date.now());
@@ -228,7 +225,7 @@ export const updateAccountBirthday = async (actor: string, params: AccountSearch
         actor,
         params,
         additionalParams: { birthday },
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return true;
 }
@@ -242,7 +239,7 @@ export const updateAccountBirthday = async (actor: string, params: AccountSearch
  * @returns True if the update was successful, otherwise false
  */
 export const updateAccountHasUser = async (actor: string, params: AccountSearchParams, hasUser: boolean): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid hasUser dateModified');
+    const account = await AccountModel.findOne(params).select('_id hasUser dateModified');
     if (!account) throw new NonExistentResourceError("account", JSON.stringify(params));
     account.hasUser = hasUser;
     account.dateModified = new Date(Date.now());
@@ -252,7 +249,7 @@ export const updateAccountHasUser = async (actor: string, params: AccountSearchP
         actor,
         params,
         additionalParams: { hasUser },
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return true;
 }
@@ -264,7 +261,7 @@ export const updateAccountHasUser = async (actor: string, params: AccountSearchP
  * @returns True if the account was successfully deleted
  */
 export const deleteAccount = async (actor: string, params: AccountSearchParams): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid');
+    const account = await AccountModel.findOne(params).select('_id');
     if (!account) throw new NonExistentResourceError("account", JSON.stringify(params));
     if (account.hasUser) throw new InvalidOperationError("Cannot delete an account that has an associated user profile");
     await account.deleteOne();
@@ -272,7 +269,7 @@ export const deleteAccount = async (actor: string, params: AccountSearchParams):
         operation: "deleteAccount",
         actor,
         params,
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return true;
 }

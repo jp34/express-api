@@ -8,7 +8,7 @@ import { validateAccountResponse } from "./util/validate";
 chai.use(chaiHttp);
 
 let account = {
-    uid: "",
+    _id: "",
     email: "test@test.com",
     password: "password",
     name: "test",
@@ -29,7 +29,7 @@ describe('[sn-api] Accounts Service', () => {
             .set('Content-Type', 'application/json')
             .send({ data: account })
             .end((err, res) => {
-                account.uid = res.body.data.account.uid;
+                account._id = res.body.data.account._id;
                 tokens.access = res.body.data.tokens.access;
                 tokens.refresh = res.body.data.tokens.refresh;
                 done();
@@ -54,7 +54,7 @@ describe('[sn-api] Accounts Service', () => {
 
     it('Retrieves an account', (done) => {
         chai.request(server)
-            .get(`/api/accounts/${account.uid}`)
+            .get(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
@@ -69,7 +69,7 @@ describe('[sn-api] Accounts Service', () => {
     it('Updates account email', (done) => {
         account.email = 'newEmail@test.com';
         chai.request(server)
-            .put(`/api/accounts/${account.uid}`)
+            .put(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .query({
@@ -86,7 +86,7 @@ describe('[sn-api] Accounts Service', () => {
     it('Updates account password', (done) => {
         account.password = 'NewPassword123!?';
         chai.request(server)
-            .put(`/api/accounts/${account.uid}`)
+            .put(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .query({
@@ -103,7 +103,7 @@ describe('[sn-api] Accounts Service', () => {
     it('Updates account name', (done) => {
         account.name = 'newname';
         chai.request(server)
-            .put(`/api/accounts/${account.uid}`)
+            .put(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .query({
@@ -120,7 +120,7 @@ describe('[sn-api] Accounts Service', () => {
     it('Updates account phone', (done) => {
         account.phone = '111-222-3333';
         chai.request(server)
-            .put(`/api/accounts/${account.uid}`)
+            .put(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .query({
@@ -137,7 +137,7 @@ describe('[sn-api] Accounts Service', () => {
     it('Updates account birthday', (done) => {
         account.birthday = '2000-12-31';
         chai.request(server)
-            .put(`/api/accounts/${account.uid}`)
+            .put(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .query({
@@ -153,7 +153,7 @@ describe('[sn-api] Accounts Service', () => {
 
     it('Verifies updated data', (done) => {
         chai.request(server)
-            .get(`/api/accounts/${account.uid}`)
+            .get(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
@@ -171,7 +171,7 @@ describe('[sn-api] Accounts Service', () => {
 
     it('Deletes an account', (done) => {
         chai.request(server)
-            .delete(`/api/accounts/${account.uid}`)
+            .delete(`/api/accounts/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {

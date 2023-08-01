@@ -1,4 +1,5 @@
-import { Tag, TagModel, CreateTagPayload } from "../../domain/entity/tag";
+import { Tag, TagModel } from "../../domain/entity/tag";
+import { CreateTagPayload } from "../../domain/dto/tag.dto";
 import { NonExistentResourceError } from "../../domain/error";
 
 // ---- Create Methods --------
@@ -15,14 +16,13 @@ import { NonExistentResourceError } from "../../domain/error";
 export const createTag = async (actor: string, data: CreateTagPayload): Promise<Tag> => {
     const parent = await TagModel.findOne({ name: data.parent }).select('name').lean();
     if (!parent) throw new NonExistentResourceError("Tag", data.parent);
-    await TagModel.create({
+    const tag = await TagModel.create({
         name: data.name,
         label: data.label,
         parent: parent.name,
         ref: data.ref,
     });
-    const tag = await TagModel.findOne({ name: data.name }).select('-_id -__v');
-    if (!tag) throw new NonExistentResourceError("tag", data.name);
+    tag.__v = undefined;
     return tag;
 }
 

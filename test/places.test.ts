@@ -7,7 +7,7 @@ import should from "should";
 chai.use(chaiHttp);
 
 let account = {
-    uid: "",
+    _id: "",
     email: "test@test.com",
     password: "password",
     name: "test",
@@ -40,12 +40,12 @@ describe('[sn-api] Places Service', () => {
             .send({ data: account })
             .end((err, res) => {
                 should.equal(res.status, 200);
-                account.uid = res.body.data.account.uid;
+                account._id = res.body.data.account._id;
                 tokens.access = res.body.data.tokens.access;
                 tokens.refresh = res.body.data.tokens.refresh;
 
                 chai.request(server)
-                    .post(`/api/users/${account.uid}`)
+                    .post(`/api/users/${account._id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', `Bearer ${tokens.access}`)
                     .send({ data: { username: user.username, interests: user.interests }})
@@ -58,7 +58,7 @@ describe('[sn-api] Places Service', () => {
 
     after('Tear Down: Delete test account & user', (done) => {
         chai.request(server)
-            .delete(`/api/users/${account.uid}`)
+            .delete(`/api/users/${account._id}`)
             .set('Content-Type', 'application/json')
             .set('Authorization', `Bearer ${tokens.access}`)
             .end((err, res) => {
@@ -66,7 +66,7 @@ describe('[sn-api] Places Service', () => {
                 should.equal(res.body.data.deleted, true);
 
                 chai.request(server)
-                    .delete(`/api/accounts/${account.uid}`)
+                    .delete(`/api/accounts/${account._id}`)
                     .set('Content-Type', 'application/json')
                     .set('Authorization', `Bearer ${tokens.access}`)
                     .end((err, res) => {

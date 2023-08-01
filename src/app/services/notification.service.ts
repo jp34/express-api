@@ -1,7 +1,6 @@
-import { v4 } from "uuid";
 import { NotificationModel, Notification } from "../../domain/entity/notification";
 import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
-import { addToUserInbox } from "./users.service";
+import { addToUserInbox } from "./user.service";
 import { CreateNotificationPayload, NotificationSearchParams } from "../../domain/dto/notification.dto";
 import logger from "../../config/logger";
 
@@ -13,22 +12,19 @@ import logger from "../../config/logger";
  */
 export const createNotification = async (actor: string, payload: CreateNotificationPayload): Promise<Notification> => {
     if (payload.notifiers.length < 1) throw new InvalidOperationError("Notification must have at least one notifier");
-    const uid = v4();
-    await NotificationModel.create({
-        uid,
+    const note = await NotificationModel.create({
         actor,
         notifiers: payload.notifiers,
         type: payload.type
     });
-    const note = await findNotification(actor, { uid });
     payload.notifiers.forEach(async (n) => {
-        await addToUserInbox(actor, { uid: n }, note.uid);
+        await addToUserInbox(actor, { _id: n }, note._id);
     });
     logger.info({
         operation: "createNotification",
         actor,
         payload,
-        resource: `note:${note.uid}`
+        resource: `note:${note._id}`
     });
     return note;
 }
@@ -41,13 +37,13 @@ export const createNotification = async (actor: string, payload: CreateNotificat
  * @returns Notification if found, otherwise false
  */
 export const findNotification = async (actor: string, params: NotificationSearchParams): Promise<Notification> => {
-    const note = await NotificationModel.findOne(params).select('-_id');
+    const note = await NotificationModel.findOne(params).select('-__v');
     if (!note) throw new NonExistentResourceError("notification", JSON.stringify(params));
     logger.info({
         operation: "findNotification",
         actor,
         params,
-        resource: `note:${note.uid}`
+        resource: `note:${note._id}`
     });
     return note;
 }
@@ -55,7 +51,7 @@ export const findNotification = async (actor: string, params: NotificationSearch
 export const findNotifications = async (actor: string, params: NotificationSearchParams, offset?: number, limit?: number): Promise<Notification[]> => {
     const off = offset ?? 0;
     const lim = limit ?? 10;
-    const notes = await NotificationModel.find(params).limit(lim).skip(off).select('-_id');
+    const notes = await NotificationModel.find(params).limit(lim).skip(off).select('-__v');
     logger.info({
         operation: "findNotifications",
         actor,

@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 import { InvalidOperationError } from "../../domain/error";
-import { createAccount, findAccount } from "./accounts.service";
+import { createAccount, findAccount } from "./account.service";
 import { CreateAccountPayload } from "../../domain/dto/account.dto";
-import { AuthenticationPayload, AuthResponse } from "../../domain/dto/auth";
+import { AuthenticationPayload, AuthResponse } from "../../domain/dto/auth.dto";
 import logger from "../../config/logger";
 import { generateTokenPair } from "./token.service";
 
@@ -14,13 +14,13 @@ import { generateTokenPair } from "./token.service";
  */
 export const register = async (actor: string, payload: CreateAccountPayload): Promise<AuthResponse> => {
     const account = await createAccount(actor, payload);
-    const tokens = generateTokenPair(account.uid);
-    if (!tokens) throw new InvalidOperationError(`Unable to generate token pair for account: ${account.uid}`);
+    const tokens = generateTokenPair(account._id);
+    if (!tokens) throw new InvalidOperationError(`Unable to generate token pair for account: ${account._id}`);
     logger.info({
         operation: "register",
         actor,
         payload,
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return { account, tokens };
 }
@@ -36,13 +36,13 @@ export const authenticate = async (actor: string, payload: AuthenticationPayload
     if (!account) throw new InvalidOperationError(`Account does not exist: ${payload.identifier}`);
     const valid = await bcrypt.compare(payload.password, account.password);
     if (!valid) throw new InvalidOperationError("Invalid credentials provided");
-    const tokens = generateTokenPair(account.uid);
-    if (!tokens) throw new InvalidOperationError(`Unable to generate token pair for account: ${account.uid}`);
+    const tokens = generateTokenPair(account._id);
+    if (!tokens) throw new InvalidOperationError(`Unable to generate token pair for account: ${account._id}`);
     logger.info({
         operation: "authenticate",
         actor,
         payload,
-        resource: `account:${account.uid}`
+        resource: `account:${account._id}`
     });
     return { account, tokens };
 }

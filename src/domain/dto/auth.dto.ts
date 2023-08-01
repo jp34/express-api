@@ -2,12 +2,12 @@ import { Account } from "../entity/account";
 import { CreateAccountPayload } from "./account.dto";
 
 export interface AuthenticationPayload {
-    identifier: string;
-    password: string;
+    identifier: string
+    password: string
 };
 
-export type AuthResponse = {
-    account: Account;
+export interface AuthResponse {
+    account: Account
     tokens: {
         access: string
         refresh: string

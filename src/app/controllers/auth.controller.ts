@@ -5,7 +5,7 @@ import {
     AuthenticationRequest,
     RefreshRequest,
     RegistrationRequest
-} from "../../domain/dto/auth";
+} from "../../domain/dto/auth.dto";
 import { CreateAccountPayload } from "../../domain/dto/account.dto";
 import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 import { register, authenticate } from "../services/auth.service";

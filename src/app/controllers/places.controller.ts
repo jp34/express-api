@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { nearbySuggestionSearch } from "../services/places.service";
+import { nearbySuggestionSearch } from "../services/place.service";
 import { InvalidInputError, InvalidOperationError } from "../../domain/error";
 
 export default class PlacesController {
@@ -33,7 +33,7 @@ export default class PlacesController {
             const longitude = request.query.longitude;
             if (!latitude) throw new InvalidInputError("query:latitude");
             if (!longitude) throw new InvalidInputError("query:longitude");
-            const data = await nearbySuggestionSearch(request.user.uid, parseFloat(latitude.toString()), parseFloat(longitude.toString()));
+            const data = await nearbySuggestionSearch(request.user.id, parseFloat(latitude.toString()), parseFloat(longitude.toString()));
             response.status(200).json({ data });
             next();
         } catch (err: any) {
