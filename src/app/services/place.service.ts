@@ -27,7 +27,6 @@ export const nearbySuggestionSearch = async (actor: string, latitude: number, lo
     const categories = refs.map((ref) => {
         return ref.ref;
     }).join(",");
-    logger.info(`CATEGORIES: ${categories}`);
     return await placesSearch({
         ll: `${latitude},${longitude}`,
         categories,
