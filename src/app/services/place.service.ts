@@ -24,7 +24,10 @@ export const nearbySuggestionSearch = async (actor: string, latitude: number, lo
     const interests = await findUserInterests(actor, { _id: actor });
     if (!interests) throw new NonExistentResourceError("user:interests", actor);
     const refs = await findTagRefs(actor, interests);
-    const categories = refs.join(",");
+    const categories = refs.map((ref) => {
+        return ref.ref;
+    }).join(",");
+    logger.info(`CATEGORIES: ${categories}`);
     return await placesSearch({
         ll: `${latitude},${longitude}`,
         categories,

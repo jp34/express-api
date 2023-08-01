@@ -50,7 +50,7 @@ export default class TagsController {
             let limit;
             if (request.query.offset) offset = +request.query.offset;
             if (request.query.limit) limit = +request.query.limit;
-            const data = await findTags(request.user.id, offset, limit);
+            const data = await findTags(request.user.id, {}, offset, limit);
             response.status(200).json({ data });
             next();
         } catch (err: any) {
@@ -69,7 +69,7 @@ export default class TagsController {
         try {
             if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
             if (!request.params.name) throw new InvalidInputError("Id");
-            const data = await findTag(request.user.id, request.params.name);
+            const data = await findTag(request.user.id, { name: request.params.name });
             response.status(200).json({ data });
             next();
         } catch (err: any) {
@@ -90,9 +90,9 @@ export default class TagsController {
             const name: string = request.params.name;
             if (!name) throw new InvalidInputError("name");
             const actor = request.user.id;
-            if (request.query.label) await updateTagLabel(actor, name, request.query.label.toString());
-            if (request.query.parent) await updateTagParent(actor, name, request.query.parent.toString());
-            if (request.query.ref) await updateTagRef(actor, name, request.query.ref.toString());
+            if (request.query.label) await updateTagLabel(actor, { name }, request.query.label.toString());
+            if (request.query.parent) await updateTagParent(actor, { name }, request.query.parent.toString());
+            if (request.query.ref) await updateTagRef(actor, { name }, request.query.ref.toString());
             response.status(200).json({ data: true });
             next();
         } catch (err: any) {
@@ -111,7 +111,7 @@ export default class TagsController {
         try {
             if (!request.user) throw new InvalidOperationError("Request does not have an associated user");
             if (!request.params.name) throw new InvalidInputError("Id");
-            const deleted = await deleteTag(request.user.id, request.params.name);
+            const deleted = await deleteTag(request.user.id, { name: request.params.name });
             response.status(200).json({ data: { deleted }});
             next();
         } catch (err: any) {

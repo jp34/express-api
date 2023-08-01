@@ -1,130 +1,206 @@
 import { Tag, TagModel } from "../../domain/entity/tag";
-import { CreateTagPayload } from "../../domain/dto/tag.dto";
-import { NonExistentResourceError } from "../../domain/error";
-
-// ---- Create Methods --------
+import { CreateTagPayload, TagSearchParams } from "../../domain/dto/tag.dto";
+import { InvalidOperationError, NonExistentResourceError } from "../../domain/error";
+import logger from "../../config/logger";
 
 /**
- * Creates a new tag objcet
+ * This method will create a new tag object
  * @param actor Unique id of account that initiated the operation
- * @param tag Identifier of new tag
- * @param label Label of new tag
- * @param plural Plural label of new tag
- * @param parent Identifier of parent tag
+ * @param payload Values to initialize new tag with
  * @returns The newly created tag object
  */
-export const createTag = async (actor: string, data: CreateTagPayload): Promise<Tag> => {
-    const parent = await TagModel.findOne({ name: data.parent }).select('name').lean();
-    if (!parent) throw new NonExistentResourceError("Tag", data.parent);
+export const createTag = async (actor: string, payload: CreateTagPayload): Promise<Tag> => {
+    const exists = await findTagExists(actor, { name: payload.name });
+    if (exists) throw new InvalidOperationError(`Tag already exists with name: ${payload.name}`);
+    const parent = await TagModel.findOne({ name: payload.parent }).select('name').lean();
+    if (!parent) throw new NonExistentResourceError("Tag", payload.parent);
     const tag = await TagModel.create({
-        name: data.name,
-        label: data.label,
+        name: payload.name,
+        label: payload.label,
         parent: parent.name,
-        ref: data.ref,
+        ref: payload.ref,
     });
     tag.__v = undefined;
+    logger.info({
+        operation: "createTag",
+        actor,
+        payload,
+        resource: `tag:${tag.name}`
+    });
     return tag;
 }
-
-// ---- Read Methods --------
 
 /**
  * Returns all existing tags
  * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate tag by
+ * @param offset Number of documents to skip
+ * @param limit Number of documents to return
  * @returns Array of tag objects
  */
-export const findTags = async (actor: string, offset?: number, limit?: number): Promise<Tag[]> => {
+export const findTags = async (actor: string, params: TagSearchParams, offset?: number, limit?: number): Promise<Tag[]> => {
     const off = offset ?? 0;
     const lim = limit ?? 10;
-    const tags = await TagModel.find().skip(off).limit(lim).select('-_id -__v').lean();
+    const tags = await TagModel.find(params).skip(off).limit(lim).select('-__v').lean();
+    logger.info({
+        operation: "findTags",
+        actor,
+        params,
+        additionalParams: { offset, limit }
+    });
     return tags;
 }
 
-export const findTagRefs = async (actor: string, tags: string[]): Promise<string[]> => {
-    const data = await TagModel.find({ 'name': { $in: tags }}).select('ref -_id').lean();
-    let refs: string[] = [];
-    data.forEach((obj) => {
-        refs.push(obj.ref);
+/**
+ * Returns a single tag by its name
+ * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate tag by
+ * @returns Tag object if it exists
+ */
+export const findTag = async (actor: string, params: TagSearchParams): Promise<Tag> => {
+    const tag = await TagModel.findOne(params).select('-__v').lean();
+    if (!tag) throw new NonExistentResourceError("tag", JSON.stringify(params));
+    logger.info({
+        operation: "findTag",
+        actor,
+        params,
+        resource: `tag:${tag.name}`
+    });
+    return tag;
+}
+
+/**
+ * This method will determine if a tag exists with the matching parameters
+ * @param actor Unique id of account that initiated the operation
+ * @param params Parameters to locate tag by
+ * @returns True if a matching tag exists, otherwise false
+ */
+export const findTagExists = async (actor: string, params: TagSearchParams): Promise<Boolean> => {
+    const tag = await TagModel.findOne(params).select('name').lean();
+    if (tag == undefined) return false;
+    logger.info({
+        operation: "findTagExists",
+        actor,
+        params,
+        resource: `tag:${tag.name}`
+    });
+    return true;
+}
+
+/**
+ * This method will locate the ref attribute for each tag provided
+ * @param actor Unique id of account that initiated the operation
+ * @param tags Array of tag names to translate into refs
+ * @returns Array of objects mapping name and ref
+ */
+export const findTagRefs = async (actor: string, tags: string[]): Promise<{ name: string, ref: string }[]> => {
+    const refs = await TagModel.find({ 'name': { $in: tags }}).select('name ref').lean();
+    logger.info({
+        operation: "findTagRefs",
+        actor,
+        additionalParams: { tags }
     });
     return refs;
 }
 
 /**
  * This method will return the number of tags stored in the database
- * @returns Number of tags available
- */
-export const countTags = async (actor: string): Promise<Number> => {
-    return await TagModel.countDocuments();
-}
-
-/**
- * Returns a single tag by its name
  * @param actor Unique id of account that initiated the operation
- * @param name Name of the tag to find
- * @returns Tag object if it exists
+ * @returns Number of existing tags
  */
-export const findTag = async (actor: string, name: string): Promise<Tag> => {
-    const tag = await TagModel.findOne({ name }).select('-_id -__v').lean();
-    if (!tag) throw new NonExistentResourceError("tag", name);
-    return tag;
+export const findTagCount = async (actor: string): Promise<Number> => {
+    const count = await TagModel.countDocuments();
+    logger.info({
+        operation: "findTagCount",
+        actor,
+    });
+    return count;
 }
-
-// ---- Update Methods --------
 
 /**
  * This method will update the label of the specified tag
  * @param actor Unique id of account that initiated the operation
- * @param name Name of the tag to be updated
- * @param newLabel New label for tag
+ * @param params Parameters to locate tag by
+ * @param label New label for tag
  * @returns True if update was successful, otherwise false
  */
-export const updateTagLabel = async (actor: string, name: string, newLabel: string): Promise<Boolean> => {
-    const t = await TagModel.findOne({ name: name }).select('label');
-    if (!t) throw new NonExistentResourceError("Tag", name);
-    t.label = newLabel;
-    await t.save();
+export const updateTagLabel = async (actor: string, params: TagSearchParams, label: string): Promise<Boolean> => {
+    const tag = await TagModel.findOne(params).select('name label dateModified');
+    if (!tag) throw new NonExistentResourceError("Tag", JSON.stringify(params));
+    tag.label = label;
+    tag.dateModified = new Date(Date.now());
+    await tag.save();
+    logger.info({
+        operation: "updateTagLabel",
+        actor,
+        params,
+        additionalParams: { label },
+        resource: `tag:${tag.name}`
+    });
     return true;
 }
 
 /**
- * This method will update the parent of the specified tag
+ * This method will update the parent attribute of the specified tag
  * @param actor Unique id of account that initiated the operation
- * @param name Name of the tag to be updated
- * @param newParent New parent for tag
+ * @param params Parameters to locate tag by
+ * @param parent New parent for tag
  * @returns True if update was successful, otherwise false
  */
-export const updateTagParent = async (actor: string, name: string, newParent: string): Promise<Boolean> => {
-    const t = await TagModel.findOne({ name: name }).select('parent');
-    if (!t) throw new NonExistentResourceError("Tag", name);
-    t.parent = newParent;
-    await t.save();
+export const updateTagParent = async (actor: string, params: TagSearchParams, parent: string): Promise<Boolean> => {
+    const tag = await TagModel.findOne(params).select('name parent dateModified');
+    if (!tag) throw new NonExistentResourceError("Tag", JSON.stringify(params));
+    tag.parent = parent;
+    tag.dateModified = new Date(Date.now());
+    await tag.save();
+    logger.info({
+        operation: "updateTagParent",
+        actor,
+        params,
+        additionalParams: { parent },
+        resource: `tag:${tag.name}`
+    });
     return true;
 }
 
 /**
- * This method will update the reference id of the specified tag
+ * This method will update the ref attribute of the specified tag
  * @param actor Unique id of account that initiated the operation
- * @param name Name of the tag to be updated
- * @param newRef New reference id for tag
+ * @param params Parameters to locate tag by
+ * @param ref New ref for tag
  * @returns True if update was successful, otherwise false
  */
-export const updateTagRef = async (actor: string, name: string, newRef: string): Promise<Boolean> => {
-    const t = await TagModel.findOne({ name: name }).select('ref');
-    if (!t) throw new NonExistentResourceError("Tag", name);
-    t.ref = newRef;
-    await t.save();
+export const updateTagRef = async (actor: string, params: TagSearchParams, ref: string): Promise<Boolean> => {
+    const tag = await TagModel.findOne(params).select('name ref dateModified');
+    if (!tag) throw new NonExistentResourceError("Tag", JSON.stringify(params));
+    tag.ref = ref;
+    tag.dateModified = new Date(Date.now());
+    await tag.save();
+    logger.info({
+        operation: "updateTagRef",
+        actor,
+        params,
+        additionalParams: { ref },
+        resource: `tag:${tag.name}`
+    });
     return true;
 }
-
-// ---- Delete Methods --------
 
 /**
  * Delete a single tag by its identifier
  * @param actor Unique id of account that initiated the operation
- * @param name Name of the tag to be deleted
+ * @param params Parameters to locate tag by
  * @returns True if the deletion was successful, otherwise false
  */
-export const deleteTag = async (actor: string, name: string): Promise<Boolean> => {
-    const result = await TagModel.deleteOne({ name });
-    return (result.acknowledged && (result.deletedCount == 1));
+export const deleteTag = async (actor: string, params: TagSearchParams): Promise<Boolean> => {
+    const tag = await TagModel.findOne(params).select('name');
+    if (!tag) throw new NonExistentResourceError("tag", JSON.stringify(params));
+    await tag.deleteOne();
+    logger.info({
+        operation: "deleteTag",
+        actor,
+        params,
+        resource: `tag:${tag.name}`
+    });
+    return true;
 }

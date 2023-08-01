@@ -12,7 +12,6 @@ connect();
 
 // Seed database
 import { seed } from "./config/db";
-import { verify } from "./app/middleware/verify";
 if (Env.SEED_DB) seed();
 
 // Configure app

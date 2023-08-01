@@ -11,5 +11,11 @@ export const connect = () => {
 }
 
 export const seed = () => {
-    TagModel.collection.insertMany(tags);
+    TagModel.collection.insertMany(tags.map((tag) => {
+        return {
+            ...tag,
+            dateCreated: new Date(Date.now()),
+            dateModified: new Date(Date.now())
+        }
+    }));
 }
