@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { InvalidOperationError } from "../../domain/error";
 import { createAccount, findAccount } from "./accounts.service";
-import { AccountSearchParams, CreateAccountPayload } from "../../domain/dto/account.dto";
+import { CreateAccountPayload } from "../../domain/dto/account.dto";
 import { AuthenticationPayload, AuthResponse } from "../../domain/dto/auth";
 import logger from "../../config/logger";
 import { generateTokenPair } from "./token.service";

@@ -47,7 +47,7 @@ export const createAccount = async (actor: string, payload: CreateAccountPayload
 export const findAccounts = async (actor: string, params: AccountSearchParams, offset?: number, limit?: number): Promise<Account[]> => {
     const off = offset ?? 0;
     const lim = limit ?? 10;
-    const accounts = await AccountModel.find(params).skip(off).limit(lim).select('-_id -__v');
+    const accounts = await AccountModel.find(params).skip(off).limit(lim).select('-_id -__v').lean();
     logger.info({
         operation: "findAccounts",
         actor,
@@ -65,7 +65,7 @@ export const findAccounts = async (actor: string, params: AccountSearchParams, o
  * @returns Account object or undefined
  */
 export const findAccount = async (actor: string, params: AccountSearchParams): Promise<Account | undefined> => {
-    const account = await AccountModel.findOne(params).select('-_id -__v');
+    const account = await AccountModel.findOne(params).select('-_id -__v').lean();
     if (!account) throw new NonExistentResourceError("account", JSON.stringify(params));
     logger.info({
         operation: "findAccount",
@@ -83,7 +83,7 @@ export const findAccount = async (actor: string, params: AccountSearchParams): P
  * @returns True if a matching account exists, otherwise false
  */
 export const findAccountExists = async (actor: string, params: AccountSearchParams): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid');
+    const account = await AccountModel.findOne(params).select('uid').lean();
     if (account == undefined) return false;
     logger.info({
         operation: "findAccountExists",
@@ -102,7 +102,7 @@ export const findAccountExists = async (actor: string, params: AccountSearchPara
  * @returns True if account is associated with a user, otherwise false
  */
 export const findAccountHasUser = async (actor: string, params: AccountSearchParams): Promise<Boolean> => {
-    const account = await AccountModel.findOne(params).select('uid hasUser');
+    const account = await AccountModel.findOne(params).select('uid hasUser').lean();
     if (!account) throw new NonExistentResourceError("account", JSON.stringify(params));
     logger.info({
         operation: "findAccountHasUser",

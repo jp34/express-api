@@ -1,7 +1,7 @@
 import { Tag, TagModel, CreateTagPayload } from "../../domain/entity/tag";
 import { NonExistentResourceError } from "../../domain/error";
 
-// ---- Create Methods ------------
+// ---- Create Methods --------
 
 /**
  * Creates a new tag objcet
@@ -13,12 +13,12 @@ import { NonExistentResourceError } from "../../domain/error";
  * @returns The newly created tag object
  */
 export const createTag = async (actor: string, data: CreateTagPayload): Promise<Tag> => {
-    const actualParent = await TagModel.findOne({ name: data.parent });
-    if (!actualParent) throw new NonExistentResourceError("Tag", data.parent);
+    const parent = await TagModel.findOne({ name: data.parent }).select('name').lean();
+    if (!parent) throw new NonExistentResourceError("Tag", data.parent);
     await TagModel.create({
         name: data.name,
         label: data.label,
-        parent: data.parent,
+        parent: parent.name,
         ref: data.ref,
     });
     const tag = await TagModel.findOne({ name: data.name }).select('-_id -__v');
@@ -26,7 +26,7 @@ export const createTag = async (actor: string, data: CreateTagPayload): Promise<
     return tag;
 }
 
-// ---- Read Methods ------------
+// ---- Read Methods --------
 
 /**
  * Returns all existing tags
@@ -36,12 +36,12 @@ export const createTag = async (actor: string, data: CreateTagPayload): Promise<
 export const findTags = async (actor: string, offset?: number, limit?: number): Promise<Tag[]> => {
     const off = offset ?? 0;
     const lim = limit ?? 10;
-    const tags = await TagModel.find().skip(off).limit(lim).select('-_id -__v');
+    const tags = await TagModel.find().skip(off).limit(lim).select('-_id -__v').lean();
     return tags;
 }
 
 export const findTagRefs = async (actor: string, tags: string[]): Promise<string[]> => {
-    const data = await TagModel.find({ 'name': { $in: tags }}).select('ref -_id');
+    const data = await TagModel.find({ 'name': { $in: tags }}).select('ref -_id').lean();
     let refs: string[] = [];
     data.forEach((obj) => {
         refs.push(obj.ref);
@@ -64,12 +64,12 @@ export const countTags = async (actor: string): Promise<Number> => {
  * @returns Tag object if it exists
  */
 export const findTag = async (actor: string, name: string): Promise<Tag> => {
-    const tag = await TagModel.findOne({ name }).select('-_id -__v');
+    const tag = await TagModel.findOne({ name }).select('-_id -__v').lean();
     if (!tag) throw new NonExistentResourceError("tag", name);
     return tag;
 }
 
-// ---- Update Methods ------------
+// ---- Update Methods --------
 
 /**
  * This method will update the label of the specified tag
@@ -79,7 +79,7 @@ export const findTag = async (actor: string, name: string): Promise<Tag> => {
  * @returns True if update was successful, otherwise false
  */
 export const updateTagLabel = async (actor: string, name: string, newLabel: string): Promise<Boolean> => {
-    const t = await TagModel.findOne({ name: name });
+    const t = await TagModel.findOne({ name: name }).select('label');
     if (!t) throw new NonExistentResourceError("Tag", name);
     t.label = newLabel;
     await t.save();
@@ -94,7 +94,7 @@ export const updateTagLabel = async (actor: string, name: string, newLabel: stri
  * @returns True if update was successful, otherwise false
  */
 export const updateTagParent = async (actor: string, name: string, newParent: string): Promise<Boolean> => {
-    const t = await TagModel.findOne({ name: name });
+    const t = await TagModel.findOne({ name: name }).select('parent');
     if (!t) throw new NonExistentResourceError("Tag", name);
     t.parent = newParent;
     await t.save();
@@ -109,14 +109,14 @@ export const updateTagParent = async (actor: string, name: string, newParent: st
  * @returns True if update was successful, otherwise false
  */
 export const updateTagRef = async (actor: string, name: string, newRef: string): Promise<Boolean> => {
-    const t = await TagModel.findOne({ name: name });
+    const t = await TagModel.findOne({ name: name }).select('ref');
     if (!t) throw new NonExistentResourceError("Tag", name);
     t.ref = newRef;
     await t.save();
     return true;
 }
 
-// ---- Delete Methods ------------
+// ---- Delete Methods --------
 
 /**
  * Delete a single tag by its identifier

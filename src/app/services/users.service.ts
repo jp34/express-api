@@ -47,7 +47,7 @@ export const createUser = async (actor: string, uid: string, payload: CreateUser
 export const findUsers = async (actor: string, params: UserSearchParams, offset?: number, limit?: number): Promise<User[]> => {
     const off = offset ?? 0;
     const lim = limit ?? 10;
-    const users = await UserModel.find(params).skip(off).limit(lim).select('-_id -__v');
+    const users = await UserModel.find(params).skip(off).limit(lim).select('-_id -__v').lean();
     logger.info({
         operation: "findUsers",
         actor,
@@ -64,7 +64,7 @@ export const findUsers = async (actor: string, params: UserSearchParams, offset?
  * @returns UserDTO or undefined
  */
 export const findUser = async (actor: string, params: UserSearchParams): Promise<User> => {
-    const user = await UserModel.findOne(params).select('-_id -__v');
+    const user = await UserModel.findOne(params).select('-_id -__v').lean();
     if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
     logger.info({
         operation: "findUser",
@@ -82,7 +82,7 @@ export const findUser = async (actor: string, params: UserSearchParams): Promise
  * @returns True if a user exists with that uid
  */
 export const findUserExists = async (actor: string, params: UserSearchParams): Promise<Boolean> => {
-    const user = await UserModel.findOne(params).select('uid');
+    const user = await UserModel.findOne(params).select('uid').lean();
     if (user == undefined) return false;
     logger.info({
         operation: "findUserExists",
@@ -146,7 +146,7 @@ export const deleteUser = async (actor: string, params: UserSearchParams): Promi
  * @returns Array of tags
  */
 export const findUserInterests = async (actor: string, params: UserSearchParams): Promise<string[]> => {
-    const user = await UserModel.findOne(params).select('uid interests');
+    const user = await UserModel.findOne(params).select('uid interests').lean();
     if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
     logger.info({
         operation: "findUserInterests",
@@ -218,7 +218,7 @@ export const removeUserInterests = async (actor: string, params: UserSearchParam
  * @returns Array of connection id's
  */
 export const findUserFriends = async (actor: string, params: UserSearchParams): Promise<string[]> => {
-    const user = await UserModel.findOne(params).select('uid friends');
+    const user = await UserModel.findOne(params).select('uid friends').lean();
     if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
     logger.info({
         operation: "findUserFriends",
@@ -238,7 +238,7 @@ export const findUserFriends = async (actor: string, params: UserSearchParams): 
  * @returns Array of connection id's
  */
 export const findUserGroups = async (actor: string, params: UserSearchParams): Promise<string[]> => {
-    const user = await UserModel.findOne(params).select('uid groups');
+    const user = await UserModel.findOne(params).select('uid groups').lean();
     if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
     logger.info({
         operation: "findUserGroups",
@@ -258,7 +258,7 @@ export const findUserGroups = async (actor: string, params: UserSearchParams): P
  * @returns Array of notification id's
  */
 export const findUserInbox = async (actor: string, params: UserSearchParams): Promise<String[]> => {
-    const user = await UserModel.findOne(params).select('uid inbox');
+    const user = await UserModel.findOne(params).select('uid inbox').lean();
     if (!user) throw new NonExistentResourceError("user", JSON.stringify(params));
     logger.info({
         operation: "findUserInbox",

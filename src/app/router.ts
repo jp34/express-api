@@ -7,24 +7,22 @@ import TagsController from "./controllers/tags.controller";
 import PlacesController from "./controllers/places.controller";
 
 const router = Router();
-const auth = new AuthController();
-const accounts = new AccountsController();
-const users = new UsersController();
-const tags = new TagsController();
-const places = new PlacesController();
 
-// Api Auth
+// ---- Auth --------
+const auth = new AuthController();
 router.post("/api/auth/login", auth.login);
 router.post("/api/auth/signup", auth.signup);
 router.post("/api/auth/refresh", auth.refresh);
 
-// Accounts API
+// ---- Accounts --------
+const accounts = new AccountsController();
 router.get("/api/accounts", authenticate, accounts.getMany);
 router.get("/api/accounts/:uid", authenticate, accounts.getOne);
 router.put("/api/accounts/:uid", authenticate, accounts.update);
 router.delete("/api/accounts/:uid", authenticate, accounts.delete);
 
-// Users API
+// ---- Users --------
+const users = new UsersController();
 router.post("/api/users/:uid", authenticate, users.create);
 router.get("/api/users", authenticate, users.getMany);
 router.get("/api/users/:uid", authenticate, users.getOne);
@@ -36,14 +34,16 @@ router.get("/api/users/:uid/friends", authenticate, users.getFriends);
 router.get("/api/users/:uid/groups", authenticate, users.getGroups);
 router.get("/api/users/:uid/inbox", authenticate, users.getInbox);
 
-// Tags API
+// ---- Tags --------
+const tags = new TagsController();
 router.post("/api/tags", authenticate, tags.create);
 router.get("/api/tags", authenticate, tags.getMany);
 router.get("/api/tags/:name", authenticate, tags.getOne);
 router.put("/api/tags/:name", authenticate, tags.update);
 router.delete("/api/tags/:name", authenticate, tags.delete);
 
-// Places API
+// ---- Places --------
+const places = new PlacesController();
 router.get("/api/places/search", authenticate, places.search);
 router.get("/api/places/nearby", authenticate, places.nearby);
 
